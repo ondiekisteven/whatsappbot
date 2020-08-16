@@ -1,9 +1,9 @@
 import pymysql
-from loadConf import get_dev_database_host, get_dev_database_user
+from loadConf import get_database_host, get_database_user, get_database_pass
 
 
 def getDb():
-    db = pymysql.connect(get_dev_database_host(), get_dev_database_user(), "", "infermedica")
+    db = pymysql.connect(get_database_host(), get_database_user(), get_database_pass(), "heroku_2c9ec56dd042196")
     return db
 
 
