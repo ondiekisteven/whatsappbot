@@ -205,6 +205,17 @@ def search_lyrics(search):
         return 'invalid search, use - to separate artist from song. eg. *work - rihanna*'
     else:
         search = remove_first_word(search)
+        if 'by' in search:
+            track, artist = search.split('by')
+            api_call = base_url + endpoint + format_url + artist_parameter + artist + track_parameter + track + api_key
+            res = requests.get(api_call)
+            json_res = res.json()
+            body = json_res['message']['body']
+
+            if len(body) == 0:
+                return 'Song not found!'
+            else:
+                return getlyric(body)
         track, artist = search.split('-')
 
         api_call = base_url + endpoint + format_url + artist_parameter + artist + track_parameter + track + api_key
@@ -214,7 +225,7 @@ def search_lyrics(search):
         body = json_res['message']['body']
 
         if len(body) == 0:
-            api_call = base_url + endpoint + format_url + artist_parameter + track + track_parrameter + artist + api_key
+            api_call = base_url + endpoint + format_url + artist_parameter + track + track_parameter + artist + api_key
             res = requests.get(api_call)
             json_res = res.json()
             sbody = json_res['message']['body']
