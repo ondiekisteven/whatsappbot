@@ -1,5 +1,6 @@
 from twilio.rest import Client
 import db
+import json
 import requests
 from configparser import ConfigParser
 from infermedicaClient import make_chuka_api_request
@@ -179,3 +180,48 @@ def register(tg_id, response):
                 return message
             else:
                 return 'Could not get any response. Press /diagnose to restart.'
+
+
+def getlyric(body):
+    return body["lyrics"]["lyrics_body"]
+
+
+def remove_first_word(text):
+    words = text.split(' ')
+    return " ".join(words[1:])
+
+
+def search_lyrics(search):
+    base_url = "http://api.musixmatch.com/ws/1.1/"
+    format_url = "?format=json&callback=callback"
+
+    endpoint = "matcher.lyrics.get"
+
+    artist_parameter = "&q_artist="
+    track_parameter = "&q_track="
+    api_key = "&apikey=23511ff3cc653349eabac10c3ff2ce03"
+
+    if '-' not in search:
+        return 'invalid search, use - to separate artist from song. eg. *work - rihanna*'
+    else:
+        search = remove_first_word(search)
+        track, artist = search.split('-')
+
+        api_call = base_url + endpoint + format_url + artist_parameter + artist + track_parameter + track + api_key
+
+        res = requests.get(api_call)
+        json_res = res.json()
+        body = json_res['message']['body']
+
+        if len(body) == 0:
+            api_call = base_url + endpoint + format_url + artist_parameter + track + track_parrameter + artist + api_key
+            res = requests.get(api_call)
+            json_res = res.json()
+            sbody = json_res['message']['body']
+
+            if len(sbody) == 0:
+                return 'Song not found!'
+            else:
+                return getlyric(sbody)
+        else:
+            return getlyric(body)

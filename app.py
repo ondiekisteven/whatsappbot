@@ -1,5 +1,5 @@
 from flask import Flask, request
-from whatsappHandler import send_, register
+from whatsappHandler import send_, register, search_lyrics
 
 app = Flask(__name__)
 
@@ -13,10 +13,13 @@ def hello_world():
         numeric_filter = filter(str.isdigit, sender)
         numeric_string = "".join(numeric_filter)
 
-        print(numeric_string)
-        response = register(numeric_string, message)
-
-        return send_(sender, response)
+        if message.lower().startswith("lyrics"):
+            print(message.lower())
+            result = search_lyrics(message)
+            return send_(sender, result)
+        else:
+            response = register(numeric_string, message)
+            return send_(sender, response)
 
 
 @app.route('/status', methods=['POST'])
