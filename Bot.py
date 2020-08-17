@@ -1,6 +1,6 @@
 import requests
 from json import dumps
-from whatsappHandler import search_lyrics, register
+from whatsappHandler import search_lyrics, register, remove_first_word, is_group
 
 
 class WaBot:
@@ -42,6 +42,7 @@ class WaBot:
     def diagnose(self, author, chat_id, response):
         phone = author.replace('@c.us', '')
         reply = register(phone, response)
+        print(f'diagnosis recepient:{phone}')
         return self.send_message(chat_id, reply)
 
     def group(self, author):
@@ -53,6 +54,22 @@ class WaBot:
         }
         answer = self.send_requests('group', data)
         return answer
+
+    def add_participant(self, group_id, participant_phone=None, participant_id=None, ):
+        data = {
+            'groupId': group_id
+        }
+        print('checking user ...')
+        if participant_phone:
+            data['participantPhone'] = participant_phone
+        elif participant_id:
+            data['participantChatId'] = participant_id
+        else:
+            return 'Missing user to add'
+        print('sending request')
+        ans = self.send_requests('addGroupParticipant', data)
+
+        return self.send_message(group_id, ans['message'])
 
     def processing(self):
         if self.dict_message:
@@ -66,8 +83,18 @@ class WaBot:
                     return self.welcome(id)
                 elif text.lower().startswith('lyrics'):
                     return self.lyrics(id, text)
+                elif text.lower().startswith('adduser'):
+                    if is_group(message['chatId']):
+                        print('adding user')
+                        user_to_add = remove_first_word(text)
+                        return self.add_participant(message['chatId'], user_to_add)
+                    else:
+                        return 'Cant add user here'
                 elif text.lower().startswith('group'):
                     return self.group(message['author'])
+                elif text.lower().startswith('diagnose'):
+                    print(f'message to diagnosis: {text}')
+                    text = remove_first_word(text)
+                    return self.diagnose(message['author'], id, text)
                 else:
-                    print(f'message to diagnosis: {message}')
-                    return self.diagnose(message['author'], id, message)
+                    return ''

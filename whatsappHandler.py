@@ -74,16 +74,19 @@ def register(tg_id, response):
             db.deleteUser(tg_id)
             return 'Ok. Maybe later. You can continue registration by clicking /register .'
     if current_count == 2:
-        if response.lower() == 'male' or 'm':
+        if response.lower() == 'male':
             db.saveGender(tg_id, 'male')
-        elif response.lower() == 'female' or 'f':
+        elif response.lower() == 'female':
             db.saveGender(tg_id, 'female')
         else:
             return 'Invalid gender. Try again'
     elif current_count == 3:
         try:
             age = int(response)
-            db.saveAge(tg_id, age)
+            if 0 < age < 120:
+                db.saveAge(tg_id, age)
+            else:
+                return 'Invalid age'
         except ValueError:
             return 'Invalid age'
     elif current_count == 4:
@@ -188,6 +191,14 @@ def getlyric(body):
 def remove_first_word(text):
     words = text.split(' ')
     return " ".join(words[1:])
+
+
+def is_group(chat_id):
+    us, gr = chat_id.split('@')
+    if 'g.us' in gr:
+        return True
+    else:
+        return False
 
 
 def search_lyrics(search):

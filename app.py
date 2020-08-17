@@ -12,7 +12,7 @@ def hello_world():
     if request.method == 'POST':
         message = request.form['Body']
         sender = request.form['From']
-
+        print(f'message from {sender}: {message}')
         numeric_filter = filter(str.isdigit, sender)
         numeric_string = "".join(numeric_filter)
 
@@ -29,8 +29,10 @@ def hello_world():
 def receive():
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
+    print(request.json)
+    allowed_chats = ['MAJANGO ⌨🖥', 'Som']
     for message in messages:
-        if message['chatName'] == 'Som' and not message['fromMe']:
+        if message['chatName'] in allowed_chats and not message['fromMe']:
             return bot.processing()
         else:
             return ""
