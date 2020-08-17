@@ -27,12 +27,11 @@ def hello_world():
 
 @app.route('/whatsapp/chatapi/messages', methods=['POST'])
 def receive():
-    print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
     for message in messages:
         if message['chatName'] == 'Som' and not message['fromMe']:
-            bot.processing()
+            return bot.processing()
         else:
             return ""
 
