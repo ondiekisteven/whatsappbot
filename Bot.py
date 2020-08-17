@@ -1,6 +1,8 @@
 import requests
 from json import dumps
+from genius import Genius
 from whatsappHandler import search_lyrics, register, remove_first_word, is_group
+import uuid
 
 
 class WaBot:
@@ -25,15 +27,42 @@ class WaBot:
         answer = self.send_requests('sendMessage', data)
         return answer
 
+    def send_file(self, chat_id, body, file_name, caption):
+        data = {
+            'chatId': chat_id,
+            'body': body,
+            'filename': file_name,
+            'caption': caption
+        }
+        print(f'file -> id: {data["chatId"]}, body: {data["body"]}, filename: {data["filename"]}')
+        answer = self.send_requests('sendFile', data)
+        return answer
+
     def welcome(self, chat_id):
         welcome_string = """Hi, use these commands to control me
         Commands:
-        1. lyrics   - get lyrics of song eg 'lyrics work - rihanna'
-        2. diagnose - get self diagnosis service.
-        3. group    - create a group using the bot
-        4. menu     - go back to main menu
+        1. Lyrics   - Get lyrics of song eg 'lyrics work - rihanna'
+        2. Diagnose - Get self diagnosis service.
+        3. Group    - Create a group using the bot
+        4. Commands - Display this menu
         """
         return self.send_message(chat_id, welcome_string)
+
+    def genius_lyrics(self, chat_id, search):
+        bot = Genius()
+        sid = bot.search_song(search)
+        song_id = sid['song_id']
+        print(f'song Id -> {song_id}')
+        lyrics = bot.retrieve_lyrics(song_id)
+        thumbnail = sid['song_thumbnail']
+        print(f'song title: {sid["song_title"]}')
+        name = sid['song_title']
+        print(f'sending image ...{thumbnail}')
+        res = self.send_file(chat_id, thumbnail, uuid.uuid4().hex+'.jpg', name)
+        print(res)
+        text = f'TITLE: {name}\n\n{lyrics}'
+
+        return self.send_message(chat_id, text)
 
     def lyrics(self, chat_id, search):
         lyrics = search_lyrics(search)
@@ -76,25 +105,24 @@ class WaBot:
             for message in self.dict_message:
                 text = message['body']
 
-                id = message['chatId']
-                if text.lower().startswith('hi'):
-                    return self.welcome(id)
+                sid = message['chatId']
+                if text.lower().startswith('commands'):
+                    return self.welcome(sid)
                 elif text.lower().startswith('menu'):
-                    return self.welcome(id)
+                    return self.welcome(sid)
                 elif text.lower().startswith('lyrics'):
-                    return self.lyrics(id, text)
+                    search = remove_first_word(text)
+                    return self.genius_lyrics(sid, search)
                 elif text.lower().startswith('adduser'):
                     if is_group(message['chatId']):
                         print('adding user')
-                        user_to_add = remove_first_word(text)
-                        return self.add_participant(message['chatId'], user_to_add)
+                        return self.add_participant(message['chatId'], text)
                     else:
                         return 'Cant add user here'
                 elif text.lower().startswith('group'):
                     return self.group(message['author'])
                 elif text.lower().startswith('diagnose'):
                     print(f'message to diagnosis: {text}')
-                    text = remove_first_word(text)
-                    return self.diagnose(message['author'], id, text)
+                    return self.diagnose(message['author'], sid, text)
                 else:
                     return ''
