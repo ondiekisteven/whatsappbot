@@ -69,5 +69,5 @@ class WaBot:
                 elif text.lower().startswith('group'):
                     return self.group(message['author'])
                 else:
+                    print(f'message to diagnosis: {message}')
                     return self.diagnose(message['author'], id, message)
-
