@@ -1,6 +1,5 @@
 from twilio.rest import Client
 import db
-import json
 import requests
 from configparser import ConfigParser
 from infermedicaClient import make_chuka_api_request
