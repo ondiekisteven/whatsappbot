@@ -29,9 +29,11 @@ def hello_world():
 def receive():
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
-    print(request.json)
+
     allowed_chats = ['MAJANGO ⌨🖥', 'Som']
     for message in messages:
+        if not message['fromMe']:
+            print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
         if message['chatName'] in allowed_chats and not message['fromMe']:
             return bot.processing()
         else:
