@@ -33,15 +33,6 @@ def receive():
     for message in messages:
         if message['chatName'] == 'Som' and not message['fromMe']:
             bot.processing()
-            time.sleep(4)
-            msg = """
-            Select option:
-            lyrics   - get lyrics of song eg 'lyrics work - rihanna'
-            diagnose - get self diagnosis service.
-            group    - create a group using the bot
-            menu     - go back to main menu
-            """
-            return bot.send_message(message['chatId'], msg)
         else:
             return ""
 
