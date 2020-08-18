@@ -261,7 +261,7 @@ def save_chat(bot, message):
     Hello {message['chatName']}, welcome.
     From now i can reply to messages in this chat
     """
-    if db.checkAllowedChatBot(message['chatId']):
+    if db.checkAllowedChatBot(str(message['chatId'])):
         return bot.send_message(message['chatId'], 'You are already registered :)')
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])

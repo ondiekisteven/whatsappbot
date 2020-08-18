@@ -32,7 +32,6 @@ def receive():
     allowed_chats = getAllowedChats()
     for message in messages:
         if not message['fromMe']:
-            print(request.json)
             print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
 
         if message['chatId'] in allowed_chats and not message['fromMe']:
