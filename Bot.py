@@ -1,7 +1,7 @@
 import requests
 from json import dumps
 from genius import Genius, get_song
-from whatsappHandler import search_lyrics, register, remove_first_word, is_group
+from whatsappHandler import register, remove_first_word, is_group
 import uuid
 import os
 
@@ -92,8 +92,9 @@ class WaBot:
         return message_send
 
     def lyrics(self, chat_id, search):
-        lyrics = search_lyrics(search)
-        return self.send_message(chat_id, lyrics)
+        pass
+        # lyrics = search_lyrics(search)
+        # return self.send_message(chat_id, lyrics)
 
     def diagnose(self, author, chat_id, response):
         phone = author.replace('@c.us', '')

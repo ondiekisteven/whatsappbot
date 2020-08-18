@@ -6,6 +6,10 @@ def getDb():
     db = pymysql.connect(get_database_host(), get_database_user(), get_database_pass(), "heroku_2c9ec56dd042196")
     return db
 
+# def getDb():
+#     db = pymysql.connect("localhost", "root", "", "infermedica")
+#     return db
+
 
 def getUserById(tg_id):
     db = getDb()
@@ -215,4 +219,32 @@ def deleteUserOngoingDiagnosis(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'DELETE FROM on_going_diagnosis WHERE tg_id = {tg_id}')
+    db.commit()
+
+
+def addAllowedBotChat(chat_id, chat_name):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'INSERT INTO allowed_bot_chats (chat_id, chat_name) VALUES ("{chat_id}", "{chat_name}")')
+    db.commit()
+
+
+def getAllowedBotChat():
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'SELECT * FROM allowed_bot_chats')
+    return cursor.fetchall()
+
+
+def checkAllowedChatBot(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'SELECT * FROM allowed_bot_chats WHERE chat_id = "{chat_id}"')
+    return cursor.fetchone()
+
+
+def deleteFromAllowedChat(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'DELETE FROM allowed_bot_chats WHERE chat_id="{chat_id}"')
     db.commit()

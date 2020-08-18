@@ -1,7 +1,6 @@
 from flask import Flask, request, send_file
-from whatsappHandler import send_, register, search_lyrics
+from whatsappHandler import send_, register, search_lyrics, save_chat, getAllowedChats
 import Bot
-import time
 
 
 app = Flask(__name__)
@@ -30,13 +29,16 @@ def receive():
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
 
-    allowed_chats = ['254704661895-1577304076@g.us', '254790670635-1597611295@g.us', '254716736857-1506316355@g.us']
+    allowed_chats = getAllowedChats()
     for message in messages:
         if not message['fromMe']:
             print(request.json)
             print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
+
         if message['chatId'] in allowed_chats and not message['fromMe']:
             return bot.processing()
+        elif message['body'] == 'join bot':
+            return save_chat(bot, message)
         else:
             return ""
 

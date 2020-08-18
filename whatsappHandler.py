@@ -246,3 +246,23 @@ def search_lyrics(search):
                 return getlyric(sbody)
         else:
             return getlyric(body)
+
+
+def getAllowedChats():
+    allowed = []
+    cursor = db.getAllowedBotChat()
+    for item in cursor:
+        allowed.append(item[0])
+    return allowed
+
+
+def save_chat(bot, message):
+    text = f"""
+    Hello {message['chatName']}, welcome.
+    From now i can reply to messages in this chat
+    """
+    if db.checkAllowedChatBot(message['chatId']):
+        return bot.send_message(message['chatId'], 'You are already registered :)')
+    else:
+        db.addAllowedBotChat(str(message['chatId']), message['chatName'])
+        return bot.send_message(message['chatId'], text)
