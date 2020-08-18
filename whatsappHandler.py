@@ -265,4 +265,5 @@ def save_chat(bot, message):
         return bot.send_message(message['chatId'], 'You are already registered :)')
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
-        return bot.send_message(message['chatId'], text)
+        bot.send_message(message['chatId'], text)
+        return bot.send_message(message['chatId'], 'Send the word *commands* to see available commands. \n\n example comand *lyrics alan walker faded*')
