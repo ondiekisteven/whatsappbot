@@ -259,7 +259,7 @@ def getAllowedChats():
 def save_chat(bot, message):
     text = f"""
     Hello {message['chatName']}, welcome.
-    From now i can reply to messages in this chat
+    Send *help* or *commands* for help
     """
     user = db.checkAllowedChatBot(str(message['chatId']))
     if user:
@@ -267,5 +267,7 @@ def save_chat(bot, message):
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
         bot.send_message(message['chatId'], text)
-        return bot.send_message(message['chatId'], 'Send the word *commands* to see available commands. \n\n example '
-                                                   '\n\n *lyrics alan walker faded*')
+        return bot.send_message(message['chatId'], 'To download a song write \n\n'
+                                                   '*audio song-title*\n\n example '
+                                                   '\n *audio alan walker - faded*')
+

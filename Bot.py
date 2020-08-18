@@ -66,17 +66,7 @@ class WaBot:
     *audio alan walker faded* or
     *audio http//youtube.com...* (youtube link)
     
-                    
-                    
-    [health]
-    *Diagnose* - Get self diagnosis service
-    
-    example:
-    *diagnose i feel pain in my back*
-    
-    
-    *Group* -Create a group using the bot. it adds the bot as a user
-    
+       
     *Commands* or *help* -Display this menu
     """
 
@@ -141,21 +131,25 @@ class WaBot:
         if self.dict_message:
             for message in self.dict_message:
                 text = message['body']
-
                 sid = message['chatId']
                 name = message['author']
-                if text.lower().startswith('commands') or text.lower().startswith('help'):
+
+                if text.lower().startswith('command') or text.lower().startswith('help'):
                     return self.welcome(sid, name)
                 elif text.lower().startswith('menu'):
                     return self.welcome(sid, name)
+                # for downloading audio from youtube or spotify or elsewhere
                 elif text.lower().startswith('audio'):
                     search = remove_first_word(text)
+
                     bot = Genius()
                     bot.download_audio(search)
                     song = get_song()
                     path = f'https://som-whatsapp.herokuapp.com/files/{song}'
-                    self.send_file(sid, path, "audio.mp3", "audio")
-                    return 'hi'
+                    x = self.send_file(sid, path, "audio.mp3", "audio")
+                    print(f'Sending audio -> {x}')
+                    os.remove(song)
+                    return x
                 elif text.lower().startswith('lyrics'):
                     search = remove_first_word(text)
                     return self.genius_lyrics(sid, search)

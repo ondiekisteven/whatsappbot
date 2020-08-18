@@ -86,10 +86,8 @@ class Genius:
     def retrieve_lyrics(self, song_id):
         '''Retrieves lyrics from html page.'''
         path = self.connect_lyrics(song_id)
-
         URL = "http://genius.com" + path
         page = requests.get(URL)
-
         # Extract the page's HTML as a string
         html = BeautifulSoup(page.text, "html.parser")
 
