@@ -74,9 +74,9 @@ def register(tg_id, response):
             db.deleteUser(tg_id)
             return 'Ok. Maybe later. You can continue registration by clicking /register .'
     if current_count == 2:
-        if response.lower() == 'male':
+        if response.lower().strip() == 'male':
             db.saveGender(tg_id, 'male')
-        elif response.lower() == 'female':
+        elif response.lower().strip() == 'female':
             db.saveGender(tg_id, 'female')
         else:
             return 'Invalid gender. Try again'
@@ -266,4 +266,5 @@ def save_chat(bot, message):
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
         bot.send_message(message['chatId'], text)
-        return bot.send_message(message['chatId'], 'Send the word *commands* to see available commands. \n\n example comand *lyrics alan walker faded*')
+        return bot.send_message(message['chatId'], 'Send the word *commands* to see available commands. \n\n example '
+                                                   'command\n\n *lyrics alan walker faded*')

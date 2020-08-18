@@ -156,6 +156,7 @@ class WaBot:
                 elif text.lower().startswith('group'):
                     return self.group(message['author'])
                 elif text.lower().startswith('diagnose'):
-                    return self.diagnose(message['author'], sid, text)
+                    response = remove_first_word(text)
+                    return self.diagnose(message['author'], sid, response)
                 else:
                     return ''
