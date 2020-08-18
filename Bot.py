@@ -56,9 +56,19 @@ class WaBot:
     def welcome(self, chat_id, name):
         welcome_string = """Hi, use these commands to control me
     Commands:
+    [Music channel]
     1. Lyrics   - Get lyrics of song eg 'lyrics work - rihanna'
-    2. Diagnose - Get self diagnosis service.
-    3. Group    - Create a group using the bot
+    2. audio    - Get audio of a song. write audio <name of song>
+                  also audio <youtube link> will convert video from 
+                    the youtube link to audio
+                    
+    [health]
+    1. Diagnose - Get self diagnosis service
+                    usage:
+                    write "diagnose <your reply here>" for the bot to understand.
+    
+    [others]
+    1. Group    - Create a group using the bot. it adds the bot as a user
     4. Commands - Display this menu
     """
 
