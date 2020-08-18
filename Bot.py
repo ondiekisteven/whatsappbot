@@ -11,10 +11,8 @@ def send_ppt(chat_id, audio):
         "chatId": chat_id,
         "audio": audio
     }
-    print(f'Trying to send audio from "{audio}"')
     answer = requests.post('https://api.chat-api.com/instance162072/sendPTT?token=0kr1ty8zjmh66oj4', data=data)
 
-    print(f'{answer.text}')
     return answer
 
 
@@ -31,7 +29,6 @@ class WaBot:
         headers = {'content-type': 'application/json'}
         answer = requests.post(url, data=dumps(data), headers=headers)
         y = answer.text
-        print(f'MAIN REQUEST: {y}')
         return y
 
     def send_message(self, chat_id, text):
@@ -58,7 +55,9 @@ class WaBot:
     Commands:
     [Music channel]
     1. Lyrics   - Get lyrics of song eg 'lyrics work - rihanna'
-    
+    2. audio    - Get audio of a song. write audio <name of song>
+                  also audio <youtube link> will convert video from 
+                    the youtube link to audio
                     
     [health]
     1. Diagnose - Get self diagnosis service
@@ -77,23 +76,19 @@ class WaBot:
         bot = Genius()
         sid = bot.search_song(search)
         song_id = sid['song_id']
-        print(f'song Id -> {song_id}')
         lyrics = bot.retrieve_lyrics(song_id)
         thumbnail = sid['song_thumbnail']
-        print(f'song title: {sid["song_title"]}')
         name = sid['song_title']
-        print(f'sending image ...{thumbnail}')
         res = self.send_file(chat_id, thumbnail, uuid.uuid4().hex+'.jpg', name)
-        print(res)
         text = f'TITLE: {name}\n\n{lyrics}'
 
         message_send = self.send_message(chat_id, text)
-        # bot.download_audio(name)
-        # audio = get_song()
-        # audio_path = f'https://som-whatsapp.herokuapp.com/files/{audio}'
-        # audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
-        # print(f'sending audio -> {audio_sending}')
-        # os.remove(audio)
+        bot.download_audio(name)
+        audio = get_song()
+        audio_path = f'https://som-whatsapp.herokuapp.com/files/{audio}'
+        audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
+        print(f'sending audio -> {audio_sending}')
+        os.remove(audio)
         return message_send
 
     def lyrics(self, chat_id, search):
@@ -120,14 +115,12 @@ class WaBot:
         data = {
             'groupId': group_id
         }
-        print('checking user ...')
         if participant_phone:
             data['participantPhone'] = participant_phone
         elif participant_id:
             data['participantChatId'] = participant_id
         else:
             return 'Missing user to add'
-        print('sending request')
         ans = self.send_requests('addGroupParticipant', data)
 
         return self.send_message(group_id, ans['message'])
@@ -143,27 +136,25 @@ class WaBot:
                     return self.welcome(sid, name)
                 elif text.lower().startswith('menu'):
                     return self.welcome(sid, name)
-                # elif text.lower().startswith('audio'):
-                #     search = remove_first_word(text)
-                #     bot = Genius()
-                #     bot.download_audio(search)
-                #     song = get_song()
-                #     path = f'https://som-whatsapp.herokuapp.com/files/{song}'
-                #     self.send_file(sid, path, "audio.mp3", "audio")
-                #     return 'hi'
+                elif text.lower().startswith('audio'):
+                    search = remove_first_word(text)
+                    bot = Genius()
+                    bot.download_audio(search)
+                    song = get_song()
+                    path = f'https://som-whatsapp.herokuapp.com/files/{song}'
+                    self.send_file(sid, path, "audio.mp3", "audio")
+                    return 'hi'
                 elif text.lower().startswith('lyrics'):
                     search = remove_first_word(text)
                     return self.genius_lyrics(sid, search)
                 elif text.lower().startswith('adduser'):
                     if is_group(message['chatId']):
-                        print('adding user')
                         return self.add_participant(message['chatId'], text)
                     else:
                         return 'Cant add user here'
                 elif text.lower().startswith('group'):
                     return self.group(message['author'])
                 elif text.lower().startswith('diagnose'):
-                    print(f'message to diagnosis: {text}')
                     return self.diagnose(message['author'], sid, text)
                 else:
                     return ''

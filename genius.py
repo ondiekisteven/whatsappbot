@@ -91,14 +91,11 @@ class Genius:
         URL = "http://genius.com" + path
         page = requests.get(URL)
 
-        print(f'PAGE TO CRAWL -> {URL}')
-
         # Extract the page's HTML as a string
         html = BeautifulSoup(page.text, "html.parser")
 
         # Scrape the song lyrics from the HTML
         lyr = html.find("div", class_="lyrics").get_text()
-        print(f'Lyrics: {lyr[10]}')
         return lyr
 
     def encode_audio(self, file_path):
@@ -108,4 +105,3 @@ class Genius:
 
     def download_audio(self, song):
         x = os.system(f'spotdl --song "{song}"')
-        print(f'Finished downloading: {x}')

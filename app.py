@@ -30,7 +30,7 @@ def receive():
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
 
-    allowed_chats = ['MAJANGO ⌨🖥', 'Som', '254716736857-1506316355@g.us']
+    allowed_chats = ['254704661895-1577304076@g.us', '254790670635-1597611295@g.us', '254716736857-1506316355@g.us']
     for message in messages:
         if not message['fromMe']:
             print(request.json)
