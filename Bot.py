@@ -76,7 +76,7 @@ class WaBot:
     
     
     1. Group-Create a group using the bot. it adds the bot as a user
-    4. Commands-Display this menu
+    4. Commands or help-Display this menu
     """
 
         text = f'{name} \n{welcome_string}'
@@ -143,7 +143,7 @@ class WaBot:
 
                 sid = message['chatId']
                 name = message['author']
-                if text.lower().startswith('commands'):
+                if text.lower().startswith('commands') or text.lower().startswith('help'):
                     return self.welcome(sid, name)
                 elif text.lower().startswith('menu'):
                     return self.welcome(sid, name)
