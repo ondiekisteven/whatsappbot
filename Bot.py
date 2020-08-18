@@ -54,29 +54,30 @@ class WaBot:
         welcome_string = """Hi, use these commands to control me
     Commands:
     [Music channel]
-    1. Lyrics   - Get lyrics of song 
+    *Lyrics*   - Get lyrics of song 
     
     example
-    lyrics work - rihanna'
+    *lyrics work - rihanna*
     
     
-    2. audio    - Get audio of a song. write audio
+    *audio*    - Get audio of a song. write audio
     
     example
-    audio alan walker faded or
-    audio http//youtube.com... (youtube link)
+    *audio alan walker faded* or
+    *audio http//youtube.com...* (youtube link)
     
                     
                     
     [health]
-    1. Diagnose - Get self diagnosis service
+    *Diagnose* - Get self diagnosis service
     
     example:
-    diagnose i feel pain in my back
+    *diagnose i feel pain in my back*
     
     
-    1. Group-Create a group using the bot. it adds the bot as a user
-    4. Commands or help-Display this menu
+    *Group* -Create a group using the bot. it adds the bot as a user
+    
+    *Commands* or *help* -Display this menu
     """
 
         text = f'{name} \n{welcome_string}'
