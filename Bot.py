@@ -58,9 +58,7 @@ class WaBot:
     Commands:
     [Music channel]
     1. Lyrics   - Get lyrics of song eg 'lyrics work - rihanna'
-    2. audio    - Get audio of a song. write audio <name of song>
-                  also audio <youtube link> will convert video from 
-                    the youtube link to audio
+    
                     
     [health]
     1. Diagnose - Get self diagnosis service
@@ -90,12 +88,12 @@ class WaBot:
         text = f'TITLE: {name}\n\n{lyrics}'
 
         message_send = self.send_message(chat_id, text)
-        bot.download_audio(name)
-        audio = get_song()
-        audio_path = f'https://som-whatsapp.herokuapp.com/files/{audio}'
-        audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
-        print(f'sending audio -> {audio_sending}')
-        os.remove(audio)
+        # bot.download_audio(name)
+        # audio = get_song()
+        # audio_path = f'https://som-whatsapp.herokuapp.com/files/{audio}'
+        # audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
+        # print(f'sending audio -> {audio_sending}')
+        # os.remove(audio)
         return message_send
 
     def lyrics(self, chat_id, search):
@@ -145,14 +143,14 @@ class WaBot:
                     return self.welcome(sid, name)
                 elif text.lower().startswith('menu'):
                     return self.welcome(sid, name)
-                elif text.lower().startswith('audio'):
-                    search = remove_first_word(text)
-                    bot = Genius()
-                    bot.download_audio(search)
-                    song = get_song()
-                    path = f'https://som-whatsapp.herokuapp.com/files/{song}'
-                    self.send_file(sid, path, "audio.mp3", "audio")
-                    return 'hi'
+                # elif text.lower().startswith('audio'):
+                #     search = remove_first_word(text)
+                #     bot = Genius()
+                #     bot.download_audio(search)
+                #     song = get_song()
+                #     path = f'https://som-whatsapp.herokuapp.com/files/{song}'
+                #     self.send_file(sid, path, "audio.mp3", "audio")
+                #     return 'hi'
                 elif text.lower().startswith('lyrics'):
                     search = remove_first_word(text)
                     return self.genius_lyrics(sid, search)
