@@ -2,6 +2,16 @@ import requests
 import json
 
 from bs4 import BeautifulSoup
+import base64
+import os
+
+
+def get_song():
+    contents = os.listdir(os.getcwd())
+    for c in contents:
+        if c.endswith('.mp3'):
+            print(f'Fround one song: -> {c}')
+            return c
 
 
 class Genius:
@@ -81,6 +91,8 @@ class Genius:
         URL = "http://genius.com" + path
         page = requests.get(URL)
 
+        print(f'PAGE TO CRAWL -> {URL}')
+
         # Extract the page's HTML as a string
         html = BeautifulSoup(page.text, "html.parser")
 
@@ -88,3 +100,12 @@ class Genius:
         lyr = html.find("div", class_="lyrics").get_text()
         print(f'Lyrics: {lyr[10]}')
         return lyr
+
+    def encode_audio(self, file_path):
+        f = open(file_path, 'rb')
+        contents = f.read()
+        return base64.encodebytes(contents)
+
+    def download_audio(self, song):
+        x = os.system(f'spotdl --song "{song}"')
+        print(f'Finished downloading: {x}')

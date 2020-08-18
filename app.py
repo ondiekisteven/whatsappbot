@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
 from whatsappHandler import send_, register, search_lyrics
 import Bot
 import time
@@ -33,11 +33,23 @@ def receive():
     allowed_chats = ['MAJANGO ⌨🖥', 'Som']
     for message in messages:
         if not message['fromMe']:
+            print(request.json)
             print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
         if message['chatName'] in allowed_chats and not message['fromMe']:
             return bot.processing()
         else:
             return ""
+
+
+@app.route('/files/<path>', methods=['GET'])
+def download_audio(path=None):
+    if not path:
+        return 'No file specified'
+    else:
+        try:
+            return send_file(path, as_attachment=False)
+        except FileNotFoundError:
+            return 'File not found'
 
 
 if __name__ == '__main__':
