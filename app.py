@@ -30,12 +30,12 @@ def receive():
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
 
-    allowed_chats = ['MAJANGO ⌨🖥', 'Som', '��Computer Science @3.2��']
+    allowed_chats = ['MAJANGO ⌨🖥', 'Som', '254716736857-1506316355@g.us']
     for message in messages:
         if not message['fromMe']:
             print(request.json)
             print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
-        if message['chatName'] in allowed_chats and not message['fromMe']:
+        if message['chatId'] in allowed_chats and not message['fromMe']:
             return bot.processing()
         else:
             return ""
