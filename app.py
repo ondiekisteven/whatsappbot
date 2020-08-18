@@ -33,7 +33,7 @@ def receive():
     for message in messages:
         if not message['fromMe']:
             print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
-        elif message['body'] == 'join bot':
+        if message['body'] == 'join bot':
             return save_chat(bot, message)
         elif message['chatId'] in allowed_chats and not message['fromMe']:
             return bot.processing()
