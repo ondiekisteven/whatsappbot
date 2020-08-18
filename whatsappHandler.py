@@ -261,10 +261,11 @@ def save_chat(bot, message):
     Hello {message['chatName']}, welcome.
     From now i can reply to messages in this chat
     """
-    if db.checkAllowedChatBot(str(message['chatId'])):
+    user = db.checkAllowedChatBot(str(message['chatId']))
+    if user:
         return bot.send_message(message['chatId'], 'You are already registered :)')
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
         bot.send_message(message['chatId'], text)
         return bot.send_message(message['chatId'], 'Send the word *commands* to see available commands. \n\n example '
-                                                   'command\n\n *lyrics alan walker faded*')
+                                                   '\n\n *lyrics alan walker faded*')
