@@ -144,6 +144,13 @@ def getCurrentQuestion(tg_id):
     return cursor.fetchone()
 
 
+def deleteCurrentQuestion(tg_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'DELETE FROM current_question WHERE  tg_id = {tg_id}')
+    db.commit()
+
+
 def saveInitialSymptom(tg_id, symptom_id, choice_id, initial):
     db = getDb()
     cursor = db.cursor()

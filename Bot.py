@@ -12,10 +12,12 @@ def get_phone(message):
 
 
 def delete_diagnosis_user(message):
+    print('Removing user data from database...')
     phone = message['author'].replace('@c.us', '')
     db.deleteUserOngoingDiagnosis(phone)
     db.deleteUserSymptoms(phone)
     db.deleteUserCurrentSymptom(phone)
+    db.deleteCurrentQuestion(phone)
 
 
 def send_ppt(chat_id, audio):
