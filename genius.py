@@ -104,13 +104,12 @@ class Genius:
     def download_audio(self, song, user):
         path = f'music/{user}'
         if not os.path.exists(path):
-            os.mkdir('music')
             os.mkdir(path)
         args = {
             "song": [song],
             'output_file': path + '/{artist} - {track-name}.{output-ext}'
         }
-
+        print(f'Downloading {song}')
         with Spotdl(args) as spotdl_handler:
             spotdl_handler.match_arguments()
 
