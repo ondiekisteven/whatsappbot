@@ -4,6 +4,7 @@ from genius import Genius, get_song
 from whatsappHandler import register, remove_first_word, is_group
 import uuid
 import os
+import db
 
 
 def send_ppt(chat_id, audio):
@@ -23,6 +24,10 @@ class WaBot:
         self.dict_message = json['messages']
         self.APIUrl = 'https://eu92.chat-api.com/instance162072/'
         self.token = '0kr1ty8zjmh66oj4'
+        self.last_command = "last comand"
+
+    def get_last_comand(self):
+        pass
 
     def send_requests(self, method, data):
         url = f'{self.APIUrl}{method}?token={self.token}'
@@ -66,7 +71,17 @@ class WaBot:
     *audio alan walker faded* or
     *audio http//youtube.com...* (youtube link)
     
-       
+                    
+                    
+    [health]
+    *Diagnose* - Get self diagnosis service
+    
+    example:
+    *diagnose i feel pain in my back*
+    
+    
+    *Group* -Create a group using the bot. it adds the bot as a user
+    
     *Commands* or *help* -Display this menu
     """
 
@@ -131,27 +146,25 @@ class WaBot:
         if self.dict_message:
             for message in self.dict_message:
                 text = message['body']
+
                 sid = message['chatId']
                 name = message['author']
-
-                if text.lower().startswith('command') or text.lower().startswith('help'):
-                    return self.welcome(sid, name)
-                elif text.lower().startswith('menu'):
+                if text.lower().startswith('commands') or text.lower().startswith('help'):
+                    db.updateLastCommand(sid, 'help')
                     return self.welcome(sid, name)
                 # for downloading audio from youtube or spotify or elsewhere
                 elif text.lower().startswith('audio'):
                     search = remove_first_word(text)
-
                     bot = Genius()
                     bot.download_audio(search)
                     song = get_song()
                     path = f'https://som-whatsapp.herokuapp.com/files/{song}'
-                    x = self.send_file(sid, path, "audio.mp3", "audio")
-                    print(f'Sending audio -> {x}')
-                    os.remove(song)
-                    return x
+                    self.send_file(sid, path, "audio.mp3", "audio")
+                    db.updateLastCommand(sid, 'audio')
+                    return 'hi'
                 elif text.lower().startswith('lyrics'):
                     search = remove_first_word(text)
+                    db.updateLastCommand(sid, 'lyrics')
                     return self.genius_lyrics(sid, search)
                 elif text.lower().startswith('adduser'):
                     if is_group(message['chatId']):
@@ -159,9 +172,14 @@ class WaBot:
                     else:
                         return 'Cant add user here'
                 elif text.lower().startswith('group'):
+                    db.updateLastCommand(sid, 'audio')
                     return self.group(message['author'])
                 elif text.lower().startswith('diagnose'):
                     response = remove_first_word(text)
+                    db.updateLastCommand(sid, 'diagnose')
                     return self.diagnose(message['author'], sid, response)
                 else:
+                    # check if the user is using diagnosis command
+                    if db.getLastCommand(sid) == 'diagnose':
+                        return self.diagnose(message['author'], sid, text.lower())
                     return ''

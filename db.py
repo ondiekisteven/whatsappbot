@@ -21,7 +21,8 @@ def getUserById(tg_id):
 def saveUser(tg_id, first_name, last_name):
     db = getDb()
     cursor = db.cursor()
-    cursor.execute('INSERT INTO users(tg_id, first_name, last_name) VALUES ("%s", "%s", "%s")' % (tg_id, first_name, last_name))
+    cursor.execute(f'INSERT INTO users(tg_id, first_name, last_name) VALUES ("%s", "%s", "%s")' %
+                   (tg_id, first_name, last_name))
     db.commit()
 
 
@@ -248,3 +249,27 @@ def deleteFromAllowedChat(chat_id):
     cursor = db.cursor()
     cursor.execute(f'DELETE FROM allowed_bot_chats WHERE chat_id="{chat_id}"')
     db.commit()
+
+
+def addLastCommand(chat_id, command):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f"INSERT INTO last_command (chat_id, command) VALUES ('{chat_id}', '{command}') ")
+    db.commit()
+
+
+def updateLastCommand(chat_id, new_command):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'UPDATE last_command SET command = "{new_command}" WHERE chat_id = "{chat_id}"')
+    db.commit()
+
+
+def getLastCommand(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'SELECT command FROM last_command WHERE chat_id = "{chat_id}"')
+    return cursor.fetchone()
+
+
+
