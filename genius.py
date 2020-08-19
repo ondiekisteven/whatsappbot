@@ -103,12 +103,12 @@ class Genius:
         return base64.encodebytes(contents)
 
     def download_audio(self, song, user):
-        path = f'music/{user}/'
+        path = f'music/{user}'
         if not os.path.exists(path):
-            mkdir(path)
+            os.mkdir(path)
         args = {
             "song": [song],
-            'output_file': path + '{artist} - {track-name}.{output-ext}'
+            'output_file': path + '/{artist} - {track-name}.{output-ext}'
         }
 
         with Spotdl(args) as spotdl_handler:
