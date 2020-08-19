@@ -301,5 +301,5 @@ def is_downloading(chat_id):
 def delete_downloading(chat_id):
     db = getDb()
     cursor = db.cursor()
-    cursor.execute(f"DELETE * FROM downloading_users WHERE chat_id = '{chat_id}'")
+    cursor.execute(f"DELETE FROM downloading_users WHERE chat_id = '{chat_id}'")
     db.commit()
