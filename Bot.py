@@ -160,7 +160,7 @@ class WaBot:
                     return self.welcome(sid, name)
                 # for downloading audio from youtube or spotify or elsewhere
                 elif text.lower().startswith('audio'):
-                    return self.send_message(sid, 'bot is under maintenance. sorry. try later')
+                    # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
                     search = remove_first_word(text)
                     bot = Genius()
                     bot.download_audio(search)
@@ -170,7 +170,7 @@ class WaBot:
                     db.updateLastCommand(sid, 'audio')
                     return 'hi'
                 elif text.lower().startswith('lyrics'):
-                    return self.send_message(sid, 'bot is under maintenance, sorry, try later')
+                    # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
                     search = remove_first_word(text)
                     db.updateLastCommand(sid, 'lyrics')
                     return self.genius_lyrics(sid, search)
