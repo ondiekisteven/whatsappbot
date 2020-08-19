@@ -266,7 +266,7 @@ def save_chat(bot, message):
         return bot.send_message(message['chatId'], 'You are already registered :)')
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
-        db.updateLastCommand(str(message['chatId']), 'join')
+        db.addLastCommand(str(message['chatId']), 'join')
         bot.send_message(message['chatId'], text)
         return bot.send_message(message['chatId'], 'To download a song write \n\n'
                                                    '*audio song-title*\n\n example '

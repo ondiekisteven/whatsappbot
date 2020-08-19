@@ -35,9 +35,9 @@ class WaBot:
         self.dict_message = json['messages']
         self.APIUrl = 'https://eu92.chat-api.com/instance162072/'
         self.token = '0kr1ty8zjmh66oj4'
-        self.last_command = "last comand"
+        self.last_command = "last command"
 
-    def get_last_comand(self):
+    def get_last_command(self):
         pass
 
     def send_requests(self, method, data):
