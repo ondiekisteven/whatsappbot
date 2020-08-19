@@ -202,8 +202,8 @@ class WaBot:
                     if not response.strip():
                         print('We need to get user\'s last message and send here...')
                         self.send_message(sid, 'Let\'s continue where we left')
-                        if db.getFinishedRegistration(sid):
-                            if db.getCurrentQuestion(sid) is not None:
+                        if db.getFinishedRegistration(get_phone(message)):
+                            if db.getCurrentQuestion(get_phone(message)) is not None:
                                 res = db.getCurrentQuestion(get_phone(message))[2]
                                 return self.send_message(sid, res)
                             else:
