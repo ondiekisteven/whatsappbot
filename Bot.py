@@ -101,20 +101,20 @@ class WaBot:
         text = f'{name} \n{welcome_string}'
         return self.send_message(chat_id, text)
 
-    def genius_lyrics(self, chat_id, search, download_audio=False):
+    def genius_lyrics(self, chat_id, search, phone, download_audio=False, ):
         bot = Genius()
         sid = bot.search_song(search)
         song_id = sid['song_id']
         lyrics = bot.retrieve_lyrics(song_id)
         thumbnail = sid['song_thumbnail']
         name = sid['song_title']
-        res = self.send_file(chat_id, thumbnail, uuid.uuid4().hex+'.jpg', name)
+        self.send_file(chat_id, thumbnail, uuid.uuid4().hex+'.jpg', name)
         text = f'TITLE: {name}\n\n{lyrics}'
 
         message_send = self.send_message(chat_id, text)
         if download_audio:
-            bot.download_audio(name)
-            audio = get_song()
+
+            audio = bot.download_audio(name, phone)
             audio_path = f'https://som-whatsapp.herokuapp.com/files/{audio}'
             audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
             print(f'sending audio -> {audio_sending}')
@@ -170,13 +170,19 @@ class WaBot:
                 # for downloading audio from youtube or spotify or elsewhere
                 elif text.lower().startswith('audio'):
                     # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
+                    if db.is_downloading(sid):
+                        return self.send_message(sid, 'Wait until your first song is downloaded')
                     self.send_message(sid, 'Downloading your song...')
+                    db.add_downloading_user(sid)
                     search = remove_first_word(text)
                     bot = Genius()
-                    bot.download_audio(search)
-                    song = get_song()
+
+                    song = bot.download_audio(search, get_phone(message))
                     path = f'https://som-whatsapp.herokuapp.com/files/{song}'
-                    self.send_file(sid, path, "audio.mp3", "audio")
+                    audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+                    print(f'sending audio -> {audio_sending}')
+                    os.remove(path)
+                    db.delete_downloading(sid)
                     db.updateLastCommand(sid, 'audio')
                     return self.send_message(sid, f'You can get its lyrics by:\n\nlyrics {search}')
                 elif text.lower().startswith('lyrics'):
@@ -185,9 +191,9 @@ class WaBot:
                     search = remove_first_word(text)
 
                     if db.getLastCommand(sid) == 'audio':
-                        res = self.genius_lyrics(sid, search, False)
+                        res = self.genius_lyrics(sid, search, get_phone(message), False)
                     else:
-                        res = self.genius_lyrics(sid, search, True)
+                        res = self.genius_lyrics(sid, search, get_phone(message), True)
 
                     db.updateLastCommand(sid, 'lyrics')
                     return res
@@ -203,7 +209,7 @@ class WaBot:
                     response = remove_first_word(text)
                     db.updateLastCommand(sid, 'diagnose')
                     if not response.strip():
-                        print('We need to get user\'s last message and send here...')
+                        # check if
                         self.send_message(sid, 'Let\'s continue where we left')
                         if db.getFinishedRegistration(get_phone(message)):
                             if db.getCurrentQuestion(get_phone(message)) is not None:

@@ -280,4 +280,26 @@ def getLastCommand(chat_id):
     return com[0]
 
 
+def add_downloading_user(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'INSERT INTO downloading_users (chat_id) VALUE ("{chat_id}")')
+    db.commit()
 
+
+def is_downloading(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f"SELECT chat_id FROM downloading_users WHERE chat_id = '{chat_id}'")
+    data = cursor.fetchone()
+    if data:
+        return True
+    else:
+        return False
+
+
+def delete_downloading(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f"DELETE * FROM downloading_users WHERE chat_id = '{chat_id}'")
+    db.commit()
