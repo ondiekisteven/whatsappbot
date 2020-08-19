@@ -116,7 +116,7 @@ class WaBot:
 
             path = bot.download_audio(name, phone)
             audio = get_song(path)
-            audio_path = f'https://som-whatsapp.herokuapp.com/files/{audio}'
+            audio_path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{audio}'
             audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
             print(f'sending audio -> {audio_sending}')
             os.remove(audio)
@@ -180,7 +180,7 @@ class WaBot:
 
                     path = bot.download_audio(search, get_phone(message))
                     song = get_song(path)
-                    path = f'https://som-whatsapp.herokuapp.com/files/{song}'
+                    path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
                     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
                     print(f'sending audio -> {audio_sending}')
                     os.remove(path)
