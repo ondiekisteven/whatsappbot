@@ -3,14 +3,15 @@ import json
 from bs4 import BeautifulSoup
 import base64
 import os
+from os import mkdir
 from spotdl.command_line.core import Spotdl
 
 
-def get_song():
-    contents = os.listdir(os.getcwd())
+def get_song(path):
+    contents = os.listdir(path)
     for c in contents:
         if c.endswith('.mp3'):
-            print(f'Fround one song: -> {c}')
+            print(f'Found one song: -> {c}')
             return c
 
 
@@ -102,15 +103,15 @@ class Genius:
         return base64.encodebytes(contents)
 
     def download_audio(self, song, user):
-
+        path = f'music/{user}/'
+        if not os.path.exists(path):
+            mkdir(path)
         args = {
-            "song": [song,],
-            'output_file': 'music/' + user + '/{artist} - {track-name}.{output-ext}'
+            "song": [song],
+            'output_file': path + '{artist} - {track-name}.{output-ext}'
         }
 
         with Spotdl(args) as spotdl_handler:
             spotdl_handler.match_arguments()
 
-        files = os.listdir(f'music/{user}')
-
-        return f'music/{user}/{files[0]}'
+        return path
