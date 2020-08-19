@@ -127,7 +127,8 @@ class WaBot:
     def diagnose(self, author, chat_id, response):
         phone = author.replace('@c.us', '')
         reply = register(phone, response)
-        return self.send_message(chat_id, reply)
+        self.send_message(chat_id, reply)
+        return reply
 
     def group(self, author):
         phone = author.replace('@c.us', '')
