@@ -269,7 +269,8 @@ def getLastCommand(chat_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT command FROM last_command WHERE chat_id = "{chat_id}"')
-    return cursor.fetchone()
+    com = cursor.fetchone()
+    return com[1]
 
 
 

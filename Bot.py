@@ -7,6 +7,10 @@ import os
 import db
 
 
+def get_phone(message):
+    return message['author'].replace('@c.us', '')
+
+
 def delete_diagnosis_user(message):
     phone = message['author'].replace('@c.us', '')
     db.deleteUserOngoingDiagnosis(phone)
@@ -95,7 +99,7 @@ class WaBot:
         text = f'{name} \n{welcome_string}'
         return self.send_message(chat_id, text)
 
-    def genius_lyrics(self, chat_id, search):
+    def genius_lyrics(self, chat_id, search, download_audio=False):
         bot = Genius()
         sid = bot.search_song(search)
         song_id = sid['song_id']
@@ -106,12 +110,13 @@ class WaBot:
         text = f'TITLE: {name}\n\n{lyrics}'
 
         message_send = self.send_message(chat_id, text)
-        bot.download_audio(name)
-        audio = get_song()
-        audio_path = f'https://som-whatsapp.herokuapp.com/files/{audio}'
-        audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
-        print(f'sending audio -> {audio_sending}')
-        os.remove(audio)
+        if download_audio:
+            bot.download_audio(name)
+            audio = get_song()
+            audio_path = f'https://som-whatsapp.herokuapp.com/files/{audio}'
+            audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
+            print(f'sending audio -> {audio_sending}')
+            os.remove(audio)
         return message_send
 
     def lyrics(self, chat_id, search):
@@ -158,9 +163,11 @@ class WaBot:
                 if text.lower().startswith('command') or text.lower().startswith('help'):
                     db.updateLastCommand(sid, 'help')
                     return self.welcome(sid, name)
+
                 # for downloading audio from youtube or spotify or elsewhere
                 elif text.lower().startswith('audio'):
                     # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
+                    self.send_message(sid, 'Downloading your song...')
                     search = remove_first_word(text)
                     bot = Genius()
                     bot.download_audio(search)
@@ -168,12 +175,19 @@ class WaBot:
                     path = f'https://som-whatsapp.herokuapp.com/files/{song}'
                     self.send_file(sid, path, "audio.mp3", "audio")
                     db.updateLastCommand(sid, 'audio')
-                    return 'hi'
+                    return self.send_message(sid, f'You can get its lyrics by:\n\nlyrics {search}')
                 elif text.lower().startswith('lyrics'):
                     # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
+                    self.send_message(sid, 'Searching lyrics...')
                     search = remove_first_word(text)
+
+                    if db.getLastCommand(sid) == 'audio':
+                        res = self.genius_lyrics(sid, search, False)
+                    else:
+                        res = self.genius_lyrics(sid, search, True)
+
                     db.updateLastCommand(sid, 'lyrics')
-                    return self.genius_lyrics(sid, search)
+                    return res
                 elif text.lower().startswith('adduser'):
                     if is_group(message['chatId']):
                         return self.add_participant(message['chatId'], text)
@@ -187,19 +201,27 @@ class WaBot:
                     db.updateLastCommand(sid, 'diagnose')
                     if not response.strip():
                         print('We need to get user\'s last message and send here...')
+                        self.send_message(sid, 'Let\'s continue where we left')
+                        if db.getFinishedRegistration(sid):
+                            if db.getCurrentQuestion(sid) is not None:
+                                res = db.getCurrentQuestion(get_phone(message))[2]
+                                return self.send_message(sid, res)
+                            else:
+                                self.send_message(sid, 'How are you feeling today? Describe your condition')
+                        else:
+                            self.send_message(sid, db.getQuestion(db.getCurrentCount(get_phone(message))))
                     else:
                         print('We need to restart diagnosis using the provided condition')
                         delete_diagnosis_user(message)
 
-                        phone = message['author'].replace('@c.us', '')
-                        register(phone, 'OK')
+                        register(get_phone(message), 'OK')
                         return self.diagnose(message['author'], sid, response)
 
                 else:
                     if is_group(message['chatId']):
                         return ''
                     # check if the user is using diagnosis command
-                    if db.getLastCommand(sid)[0] == 'diagnose':
+                    if db.getLastCommand(sid) == 'diagnose':
                         res = self.diagnose(message['author'], sid, text.lower())
                         if 'conditions were discovered' in res:
                             delete_diagnosis_user(message)
