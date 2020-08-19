@@ -119,7 +119,7 @@ class WaBot:
             audio_path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{audio}'
             audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
             print(f'sending audio -> {audio_sending}')
-            os.remove(audio)
+            os.remove(f'music/{phone}/{audio}')
         return message_send
 
     def lyrics(self, chat_id, search):
@@ -183,7 +183,7 @@ class WaBot:
                     path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
                     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
                     print(f'sending audio -> {audio_sending}')
-                    os.remove(path)
+                    os.remove(f'music/{get_phone(message)}/{song}')
                     db.delete_downloading(sid)
                     db.updateLastCommand(sid, 'audio')
                     return self.send_message(sid, f'You can get its lyrics by:\n\nlyrics {search}')
