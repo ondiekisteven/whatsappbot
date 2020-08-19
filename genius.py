@@ -105,6 +105,7 @@ class Genius:
     def download_audio(self, song, user):
         path = f'music/{user}'
         if not os.path.exists(path):
+            os.mkdir('music')
             os.mkdir(path)
         args = {
             "song": [song],
