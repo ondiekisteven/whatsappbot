@@ -25,7 +25,7 @@ def send_ppt(chat_id, audio):
         "chatId": chat_id,
         "audio": audio
     }
-    answer = requests.post('https://api.chat-api.com/instance162072/sendPTT?token=0kr1ty8zjmh66oj4', data=data)
+    answer = requests.post('https://eu173.chat-api.com/instance163153/sendPTT?token=0kr1ty8zjmh66oj4', data=data)
 
     return answer
 
@@ -35,7 +35,7 @@ class WaBot:
     def __init__(self, json):
         self.json = json
         self.dict_message = json['messages']
-        self.APIUrl = 'https://eu92.chat-api.com/instance162072/'
+        self.APIUrl = 'https://eu173.chat-api.com/instance163153/'
         self.token = '0kr1ty8zjmh66oj4'
         self.last_command = "last command"
 
