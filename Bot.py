@@ -7,6 +7,13 @@ import os
 import db
 
 
+def delete_diagnosis_user(message):
+    phone = message['author'].replace('@c.us', '')
+    db.deleteUserOngoingDiagnosis(phone)
+    db.deleteUserSymptoms(phone)
+    db.deleteUserCurrentSymptom(phone)
+
+
 def send_ppt(chat_id, audio):
     data = {
         "chatId": chat_id,
@@ -115,7 +122,6 @@ class WaBot:
     def diagnose(self, author, chat_id, response):
         phone = author.replace('@c.us', '')
         reply = register(phone, response)
-        print(f'diagnosis recepient:{phone}')
         return self.send_message(chat_id, reply)
 
     def group(self, author):
@@ -149,11 +155,12 @@ class WaBot:
 
                 sid = message['chatId']
                 name = message['author']
-                if text.lower().startswith('commands') or text.lower().startswith('help'):
+                if text.lower().startswith('command') or text.lower().startswith('help'):
                     db.updateLastCommand(sid, 'help')
                     return self.welcome(sid, name)
                 # for downloading audio from youtube or spotify or elsewhere
                 elif text.lower().startswith('audio'):
+                    return self.send_message(sid, 'bot is under maintenance. sorry. try later')
                     search = remove_first_word(text)
                     bot = Genius()
                     bot.download_audio(search)
@@ -163,6 +170,7 @@ class WaBot:
                     db.updateLastCommand(sid, 'audio')
                     return 'hi'
                 elif text.lower().startswith('lyrics'):
+                    return self.send_message(sid, 'bot is under maintenance, sorry, try later')
                     search = remove_first_word(text)
                     db.updateLastCommand(sid, 'lyrics')
                     return self.genius_lyrics(sid, search)
@@ -177,9 +185,23 @@ class WaBot:
                 elif text.lower().startswith('diagnose'):
                     response = remove_first_word(text)
                     db.updateLastCommand(sid, 'diagnose')
-                    return self.diagnose(message['author'], sid, response)
+                    if not response.strip():
+                        print('We need to get user\'s last message and send here...')
+                    else:
+                        print('We need to restart diagnosis using the provided condition')
+                        delete_diagnosis_user(message)
+
+                        phone = message['author'].replace('@c.us', '')
+                        register(phone, 'OK')
+                        return self.diagnose(message['author'], sid, response)
+
                 else:
+                    if is_group(message['chatId']):
+                        return ''
                     # check if the user is using diagnosis command
-                    if db.getLastCommand(sid) == 'diagnose':
-                        return self.diagnose(message['author'], sid, text.lower())
+                    if db.getLastCommand(sid)[0] == 'diagnose':
+                        res = self.diagnose(message['author'], sid, text.lower())
+                        if 'conditions were discovered' in res:
+                            delete_diagnosis_user(message)
+                            self.send_message(sid, 'Thanks for using our service. \n\nSend *diagnose* to restart')
                     return ''
