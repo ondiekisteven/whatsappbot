@@ -104,6 +104,8 @@ class WaBot:
     def genius_lyrics(self, chat_id, search, phone, download_audio=False, ):
         bot = Genius()
         sid = bot.search_song(search)
+        if 'Could not find' in sid:
+            return 'Could not find song'
         song_id = sid['song_id']
         lyrics = bot.retrieve_lyrics(song_id)
         thumbnail = sid['song_thumbnail']

@@ -72,6 +72,10 @@ class Genius:
         result = self.make_request('search', params=params)
         result = json.loads(result)
         if result['meta']['status'] == 200:
+            try:
+                pass
+            except IndexError:
+                return "Could not find song"
             song = result['response']['hits'][0]['result']
             song_id = song['id']
             song_title = song['full_title']
@@ -82,7 +86,7 @@ class Genius:
                 'song_thumbnail': song_thumbnail
             }
         else:
-            return 'Error'
+            return 'Could not find song'
 
     def retrieve_lyrics(self, song_id):
         '''Retrieves lyrics from html page.'''
