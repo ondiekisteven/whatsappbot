@@ -13,6 +13,8 @@ def job_every_minute():
     bot.send_message('254745021668@c.us', '.')
 
 
+tl.start(block=True)
+
 app = Flask(__name__)
 
 
@@ -38,7 +40,6 @@ def hello_world():
 def receive():
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
-
     allowed_chats = getAllowedChats()
     for message in messages:
         if not message['fromMe']:
@@ -62,5 +63,4 @@ def download_audio(sid=None, filename=None):
 
 
 if __name__ == '__main__':
-    tl.start(block=True)
     app.run()
