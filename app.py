@@ -1,7 +1,16 @@
 from flask import Flask, request, send_file
 from whatsappHandler import send_, register, search_lyrics, save_chat, getAllowedChats
 import Bot
+from timeloop import Timeloop
+from datetime import timedelta
 
+tl = Timeloop()
+
+
+@tl.job(interval=timedelta(seconds=50))
+def job_every_minute():
+    bot = Bot.WaBot({'messages': 'messages'})
+    bot.send_message('254745021668@c.us', '.')
 
 app = Flask(__name__)
 
@@ -28,7 +37,7 @@ def hello_world():
 def receive():
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
-
+    tl.start()
     allowed_chats = getAllowedChats()
     for message in messages:
         if not message['fromMe']:
@@ -50,4 +59,5 @@ def download_audio(sid=None, filename=None):
 
 
 if __name__ == '__main__':
+    tl.start(block=True)
     app.run()

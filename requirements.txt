@@ -27,6 +27,7 @@ six==1.15.0
 soupsieve==2.0.1
 spotdl==2.2.2
 spotipy==2.13.0
+timeloop==1.0.2
 tqdm==4.48.2
 twilio==6.44.2
 typing-extensions==3.7.4.2

@@ -270,10 +270,9 @@ def save_chat(bot, message):
         db.addLastCommand(str(message['chatId']), 'join')
         bot.send_message(message['chatId'], text)
         bot.send_message(message['chatId'], '*Please note the bot is not perfect yet, its being developed still. If '
-                                            'it doesnt respond, reply with help to get other services then try again '
+                                            'it doesnt respond, reply with `help` to get other services then try again '
                                             'later*')
         sleep(1)
         return bot.send_message(message['chatId'], 'To download a song write \n\n'
                                                    '*audio song-title*\n\n example '
                                                    '\n *audio alan walker - faded*')
-

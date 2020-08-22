@@ -5,6 +5,7 @@ from whatsappHandler import register, remove_first_word, is_group
 import uuid
 import os
 import db
+from spotdl.command_line.core import Spotdl
 
 
 def get_phone(message):
@@ -35,8 +36,8 @@ class WaBot:
     def __init__(self, json):
         self.json = json
         self.dict_message = json['messages']
-        self.APIUrl = 'https://eu173.chat-api.com/instance163153/'
-        self.token = '18tge8h634rmjh5t'
+        self.APIUrl = 'https://eu172.chat-api.com/instance164092/'
+        self.token = 'zzceflkpr5jy8ee9'
         self.last_command = "last command"
 
     def get_last_command(self):
@@ -67,6 +68,22 @@ class WaBot:
         }
         answer = self.send_requests('sendFile', data)
         return answer
+
+    def download_audio(self, song, user):
+        path = f'music/{user}'
+        if not os.path.exists(path):
+            print("Directory not found, Creating...")
+            os.mkdir(path)
+        args = {
+            "song": [song],
+            'output_file': path + '/{artist} - {track-name}.{output-ext}'
+        }
+        print(f'Downloading {song}')
+        self.send_message(f'{user}"c.us', 'Downloading your song...')
+        with Spotdl(args) as spotdl_handler:
+            spotdl_handler.match_arguments()
+
+        return path
 
     def welcome(self, chat_id, name):
         welcome_string = """Hi, use these commands to control me
@@ -101,7 +118,7 @@ class WaBot:
         text = f'{name} \n{welcome_string}'
         return self.send_message(chat_id, text)
 
-    def genius_lyrics(self, chat_id, search, phone, download_audio=False, ):
+    def genius_lyrics(self, chat_id, search, phone, download=False, ):
         bot = Genius()
         sid = bot.search_song(search)
         if 'Could not find' in sid:
@@ -114,14 +131,28 @@ class WaBot:
         text = f'TITLE: {name}\n\n{lyrics}'
 
         message_send = self.send_message(chat_id, text)
-        if download_audio:
-
-            path = bot.download_audio(name, phone)
-            audio = get_song(path)
-            audio_path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{audio}'
-            audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
+        if download:
+            path = self.download_audio(search, phone)
+            song = get_song(path)
+            if song == 'empty directory':
+                db.delete_downloading(sid)
+                return self.send_message(sid, 'Error downloading song')
+            path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{song}'
+            audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
             print(f'sending audio -> {audio_sending}')
-            os.remove(f'music/{phone}/{audio}')
+            if os.path.exists(f'music/{phone}/{song}'):
+                os.remove(f'music/{phone}/{song}')
+                db.delete_downloading(sid)
+                db.updateLastCommand(sid, 'audio')
+                return self.send_message(sid, f'You can get its lyrics by:\n\nlyrics {search}')
+            return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
+            # path = download_audio(name, phone, bot)
+            # audio = get_song(path)
+            # audio_path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{audio}'
+            # audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
+            # print(f'sending audio -> {audio_sending}')
+            # os.remove(f'music/{phone}/{audio}')
+
         return message_send
 
     def lyrics(self, chat_id, search):
@@ -174,22 +205,33 @@ class WaBot:
                 elif text.lower().startswith('audio'):
                     # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
                     if db.is_downloading(sid):
-                        
-                        return self.send_message(sid, 'Wait until your first song is downloaded')
-                    self.send_message(sid, 'Downloading your song...')
+                        try:
+                            files = get_song(f'music/{get_phone(message)}')
+                            if files == 'empty directory':
+                                db.delete_downloading(sid)
+                            else:
+                                return self.send_message(sid, 'Wait for last song to download')
+                        except FileNotFoundError:
+                            os.mkdir('music/{get_phone(message)}')
+
                     db.add_downloading_user(sid)
                     search = remove_first_word(text)
                     bot = Genius()
 
-                    path = bot.download_audio(search, get_phone(message))
+                    path = self.download_audio(search, get_phone(message))
                     song = get_song(path)
+                    if song == 'empty directory':
+                        db.delete_downloading(sid)
+                        return self.send_message(sid, 'Error downloading song')
                     path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
                     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
                     print(f'sending audio -> {audio_sending}')
-                    os.remove(f'music/{get_phone(message)}/{song}')
-                    db.delete_downloading(sid)
-                    db.updateLastCommand(sid, 'audio')
-                    return self.send_message(sid, f'You can get its lyrics by:\n\nlyrics {search}')
+                    if os.path.exists(f'music/{get_phone(message)}/{song}'):
+                        os.remove(f'music/{get_phone(message)}/{song}')
+                        db.delete_downloading(sid)
+                        db.updateLastCommand(sid, 'audio')
+                        return self.send_message(sid, f'You can get its lyrics by:\n\nlyrics {search}')
+                    return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
                 elif text.lower().startswith('lyrics'):
                     # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
                     self.send_message(sid, 'Searching lyrics...')

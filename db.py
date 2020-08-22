@@ -277,7 +277,7 @@ def getLastCommand(chat_id):
     cursor = db.cursor()
     cursor.execute(f'SELECT command FROM last_command WHERE chat_id = "{chat_id}"')
     com = cursor.fetchone()
-    return com[0]
+    return com[0] or 'join'
 
 
 def add_downloading_user(chat_id):
