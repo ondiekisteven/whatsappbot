@@ -12,6 +12,7 @@ def job_every_minute():
     bot = Bot.WaBot({'messages': 'messages'})
     bot.send_message('254745021668@c.us', '.')
 
+
 app = Flask(__name__)
 
 
@@ -55,6 +56,8 @@ def receive():
 @app.route('/files/music/<sid>/<filename>', methods=['GET'])
 def download_audio(sid=None, filename=None):
     file_path = f'music/{sid}/{filename}'
+    if not file_path:
+        return 'File not found'
     return send_file(file_path, as_attachment=True)
 
 
