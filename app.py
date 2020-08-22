@@ -38,7 +38,10 @@ def hello_world():
 def receive():
     bot = Bot.WaBot(request.json)
     messages = bot.dict_message
-    tl.start()
+    try:
+        tl.start(block=True)
+    except RuntimeError:
+        pass
     allowed_chats = getAllowedChats()
     for message in messages:
         if not message['fromMe']:
