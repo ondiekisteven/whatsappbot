@@ -174,6 +174,7 @@ class WaBot:
                 elif text.lower().startswith('audio'):
                     # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
                     if db.is_downloading(sid):
+                        
                         return self.send_message(sid, 'Wait until your first song is downloaded')
                     self.send_message(sid, 'Downloading your song...')
                     db.add_downloading_user(sid)
