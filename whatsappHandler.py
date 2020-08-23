@@ -160,7 +160,7 @@ def register(tg_id, response):
                         db.saveInitialSymptom(tg_id, s_id, choice, 1)
                 else:
                     if db.getCurrentQuestion(tg_id):
-                        return f'Invalid answer\n\n{db.getCurrentQuestion(tg_id)[1]}\n1 - Yes\n2 - No\n3 - Dont know' \
+                        return f'Invalid answer\n\n{db.getCurrentQuestion(tg_id)[2]}\n1 - Yes\n2 - No\n3 - Dont know' \
                                f'\n\n0 - Cancel diagnosis and restart '
                     else:
                         return 'Describe how you feel. Example, I feel pain in my joints '
