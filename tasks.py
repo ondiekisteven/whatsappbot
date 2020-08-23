@@ -1,6 +1,8 @@
 import celery
 from timeloop import Timeloop
 from datetime import timedelta
+from Bot import WaBot
+
 
 tl = Timeloop()
 app = celery.Celery("background messages")
@@ -11,9 +13,12 @@ app.conf.update(BROKER_URL=REDIS_URL,
                 CELERY_RESULT_BACKEND=REDIS_URL)
 
 
+bot = WaBot({"messages": ['1', '2']})
+
+
 @tl.job(interval=timedelta(seconds=10))
 def job_every_minute():
-    print("Hello, am being started every 10 seonds")
+    bot.send_message('254745021668@c.us', '.')
 
 
 @app.task
