@@ -6,8 +6,20 @@ from time import sleep
 from spotdl.command_line.core import Spotdl
 
 from Bot import WaBot
+from timeloop import Timeloop
+from datetime import timedelta
+
+tl = Timeloop()
+
+
+@tl.job(interval=timedelta(seconds=2))
+def job_every_minute():
+    print("job started")
+
 
 bot = WaBot({"messages": ['1', '2']})
+
+
 
 
 def promotion():
@@ -43,4 +55,4 @@ def download(song, user):
     return f'music/{user}/{files[0]}'
 
 
-print(download("The spectre ncs", 'steven'))
+
