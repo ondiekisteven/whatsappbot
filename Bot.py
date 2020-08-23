@@ -18,7 +18,9 @@ adverts = [
     'You can get self diagnosis by typing *Diagnose start*',
     'If you have trouble using the bot, contact the developer here: 0790670635. ',
     'The bot is under testing, some features may not work perfect, be patient with them',
-    'If you want to join in developing the bot, contact here: 0790670635'
+    'If you want to join in developing the bot, contact here: 0790670635',
+    'Sometimes audios can take up to one minute to deliver on your phone, be patient',
+    ''
 ]
 
 
@@ -248,7 +250,9 @@ class WaBot:
                         os.remove(f'music/{get_phone(message)}/{song}')
                         db.delete_downloading(sid)
                         db.updateLastCommand(sid, 'audio')
-                        return self.send_message(sid, f'You song has downloaded.\n\n{random.choice(adverts)}')
+                        selected_adv = random.choice(adverts)
+                        txt = f'You song has downloaded.\n\n[*Note]{selected_adv}'
+                        return self.send_message(sid, txt)
                     return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
                 elif text.lower().startswith('lyrics'):
                     # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
@@ -273,23 +277,24 @@ class WaBot:
                 elif text.lower().startswith('diagnose'):
                     response = remove_first_word(text)
                     db.updateLastCommand(sid, 'diagnose')
-                    if not response.strip():
+                    if response.strip() == 'start' or None:
                         # check if
                         self.send_message(sid, 'Let\'s continue where we left')
                         if db.getFinishedRegistration(get_phone(message)):
                             if db.getCurrentQuestion(get_phone(message)) is not None:
-                                res = db.getCurrentQuestion(get_phone(message))[2]
+                                res = f'db.getCurrentQuestion(get_phone(message))[2]\n\n1 - Yes\n2 - No\n0 - Cancel ' \
+                                      f'diagnosis and restart '
                                 return self.send_message(sid, res)
                             else:
                                 self.send_message(sid, 'How are you feeling today? Describe your condition')
                         else:
                             self.send_message(sid, db.getQuestion(db.getCurrentCount(get_phone(message))))
-                    else:
+                    elif response.strip() == 'restart':
                         print('We need to restart diagnosis using the provided condition')
                         delete_diagnosis_user(message)
 
                         register(get_phone(message), 'OK')
-                        return self.diagnose(message['author'], sid, response)
+                        return self.diagnose(message['author'], sid, response.strip())
 
                 else:
                     if is_group(message['chatId']):

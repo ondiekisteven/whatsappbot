@@ -71,13 +71,13 @@ def register(tg_id, response):
 
     # saving user details in database
     if current_count == 1:
-        if response.lower() == 'no':
+        if response.lower() in ['no', '2']:
             db.deleteUser(tg_id)
             return 'Ok. Maybe later. You can continue registration by clicking /register .'
     if current_count == 2:
-        if response.lower().strip() == 'male':
+        if response.lower().strip() in ['male', '1']:
             db.saveGender(tg_id, 'male')
-        elif response.lower().strip() == 'female':
+        elif response.lower().strip() == ['female', '2']:
             db.saveGender(tg_id, 'female')
         else:
             return 'Invalid gender. Try again'
@@ -115,7 +115,12 @@ def register(tg_id, response):
 
     # return registration question from database if user hasn't finished registering
     if can_continue:
-        return db.getQuestion(current_count + 1)
+
+        nextQ = db.getQuestion(current_count + 1)
+        if 'our system' in nextQ:
+            nextQ += '\n1 - Yes\n2 - No'
+        elif '[male/female]' in nextQ:
+            nextQ += '\n1 - Yes\n2 - No'
     else:
         # go to diagnosis part if registration is complete
         if db.getOnGoingUser(tg_id) is None:
@@ -126,16 +131,21 @@ def register(tg_id, response):
         else:
             INVALID_INITIAL_SYMPTOM = 'Please say that again, i couldn\'t get you. \nExplain how you feel. eg, ' \
                                       '"i feel pain on my back" '
-
-            if response.lower() == 'yes':
+            if response.lower() == '0':
+                db.deleteUserOngoingDiagnosis(tg_id)
+                db.deleteUserSymptoms(tg_id)
+                db.deleteUserCurrentSymptom(tg_id)
+                db.deleteCurrentQuestion(tg_id)
+                return 'Diagnosis stoppped. You can start by typing *diagnose start*'
+            elif response.lower() in ['yes', '1']:
                 if db.getCurrentQuestion(tg_id) is None:
                     return INVALID_INITIAL_SYMPTOM
                 db.saveSymptom(tg_id, db.getCurrentQuestion(tg_id)[1], 'present')
-            elif response.lower() == 'no':
+            elif response.lower() in ['no', '2']:
                 if db.getCurrentQuestion(tg_id) is None:
                     return INVALID_INITIAL_SYMPTOM
                 db.saveSymptom(tg_id, db.getCurrentQuestion(tg_id)[1], 'absent')
-            elif 'dont know' in response.lower() or 'don\'t know' in response.lower():
+            elif 'dont know' in response.lower() or 'don\'t know' in response.lower() or response.lower() == '3':
                 if db.getCurrentQuestion(tg_id) is None:
                     return INVALID_INITIAL_SYMPTOM
                 db.saveSymptom(tg_id, db.getCurrentQuestion(tg_id)[1], 'unknown')
@@ -149,7 +159,9 @@ def register(tg_id, response):
                         choice = symptom['choice_id']
                         db.saveInitialSymptom(tg_id, s_id, choice, 1)
                 else:
-                    return INVALID_INITIAL_SYMPTOM
+                    if db.getCurrentQuestion(tg_id):
+                        return f'Invalid answer\n\n{db.getCurrentQuestion()[1]}\n1 - Yes\n2 - No\n3 - Dont know\n0 - ' \
+                               f'Cancel diagnosis and restart '
 
             symptoms = db.getSymptoms(tg_id)
             # print(f'API HANDLER symptoms: {symptoms}')
@@ -167,7 +179,8 @@ def register(tg_id, response):
             if 'next_question' in response:
                 nextQuestionId = response["next_question"]["items"][0]["id"]
                 db.updateCurrentQuestion(tg_id, nextQuestionId, response["next_question"]["text"])
-                return response["next_question"]["text"]
+                return f'{response["next_question"]["text"]}\n1 - Yes\n2 - No\n3 - Dont know\n0 - Cancel diagnosis ' \
+                       f'and restart '
             elif 'stop' in response:
                 conditions = response['conditions']
                 message = "After Diagnosis, the following conditions were discovered:\n\n"
