@@ -10,7 +10,14 @@ app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
 
 
-@app.task
 @tl.job(interval=timedelta(seconds=10))
 def job_every_minute():
-    print("job started")
+    print("Hello, am being started every 10 seonds")
+
+
+@app.task
+def work():
+    try:
+        tl.start(block=True)
+    except RuntimeError:
+        pass
