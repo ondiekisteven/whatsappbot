@@ -160,8 +160,10 @@ def register(tg_id, response):
                         db.saveInitialSymptom(tg_id, s_id, choice, 1)
                 else:
                     if db.getCurrentQuestion(tg_id):
-                        return f'Invalid answer\n\n{db.getCurrentQuestion()[1]}\n1 - Yes\n2 - No\n3 - Dont know\n0 - ' \
-                               f'Cancel diagnosis and restart '
+                        return f'Invalid answer\n\n{db.getCurrentQuestion(tg_id)[1]}\n1 - Yes\n2 - No\n3 - Dont know' \
+                               f'\n\n0 - Cancel diagnosis and restart '
+                    else:
+                        return 'Describe how you feel. Example, I feel pain in my joints '
 
             symptoms = db.getSymptoms(tg_id)
             # print(f'API HANDLER symptoms: {symptoms}')
@@ -179,7 +181,7 @@ def register(tg_id, response):
             if 'next_question' in response:
                 nextQuestionId = response["next_question"]["items"][0]["id"]
                 db.updateCurrentQuestion(tg_id, nextQuestionId, response["next_question"]["text"])
-                return f'{response["next_question"]["text"]}\n1 - Yes\n2 - No\n3 - Dont know\n0 - Cancel diagnosis ' \
+                return f'{response["next_question"]["text"]}\n1 - Yes\n2 - No\n3 - Dont know\n\n_0 - Cancel diagnosis_' \
                        f'and restart '
             elif 'stop' in response:
                 conditions = response['conditions']
