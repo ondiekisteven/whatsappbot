@@ -282,7 +282,7 @@ class WaBot:
                         self.send_message(sid, 'Let\'s continue where we left')
                         if db.getFinishedRegistration(get_phone(message)):
                             if db.getCurrentQuestion(get_phone(message)) is not None:
-                                res = f'db.getCurrentQuestion(get_phone(message))[2]\n\n1 - Yes\n2 - No\n0 - Cancel ' \
+                                res = f'{db.getCurrentQuestion(get_phone(message))[2]}\n\n1 - Yes\n2 - No\n0 - Cancel ' \
                                       f'diagnosis and restart '
                                 return self.send_message(sid, res)
                             else:
