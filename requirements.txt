@@ -1,3 +1,4 @@
+celery
 appdirs==1.4.4
 beautifulsoup4==4.9.1
 certifi==2020.6.20
