@@ -1,19 +1,6 @@
 from flask import Flask, request, send_file
 from whatsappHandler import send_, register, search_lyrics, save_chat, getAllowedChats
 import Bot
-from timeloop import Timeloop
-from datetime import timedelta
-
-tl = Timeloop()
-
-
-@tl.job(interval=timedelta(seconds=50))
-def job_every_minute():
-    bot = Bot.WaBot({'messages': 'messages'})
-    bot.send_message('254745021668@c.us', '.')
-
-
-tl.start(block=True)
 
 app = Flask(__name__)
 

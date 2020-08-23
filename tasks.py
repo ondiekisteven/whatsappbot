@@ -1,4 +1,3 @@
-import os
 import celery
 from timeloop import Timeloop
 from datetime import timedelta

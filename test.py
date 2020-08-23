@@ -20,8 +20,6 @@ def job_every_minute():
 bot = WaBot({"messages": ['1', '2']})
 
 
-
-
 def promotion():
     chats = getAllowedChats()
     message = 'You can get self diagnosis easily. Just write ```disgnose``` then your condition.\n ' \
