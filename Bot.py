@@ -5,7 +5,21 @@ from whatsappHandler import register, remove_first_word, is_group
 import uuid
 import os
 import db
+import random
 from spotdl.command_line.core import Spotdl
+
+
+adverts = [
+    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'Audio downloads are not stable yet, Dont download many songs in a short time, it will crash the bot',
+    'Remember whatsapp has a size limit. Therefore, dont download dj mixes and other big files, They wont be sent here',
+    'Lyrics are not guaranteed to be exactly as you wanted. Most songs\' lyrics are not recorded.',
+    'The bot downloads songs from spotify and youtube. If we didnt find your song, its probably not in youtube yet',
+    'You can get self diagnosis by typing *Diagnose start*',
+    'If you have trouble using the bot, contact the developer here: 0790670635. ',
+    'The bot is under testing, some features may not work perfect, be patient with them',
+    'If you want to join in developing the bot, contact here: 0790670635'
+]
 
 
 def get_phone(message):
@@ -146,7 +160,9 @@ class WaBot:
                 os.remove(f'music/{phone}/{song}')
                 db.delete_downloading(sid)
                 db.updateLastCommand(sid, 'audio')
-                return self.send_message(sid, f'You can get its lyrics by:\n\nlyrics {search}')
+
+                return self.send_message(sid, f'Your song has downloaded. If you dont receive it quickly, send the '
+                                              f'command *join bot* to refresh the bot. It will send your song')
             return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
             # path = download_audio(name, phone, bot)
             # audio = get_song(path)
@@ -232,7 +248,7 @@ class WaBot:
                         os.remove(f'music/{get_phone(message)}/{song}')
                         db.delete_downloading(sid)
                         db.updateLastCommand(sid, 'audio')
-                        return self.send_message(sid, f'You can get its lyrics by:\n\nlyrics {search}')
+                        return self.send_message(sid, f'You song has downloaded.\n\n{random.choice(adverts)}')
                     return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
                 elif text.lower().startswith('lyrics'):
                     # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
