@@ -13,14 +13,18 @@ adverts = [
     'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'Audio downloads are not stable yet, Dont download many songs in a short time, it will crash the bot',
     'Remember whatsapp has a size limit. Therefore, dont download dj mixes and other big files, They wont be sent here',
+    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'Lyrics are not guaranteed to be exactly as you wanted. Most songs\' lyrics are not recorded.',
+    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'The bot downloads songs from spotify and youtube. If we didnt find your song, its probably not in youtube yet',
+    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'You can get self diagnosis by typing *Diagnose start*',
     'If you have trouble using the bot, contact the developer here: 0790670635. ',
     'The bot is under testing, some features may not work perfect, be patient with them',
+    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'If you want to join in developing the bot, contact here: 0790670635',
     'Sometimes audios can take up to one minute to deliver on your phone, be patient',
-    ''
+    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
 ]
 
 
@@ -52,8 +56,8 @@ class WaBot:
     def __init__(self, json):
         self.json = json
         self.dict_message = json['messages']
-        self.APIUrl = 'https://eu172.chat-api.com/instance164092/'
-        self.token = 'zzceflkpr5jy8ee9'
+        self.APIUrl = 'https://eu172.chat-api.com/instance165186/'
+        self.token = 'lj6w8s7c7c7vaqge'
         self.last_command = "last command"
 
     def get_last_command(self):
