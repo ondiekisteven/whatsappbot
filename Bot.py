@@ -239,7 +239,7 @@ class WaBot:
             # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
             if db.is_downloading(sid):
                 try:
-                    files = get_song(f'music/{get_phone(message)}')
+                    files = self.get_song(f'music/{get_phone(message)}')
                     if files == 'empty directory':
                         db.delete_downloading(sid)
                     else:
