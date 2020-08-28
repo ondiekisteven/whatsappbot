@@ -16,7 +16,6 @@ def get_song(path):
         return "empty directory"
 
 
-
 class Genius:
     def __init__(self):
         self.token = 'ixSPr24nAw6FnPZVDGWpWPl40zirdftUk6x7gO5llceXb2v-Ey2Q7SBQaJ9QKksm'

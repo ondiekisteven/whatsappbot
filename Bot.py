@@ -89,10 +89,12 @@ class WaBot:
         return answer
 
     def download_audio(self, song, user):
-        path = f'music/{user}'
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(BASE_DIR, f'/music/{user}')
         if not os.path.exists(path):
-            print("Directory not found, Creating...")
+            print("[*] Directory not found, Creating...")
             os.mkdir(path)
+            print(f"[x] Created directory in {path}")
         args = {
             "song": [song],
             'output_file': path + '/{artist} - {track-name}.{output-ext}'
