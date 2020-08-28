@@ -89,15 +89,14 @@ class WaBot:
         return answer
 
     def download_audio(self, song, user):
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.join(BASE_DIR, f'music/{user}/')
+        path = f'music/{user}/'
         if not os.path.exists(path):
             print("[*] Directory not found, Creating...")
             os.mkdir(f'music/{user}')
             print(f"[x] Created directory in {path}")
         args = {
             "song": [song],
-            'output_file': path + '/{artist} - {track-name}.{output-ext}'
+            'output_file': f'music/{user}/' + '{artist} - {track-name}.{output-ext}'
         }
         print(f'Downloading to {path}')
         with Spotdl(args) as spotdl_handler:
@@ -235,7 +234,7 @@ class WaBot:
                     else:
                         return self.send_message(sid, 'Wait for last song to download')
                 except FileNotFoundError:
-                    os.mkdir('music/{get_phone(message)}')
+                    os.mkdir(f'music/{get_phone(message)}')
 
             db.add_downloading_user(sid)
             search = remove_first_word(text)

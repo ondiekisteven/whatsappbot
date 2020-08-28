@@ -47,6 +47,7 @@ def receive():
 @app.route('/files/music/<sid>/<filename>', methods=['GET'])
 def download_audio(sid=None, filename=None):
     file_path = f'music/{sid}/{filename}'
+    print(app.root_path)
     if not file_path:
         return 'File not found'
     return send_file(file_path, as_attachment=True)
