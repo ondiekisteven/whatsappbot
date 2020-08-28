@@ -5,16 +5,6 @@ import base64
 import os
 
 
-def get_song(path):
-    contents = os.listdir(path)
-    if contents:
-        for c in contents:
-            if c.endswith('.mp3'):
-                print(f'Found one song: -> {c}')
-                return c
-    else:
-        return "empty directory"
-
 
 class Genius:
     def __init__(self):

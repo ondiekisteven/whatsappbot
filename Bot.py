@@ -59,6 +59,17 @@ class WaBot:
         self.token = 'lj6w8s7c7c7vaqge'
         self.last_command = "last command"
 
+    def get_song(self, path):
+        contents = os.listdir(path)
+        if contents:
+            for c in contents:
+                if c.endswith('.mp3'):
+                    print(f'Found one song: -> {c}')
+                    path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(self.message)}/{c}'
+                    return self.send_file(self.message['chatId'], path, 'audio.mp3', 'audio')
+        else:
+            return "empty directory"
+
     def get_last_command(self):
         pass
 
@@ -240,21 +251,24 @@ class WaBot:
             search = remove_first_word(text)
 
             path = self.download_audio(search, get_phone(message))
-            song = get_song(path)
+            song = self.get_song(path)
+
             if song == 'empty directory':
                 db.delete_downloading(sid)
                 return self.send_message(sid, 'Error downloading song')
-            path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
-            if os.path.exists(f'music/{get_phone(message)}/{song}'):
-                print(f"Song found in music/{get_phone(message)}/{song}")
-                audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                print(f'sending audio -> {audio_sending}')
-                os.remove(f'music/{get_phone(message)}/{song}')
-                db.delete_downloading(sid)
-                db.updateLastCommand(sid, 'audio')
-                selected_adv = random.choice(adverts)
-                txt = f'You song has downloaded.\n\n[*Note]{selected_adv}'
-                return self.send_message(sid, txt)
+            return song
+            # print('path not empty')
+            # path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
+            # if os.path.exists(f'music/{get_phone(message)}/{song}'):
+            #     print(f"Song found in music/{get_phone(message)}/{song}")
+            #     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+            #     print(f'sending audio -> {audio_sending}')
+            #     # os.remove(f'music/{get_phone(message)}/{song}')
+            #     db.delete_downloading(sid)
+            #     db.updateLastCommand(sid, 'audio')
+            #     selected_adv = random.choice(adverts)
+            #     txt = f'You song has downloaded.\n\n[*Note]{selected_adv}'
+            #     return self.send_message(sid, txt)
             return self.send_message(sid, f'Song not found in directory music/{get_phone(message)}/{song}')
         elif text.lower().startswith('lyrics'):
             # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
