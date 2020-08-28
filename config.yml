@@ -1,0 +1,27 @@
+
+default:
+    publish_exchange: wa-sendout
+    publish_exchange_type: 'direct'
+    dlx_exchange: 'dlx'
+    dlx_exchange_key: 'dl'
+    publish_interval: 10
+    queue_incoming: 'incoming_queue'
+    queue_outgoing: 'outgoing_queue'
+    publish_routing_key: 'wa-sendout'
+    ttl: 3600000
+    dlx_exchange_type: "direct"
+    ampq_url: "amqp://guest:guest@3.128.231.254:5673/%2F?connection_attempts=3&heartbeat=3600"
+
+
+steveapp:
+    publish_exchange: steve-out
+    publish_exchange_type: 'direct'
+    dlx_exchange: 'sdlx'
+    dlx_exchange_key: 'sdl'
+    publish_interval: 10
+    queue_incoming: 'steve_incoming'
+    queue_outgoing: 'steve_outgoing'
+    publish_routing_key: 'steve-out'
+    ttl: 3600000
+    dlx_exchange_type: "direct"
+    ampq_url: "amqp://guest:guest@3.128.231.254:5673/%2F?connection_attempts=3&heartbeat=3600"
