@@ -14,6 +14,7 @@ REDIS_URL = 'redis://h:pffa2ba6288eb64eebf2bff97dc93ef56f156dd8a2758163f96fb52b5
 
 app.conf.update(BROKER_URL=REDIS_URL)
 
+
 @app.task
 def download_audio(self, song, user):
     path = f'music/{user}'
