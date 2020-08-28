@@ -1,6 +1,6 @@
 import requests
 from json import dumps
-from genius import Genius, get_song
+from genius import Genius
 from whatsappHandler import register, remove_first_word, is_group
 import uuid
 import os
