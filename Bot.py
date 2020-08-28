@@ -245,6 +245,7 @@ class WaBot:
                 return self.send_message(sid, 'Error downloading song')
             path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
             if os.path.exists(f'music/{get_phone(message)}/{song}'):
+                print(f"Song found in music/{get_phone(message)}/{song}")
                 audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
                 print(f'sending audio -> {audio_sending}')
                 os.remove(f'music/{get_phone(message)}/{song}')
