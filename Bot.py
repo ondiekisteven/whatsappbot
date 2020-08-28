@@ -10,21 +10,21 @@ from spotdl.command_line.core import Spotdl
 
 
 adverts = [
-    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'Audio downloads are not stable yet, Dont download many songs in a short time, it will crash the bot',
     'Remember whatsapp has a size limit. Therefore, dont download dj mixes and other big files, They wont be sent here',
-    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'Lyrics are not guaranteed to be exactly as you wanted. Most songs\' lyrics are not recorded.',
-    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'The bot downloads songs from spotify and youtube. If we didnt find your song, its probably not in youtube yet',
-    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'You can get self diagnosis by typing *Diagnose start*',
     'If you have trouble using the bot, contact the developer here: 0790670635. ',
     'The bot is under testing, some features may not work perfect, be patient with them',
-    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'If you want to join in developing the bot, contact here: 0790670635',
     'Sometimes audios can take up to one minute to deliver on your phone, be patient',
-    'I you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
 ]
 
 
@@ -54,8 +54,7 @@ def send_ppt(chat_id, audio):
 class WaBot:
 
     def __init__(self, json):
-        self.json = json
-        self.dict_message = json['messages']
+        self.message = json
         self.APIUrl = 'https://eu172.chat-api.com/instance165186/'
         self.token = 'lj6w8s7c7c7vaqge'
         self.last_command = "last command"
@@ -215,98 +214,97 @@ class WaBot:
         return self.send_message(group_id, ans['message'])
 
     def processing(self):
-        if self.dict_message:
-            for message in self.dict_message:
-                text = message['body']
+        message = self.message
+        text = message['body']
 
-                sid = message['chatId']
-                name = message['author']
-                if text.lower().startswith('command') or text.lower().startswith('help'):
-                    db.updateLastCommand(sid, 'help')
-                    return self.welcome(sid, name)
+        sid = message['chatId']
+        name = message['author']
+        if text.lower().startswith('command') or text.lower().startswith('help'):
+            db.updateLastCommand(sid, 'help')
+            return self.welcome(sid, name)
 
-                # for downloading audio from youtube or spotify or elsewhere
-                elif text.lower().startswith('audio'):
-                    # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
-                    if db.is_downloading(sid):
-                        try:
-                            files = get_song(f'music/{get_phone(message)}')
-                            if files == 'empty directory':
-                                db.delete_downloading(sid)
-                            else:
-                                return self.send_message(sid, 'Wait for last song to download')
-                        except FileNotFoundError:
-                            os.mkdir('music/{get_phone(message)}')
-
-                    db.add_downloading_user(sid)
-                    search = remove_first_word(text)
-                    bot = Genius()
-
-                    path = self.download_audio(search, get_phone(message))
-                    song = get_song(path)
-                    if song == 'empty directory':
+        # for downloading audio from youtube or spotify or elsewhere
+        elif text.lower().startswith('audio'):
+            # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
+            if db.is_downloading(sid):
+                try:
+                    files = get_song(f'music/{get_phone(message)}')
+                    if files == 'empty directory':
                         db.delete_downloading(sid)
-                        return self.send_message(sid, 'Error downloading song')
-                    path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
-                    audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                    print(f'sending audio -> {audio_sending}')
-                    if os.path.exists(f'music/{get_phone(message)}/{song}'):
-                        os.remove(f'music/{get_phone(message)}/{song}')
-                        db.delete_downloading(sid)
-                        db.updateLastCommand(sid, 'audio')
-                        selected_adv = random.choice(adverts)
-                        txt = f'You song has downloaded.\n\n[*Note]{selected_adv}'
-                        return self.send_message(sid, txt)
-                    return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
-                elif text.lower().startswith('lyrics'):
-                    # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
-                    self.send_message(sid, 'Searching lyrics...')
-                    search = remove_first_word(text)
-
-                    if db.getLastCommand(sid) == 'audio':
-                        res = self.genius_lyrics(sid, search, get_phone(message), False)
                     else:
-                        res = self.genius_lyrics(sid, search, get_phone(message), True)
+                        return self.send_message(sid, 'Wait for last song to download')
+                except FileNotFoundError:
+                    os.mkdir('music/{get_phone(message)}')
 
-                    db.updateLastCommand(sid, 'lyrics')
-                    return res
-                elif text.lower().startswith('adduser'):
-                    if is_group(message['chatId']):
-                        return self.add_participant(message['chatId'], text)
+            db.add_downloading_user(sid)
+            search = remove_first_word(text)
+            bot = Genius()
+
+            path = self.download_audio(search, get_phone(message))
+            song = get_song(path)
+            if song == 'empty directory':
+                db.delete_downloading(sid)
+                return self.send_message(sid, 'Error downloading song')
+            path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
+            audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+            print(f'sending audio -> {audio_sending}')
+            if os.path.exists(f'music/{get_phone(message)}/{song}'):
+                os.remove(f'music/{get_phone(message)}/{song}')
+                db.delete_downloading(sid)
+                db.updateLastCommand(sid, 'audio')
+                selected_adv = random.choice(adverts)
+                txt = f'You song has downloaded.\n\n[*Note]{selected_adv}'
+                return self.send_message(sid, txt)
+            return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
+        elif text.lower().startswith('lyrics'):
+            # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
+            self.send_message(sid, 'Searching lyrics...')
+            search = remove_first_word(text)
+
+            if db.getLastCommand(sid) == 'audio':
+                res = self.genius_lyrics(sid, search, get_phone(message), False)
+            else:
+                res = self.genius_lyrics(sid, search, get_phone(message), True)
+
+            db.updateLastCommand(sid, 'lyrics')
+            return res
+        elif text.lower().startswith('adduser'):
+            if is_group(message['chatId']):
+                return self.add_participant(message['chatId'], text)
+            else:
+                return 'Cant add user here'
+        elif text.lower().startswith('group'):
+            db.updateLastCommand(sid, 'audio')
+            return self.group(message['author'])
+        elif text.lower().startswith('diagnose'):
+            response = remove_first_word(text)
+            db.updateLastCommand(sid, 'diagnose')
+            if response.strip() == 'start' or None:
+                # check if
+                self.send_message(sid, 'Let\'s continue where we left')
+                if db.getFinishedRegistration(get_phone(message)):
+                    if db.getCurrentQuestion(get_phone(message)) is not None:
+                        res = f'{db.getCurrentQuestion(get_phone(message))[2]}\n\n1 - Yes\n2 - No\n0 - Cancel ' \
+                              f'diagnosis and restart '
+                        return self.send_message(sid, res)
                     else:
-                        return 'Cant add user here'
-                elif text.lower().startswith('group'):
-                    db.updateLastCommand(sid, 'audio')
-                    return self.group(message['author'])
-                elif text.lower().startswith('diagnose'):
-                    response = remove_first_word(text)
-                    db.updateLastCommand(sid, 'diagnose')
-                    if response.strip() == 'start' or None:
-                        # check if
-                        self.send_message(sid, 'Let\'s continue where we left')
-                        if db.getFinishedRegistration(get_phone(message)):
-                            if db.getCurrentQuestion(get_phone(message)) is not None:
-                                res = f'{db.getCurrentQuestion(get_phone(message))[2]}\n\n1 - Yes\n2 - No\n0 - Cancel ' \
-                                      f'diagnosis and restart '
-                                return self.send_message(sid, res)
-                            else:
-                                self.send_message(sid, 'How are you feeling today? Describe your condition')
-                        else:
-                            self.send_message(sid, db.getQuestion(db.getCurrentCount(get_phone(message))))
-                    elif response.strip() == 'restart':
-                        print('We need to restart diagnosis using the provided condition')
-                        delete_diagnosis_user(message)
-
-                        register(get_phone(message), 'OK')
-                        return self.diagnose(message['author'], sid, response.strip())
-
+                        self.send_message(sid, 'How are you feeling today? Describe your condition')
                 else:
-                    if is_group(message['chatId']):
-                        return ''
-                    # check if the user is using diagnosis command
-                    if db.getLastCommand(sid) == 'diagnose':
-                        res = self.diagnose(message['author'], sid, text.lower())
-                        if 'conditions were discovered' in res:
-                            delete_diagnosis_user(message)
-                            self.send_message(sid, 'Thanks for using our service. \n\nSend *diagnose* to restart')
-                    return ''
+                    self.send_message(sid, db.getQuestion(db.getCurrentCount(get_phone(message))))
+            elif response.strip() == 'restart':
+                print('We need to restart diagnosis using the provided condition')
+                delete_diagnosis_user(message)
+
+                register(get_phone(message), 'OK')
+                return self.diagnose(message['author'], sid, response.strip())
+
+        else:
+            if is_group(message['chatId']):
+                return ''
+            # check if the user is using diagnosis command
+            if db.getLastCommand(sid) == 'diagnose':
+                res = self.diagnose(message['author'], sid, text.lower())
+                if 'conditions were discovered' in res:
+                    delete_diagnosis_user(message)
+                    self.send_message(sid, 'Thanks for using our service. \n\nSend *diagnose* to restart')
+            return ''

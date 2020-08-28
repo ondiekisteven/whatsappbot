@@ -1,6 +1,8 @@
 from flask import Flask, request, send_file
 from whatsappHandler import send_, register, search_lyrics, save_chat, getAllowedChats
 import Bot
+from sendQueue import to_queue
+from json import dumps
 
 app = Flask(__name__)
 
@@ -25,18 +27,17 @@ def hello_world():
 
 @app.route('/whatsapp/chatapi/messages', methods=['POST'])
 def receive():
-    bot = Bot.WaBot(request.json)
-    messages = bot.dict_message
+    messages = request.json['messages']
     allowed_chats = getAllowedChats()
     for message in messages:
+        bot = Bot.WaBot(request.json)
         if not message['fromMe']:
             print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
 
         if message['body'].lower() == 'join bot':
             return save_chat(bot, message)
         elif message['chatId'] in allowed_chats and not message['fromMe']:
-            return bot.processing()
-
+            return to_queue(dumps(message))
         else:
             return ""
 
