@@ -3,6 +3,7 @@ from whatsappHandler import send_, register, search_lyrics, save_chat, getAllowe
 import Bot
 from sendQueue import to_queue
 from json import dumps
+import tasks
 
 app = Flask(__name__)
 
@@ -37,7 +38,7 @@ def receive():
         if message['body'].lower() == 'join bot':
             return save_chat(bot, message)
         elif message['chatId'] in allowed_chats and not message['fromMe']:
-            return to_queue(dumps(message))
+            return tasks.work.delay(message)
         else:
             return ""
 
