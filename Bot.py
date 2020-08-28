@@ -97,8 +97,7 @@ class WaBot:
             "song": [song],
             'output_file': path + '/{artist} - {track-name}.{output-ext}'
         }
-        print(f'Downloading {song}')
-        self.send_message(f'{user}"c.us', 'Downloading your song...')
+        print(f'Downloading to {path}')
         with Spotdl(args) as spotdl_handler:
             spotdl_handler.match_arguments()
 
@@ -238,7 +237,6 @@ class WaBot:
 
             db.add_downloading_user(sid)
             search = remove_first_word(text)
-            bot = Genius()
 
             path = self.download_audio(search, get_phone(message))
             song = get_song(path)
@@ -246,16 +244,16 @@ class WaBot:
                 db.delete_downloading(sid)
                 return self.send_message(sid, 'Error downloading song')
             path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
-            audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-            print(f'sending audio -> {audio_sending}')
             if os.path.exists(f'music/{get_phone(message)}/{song}'):
+                audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+                print(f'sending audio -> {audio_sending}')
                 os.remove(f'music/{get_phone(message)}/{song}')
                 db.delete_downloading(sid)
                 db.updateLastCommand(sid, 'audio')
                 selected_adv = random.choice(adverts)
                 txt = f'You song has downloaded.\n\n[*Note]{selected_adv}'
                 return self.send_message(sid, txt)
-            return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
+            return self.send_message(sid, f'Song not found in directory music/{get_phone(message)}/{song}')
         elif text.lower().startswith('lyrics'):
             # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
             self.send_message(sid, 'Searching lyrics...')
