@@ -100,11 +100,9 @@ class WaBot:
         return answer
 
     def download_audio(self, song, user):
+
         path = f'music/{user}/'
-        if not os.path.exists(path):
-            print("[*] Directory not found, Creating...")
-            os.mkdir(f'music/{user}')
-            print(f"[x] Created directory in {path}")
+
         args = {
             "song": [song],
             'output_file': f'music/{user}/' + '{artist} - {track-name}.{output-ext}'
@@ -236,7 +234,12 @@ class WaBot:
 
         # for downloading audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
-            # return self.send_message(sid, 'bot is under maintenance. sorry. try later')
+            return self.send_message(sid, 'audios are not working for now, type help to get other services')
+            path = f'music/{sid}/'
+            if not os.path.exists(path):
+                print("[*] Directory not found, Creating...")
+                os.mkdir(f'music/{sid}')
+                print(f"[x] Created directory in {path}")
             if db.is_downloading(sid):
                 try:
                     files = self.get_song(f'music/{get_phone(message)}')
