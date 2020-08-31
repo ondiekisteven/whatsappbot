@@ -298,8 +298,8 @@ class WaBot:
             db.updateLastCommand(sid, 'diagnose')
             if response.strip() == 'start' or None:
                 # check if
-                self.send_message(sid, 'Let\'s continue where we left')
                 if db.getFinishedRegistration(get_phone(message)):
+                    self.send_message(sid, 'Let\'s continue where we left')
                     if db.getCurrentQuestion(get_phone(message)) is not None:
                         res = f'{db.getCurrentQuestion(get_phone(message))[2]}\n\n1 - Yes\n2 - No\n0 - Cancel ' \
                               f'diagnosis and restart '
@@ -307,7 +307,13 @@ class WaBot:
                     else:
                         self.send_message(sid, 'How are you feeling today? Describe your condition')
                 else:
-                    self.send_message(sid, db.getQuestion(db.getCurrentCount(get_phone(message))))
+                    # should continue registering user here or start a new one
+                    if db.getUserById(get_phone(message)):
+                        return self.send_message(sid, db.getQuestion(db.getCurrentCount(get_phone(message))))
+                    else:
+                        regResponse = register(get_phone(message), text)
+                        return self.send_message(sid, regResponse)
+
             elif response.strip() == 'restart':
                 print('We need to restart diagnosis using the provided condition')
                 delete_diagnosis_user(message)
