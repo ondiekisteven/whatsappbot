@@ -38,8 +38,8 @@ def receive():
         if message['body'].lower() == 'join bot':
             return save_chat(bot, message)
         elif message['chatId'] in allowed_chats and not message['fromMe']:
-            tasks.work.delay(message)
-            return '[x] Sent to redis '
+            # tasks.work.delay(message)
+            return bot.processing()
         else:
             return ""
 

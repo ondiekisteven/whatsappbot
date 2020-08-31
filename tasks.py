@@ -12,7 +12,7 @@ app = celery.Celery("tasks")
 REDIS_URL = 'redis://h:pffa2ba6288eb64eebf2bff97dc93ef56f156dd8a2758163f96fb52b5db387a5f@ec2-52-72-186-42.compute-1' \
             '.amazonaws.com:27749'
 
-app.conf.update(BROKER_URL=REDIS_URL)
+app.conf.update(BROKER_URL=REDIS_URL, CELERY_RESULT_BACKEND=REDIS_URL)
 
 
 @app.task
