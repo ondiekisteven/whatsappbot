@@ -31,7 +31,7 @@ def receive():
     messages = request.json['messages']
     allowed_chats = getAllowedChats()
     for message in messages:
-        bot = Bot.WaBot(request.json)
+        bot = Bot.WaBot(message)
         if not message['fromMe']:
             print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
 
