@@ -26,7 +26,7 @@ def hello_world():
             return send_(sender, response)
 
 
-@app.route('/whatsapp/chatapi/messages', methods=['POST'])
+@app.route('/whatsapp/chatapi/messages/', methods=['POST'])
 def receive():
     messages = request.json['messages']
     allowed_chats = getAllowedChats()
