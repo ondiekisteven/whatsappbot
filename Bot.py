@@ -234,7 +234,7 @@ class WaBot:
 
         # for downloading audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
-            return self.send_message(sid, 'audios are not working for now, type help to get other services')
+            #return self.send_message(sid, 'audios are not working for now, type help to get other services')
             path = f'music/{sid}/'
             if not os.path.exists(path):
                 print("[*] Directory not found, Creating...")
