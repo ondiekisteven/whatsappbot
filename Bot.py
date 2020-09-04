@@ -64,9 +64,11 @@ class WaBot:
         if contents:
             for c in contents:
                 if c.endswith('.mp3'):
-                    print(f'Found one song: -> {c}')
-                    path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(self.message)}/{c}'
-                    return self.send_file(self.message['chatId'], path, 'audio.mp3', 'audio')
+					return c
+                    #print(f'Found one song: -> {c}')
+                    #path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(self.message)}/{c}'
+                    #return self.send_file(self.message['chatId'], path, 'audio.mp3', 'audio')
+
         else:
             return "empty directory"
 
