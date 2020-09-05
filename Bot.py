@@ -177,7 +177,7 @@ class WaBot:
         #        db.updateLastCommand(sid, 'audio')
 
         #        return self.send_message(sid, f'Your song has downloaded. If you dont receive it quickly, send the '
-                                              f'command *join bot* to refresh the bot. It will send your song')
+        #                                      f'command *join bot* to refresh the bot. It will send your song')
         #    return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
             # path = download_audio(name, phone, bot)
             # audio = get_song(path)
