@@ -267,7 +267,7 @@ class WaBot:
                 print(f"Song found in music/{get_phone(message)}/{song}")
                 audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
                 print(f'sending audio -> {audio_sending}')
-                # os.remove(f'music/{get_phone(message)}/{song}')
+                os.remove(f'music/{get_phone(message)}/{song}')
                 db.delete_downloading(sid)
                 db.updateLastCommand(sid, 'audio')
                 selected_adv = random.choice(adverts)
