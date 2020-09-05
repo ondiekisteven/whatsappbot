@@ -301,13 +301,9 @@ class WaBot:
             if response.strip() == 'start' or None:
                 # check if
                 if db.getFinishedRegistration(get_phone(message)):
-                    self.send_message(sid, 'Let\'s continue where we left')
-                    if db.getCurrentQuestion(get_phone(message)) is not None:
-                        res = f'{db.getCurrentQuestion(get_phone(message))[2]}\n\n1 - Yes\n2 - No\n0 - Cancel ' \
-                              f'diagnosis and restart '
-                        return self.send_message(sid, res)
-                    else:
-                        self.send_message(sid, 'How are you feeling today? Describe your condition')
+                    delete_diagnosis_user(message)
+                    register(get_phone(message), 'OK') 
+                    return self.diagnose(message['author'], sid, response. strip())
                 else:
                     # should continue registering user here or start a new one
                     if db.getUserById(get_phone(message)):
