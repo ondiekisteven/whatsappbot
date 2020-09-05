@@ -248,8 +248,7 @@ class WaBot:
                         db.delete_downloading(sid)
                     else:
                     	db.delete_downloading(sid)
-                    	
-                        return self.send_message(sid, 'Wait for last song to download')
+                    	return self.send_message(sid, 'Wait for last song to download')
                 except FileNotFoundError:
                     os.mkdir(path)
             self.send_message(sid, "Downloading your song... please wait")       
