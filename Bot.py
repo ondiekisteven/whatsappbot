@@ -324,8 +324,8 @@ class WaBot:
                 return ''
             # check if the user is using diagnosis command
             if db.getLastCommand(sid) == 'diagnose':
-                res = self.diagnose(message['author'], sid, text.lower())
+                res = self.diagnose(message['author'], sid, text.lower()[1:])
                 if 'conditions were discovered' in res:
                     delete_diagnosis_user(message)
-                    self.send_message(sid, 'Thanks for using our service. \n\nSend *diagnose* to restart')
+                    return self.send_message(sid, 'Thanks for using our service. \n\nSend *diagnose* to restart')
             return ''
