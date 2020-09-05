@@ -236,21 +236,21 @@ class WaBot:
         # for downloading audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')
-            path = f'music/{sid}/'
+            path = f'music/{get_phone(message)}/'
             if not os.path.exists(path):
                 print("[*] Directory not found, Creating...")
-                os.mkdir(f'music/{sid}')
+                os.mkdir(path)
                 print(f"[x] Created directory in {path}")
             if db.is_downloading(sid):
                 try:
-                    files = self.get_song(f'music/{get_phone(message)}')
+                    files = self.get_song(path)
                     if files == 'empty directory':
                         db.delete_downloading(sid)
                     else:
                         return self.send_message(sid, 'Wait for last song to download')
                 except FileNotFoundError:
-                    os.mkdir(f'music/{get_phone(message)}')
-
+                    os.mkdir(path)
+            self.send_message(sid, "Downloading your song... please wait")       
             db.add_downloading_user(sid)
             search = remove_first_word(text)
 
@@ -271,7 +271,7 @@ class WaBot:
                 db.delete_downloading(sid)
                 db.updateLastCommand(sid, 'audio')
                 selected_adv = random.choice(adverts)
-                txt = f'You song has downloaded.\n\n[*Note]{selected_adv}'
+                txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
                 return self.send_message(sid, txt)
             return self.send_message(sid, f'Song not found in directory music/{get_phone(message)}/{song}')
         elif text.lower().startswith('lyrics'):
