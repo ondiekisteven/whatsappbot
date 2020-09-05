@@ -160,25 +160,25 @@ class WaBot:
         text = f'TITLE: {name}\n\n{lyrics}'
 
         message_send = self.send_message(chat_id, text)
-        if download:
-            path = self.download_audio(search, phone)
-            song = get_song(path)
-            if song == 'empty directory':
-                db.delete_downloading(sid)
-                return self.send_message(sid, 'Song not found in Directory')
-            path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{song}'
-            if path == 'File not found':
-                return self.send_message(sid, 'Error serving your song')
-            audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-            print(f'sending audio -> {audio_sending}')
-            if os.path.exists(f'music/{phone}/{song}'):
-                os.remove(f'music/{phone}/{song}')
-                db.delete_downloading(sid)
-                db.updateLastCommand(sid, 'audio')
+        #if download:
+        #    path = self.download_audio(search, phone)
+        #    song = get_song(path)
+        #    if song == 'empty directory':
+        #        db.delete_downloading(sid)
+        #        return self.send_message(sid, 'Song not found in Directory')
+        #    path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{song}'
+        #    if path == 'File not found':
+        #        return self.send_message(sid, 'Error serving your song')
+        #    audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+        #    print(f'sending audio -> {audio_sending}')
+        #    if os.path.exists(f'music/{phone}/{song}'):
+        #        os.remove(f'music/{phone}/{song}')
+        #        db.delete_downloading(sid)
+        #        db.updateLastCommand(sid, 'audio')
 
-                return self.send_message(sid, f'Your song has downloaded. If you dont receive it quickly, send the '
+        #        return self.send_message(sid, f'Your song has downloaded. If you dont receive it quickly, send the '
                                               f'command *join bot* to refresh the bot. It will send your song')
-            return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
+        #    return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
             # path = download_audio(name, phone, bot)
             # audio = get_song(path)
             # audio_path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{audio}'
@@ -247,6 +247,8 @@ class WaBot:
                     if files == 'empty directory':
                         db.delete_downloading(sid)
                     else:
+                    	db.delete_downloading(sid)
+                    	
                         return self.send_message(sid, 'Wait for last song to download')
                 except FileNotFoundError:
                     os.mkdir(path)
