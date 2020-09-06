@@ -25,7 +25,6 @@ mutagen==1.45.1
 pamqp==2.3.0
 pathlib==1.0.1
 pika==1.1.0
-PyDictionary
 PyJWT==1.7.1
 PyMySQL==0.10.0
 pyreadline==2.1
