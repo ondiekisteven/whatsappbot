@@ -30,8 +30,8 @@ def meaningSynonym(word):
     many = word.split()
     res = ''
     for i in many:
-        res += f'MEANING: {dictionary.meaning(i))}\n'
-        res += f'SYNONYM: {dictionary.synonym(i))}\n\n'
+        res += f'MEANING: {dictionary.meaning(i)}\n'
+        res += f'SYNONYM: {dictionary.synonym(i)}\n\n'
 
     return res
 
