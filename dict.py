@@ -25,16 +25,19 @@ language_code = [
 ]
 
 
-def meaningSynonym():
-    word = input('Enter a word or words separated by space to get meaning: ')
+def meaningSynonym(word):
+    #word = input('Enter a word or words separated by space to get meaning: ')
     many = word.split()
+    res = ''
     for i in many:
-        print('Meaning: ', dictionary.meaning(i))
-        print('Synonym: ', dictionary.synonym(i))
+        res += f'MEANING: {dictionary.meaning(i))}\n'
+        res += f'SYNONYM: {dictionary.synonym(i))}\n\n'
+
+    return res
 
 
-def meanings():
-    words = input('Enter words separated by space if more than one')
+def meanings(words):
+    #words = input('Enter words separated by space if more than one')
     many = words.split()
     means = PyDictionary(many)
     print(means.printMeanings())
@@ -57,5 +60,3 @@ def translateSentence():
     print(trans.translateTo(code))
 
 
-if __name__ == '__main__':
-    meanings()

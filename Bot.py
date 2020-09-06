@@ -7,6 +7,7 @@ import os
 import db
 import random
 from spotdl.command_line.core import Spotdl
+from dict import meaningSynonym 
 
 
 adverts = [
@@ -232,7 +233,10 @@ class WaBot:
         if text.lower().startswith('command') or text.lower().startswith('help'):
             db.updateLastCommand(sid, 'help')
             return self.welcome(sid, name)
-
+        elif text.lower().startswith('def'):
+        	term = remove_first_word(text)
+        	meaning = meaningSynonym(term)
+        	return self.send_message(sid, meaning) 
         # for downloading audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')
