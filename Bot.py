@@ -306,11 +306,8 @@ class WaBot:
                     return self.diagnose(message['author'], sid, response. strip())
                 else:
                     # should continue registering user here or start a new one
-                    if db.getUserById(get_phone(message)):
-                        return self.send_message(sid, db.getQuestion(db.getCurrentCount(get_phone(message))))
-                    else:
-                        regResponse = register(get_phone(message), text)
-                        return self.send_message(sid, regResponse)
+                    regResponse = register(get_phone(message), text)
+                    return self.send_message(sid, regResponse)
 
             elif response.strip() == 'restart':
                 print('We need to restart diagnosis using the provided condition')
