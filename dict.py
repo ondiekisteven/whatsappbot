@@ -57,6 +57,7 @@ def transFr(words):
     #code = input('Chose code to translate to e.g en: ')
     many = words.split()
     trans = PyDictionary(many)
+    print('Translating') 
     return trans.translateTo("fr")
 
 
