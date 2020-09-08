@@ -62,6 +62,6 @@ def transFr(words):
     
     
     print('Translating') 
-    return translator.translate(many, dest='fr'))
+    return translator.translate(many, dest='fr')
 
 
