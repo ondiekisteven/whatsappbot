@@ -47,7 +47,7 @@ def translateWord(word):
     #word = input('Enter a word to translate: ')
     #pprint(language_code)
     #code = input('Chose code to translate to e.g en')
-    print(dictionary.translate(word, 'fr'))
+    return dictionary.translate(word, 'fr')
 
 
 def transFr(words):
