@@ -245,7 +245,7 @@ class WaBot:
         	term = remove_first_word(text)
         	trans = transFr(term)
         	print(f'Translated: {trans}') 
-        	return self.send_message(sid, load(trans))
+        	return self.send_message(sid, trans)
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')

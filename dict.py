@@ -53,15 +53,8 @@ def translateWord(word):
 
 
 def transFr(words):
-    #words = input('Enter words separated by space if more than one : ')
-    #print('Chose a code below')
-    #pprint(language_code)
-    #code = input('Chose code to translate to e.g en: ')
-    many = words.split()
-    #trans = PyDictionary(many)
-    
-    
-    print('Translating') 
-    return translator.translate(many, dest='fr')
+    translation = translator.translate(words, dest=lang)
+    final = f"{translation.origin} ({translation.src}) --> {translation.text} ({translation.dest})"
+    return final
 
 
