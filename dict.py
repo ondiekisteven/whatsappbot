@@ -30,7 +30,7 @@ def meaningSynonym(word):
     many = word.split()
     res = ''
     for i in many:
-        res += f'MEANING: {dictionary.meaning(i)}\n'
+        res += f'MEANING: {dictionary.meaning(i)}\n\n\n'
         res += f'SYNONYM: {dictionary.synonym(i)}\n\n'
 
     return res
@@ -43,20 +43,20 @@ def meanings(words):
     print(means.printMeanings())
 
 
-def translateWord():
-    word = input('Enter a word to translate: ')
+def translateWord(word):
+    #word = input('Enter a word to translate: ')
     pprint(language_code)
     code = input('Chose code to translate to e.g en')
     print(dictionary.translate(word, code))
 
 
-def translateSentence():
-    words = input('Enter words separated by space if more than one : ')
-    print('Chose a code below')
-    pprint(language_code)
-    code = input('Chose code to translate to e.g en: ')
+def transFr(words):
+    #words = input('Enter words separated by space if more than one : ')
+    #print('Chose a code below')
+    #pprint(language_code)
+    #code = input('Chose code to translate to e.g en: ')
     many = words.split()
     trans = PyDictionary(many)
-    print(trans.translateTo(code))
+    return trans.translateTo("fr")
 
 

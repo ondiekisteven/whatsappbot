@@ -7,7 +7,7 @@ import os
 import db
 import random
 from spotdl.command_line.core import Spotdl
-from dict import meaningSynonym 
+from dict import meaningSynonym, transFr
 
 
 adverts = [
@@ -236,8 +236,12 @@ class WaBot:
         elif text.lower().startswith('def'):
         	term = remove_first_word(text)
         	meaning = meaningSynonym(term)
-        	return self.send_message(sid, meaning) 
-        # for downloading audio from youtube or spotify or elsewhere
+        	return self.send_message(sid, meaning)
+        elif text.lower().startswith('french'):
+        	term = remove_first_word(text)
+        	trans = transFr(term)
+        	return send_message(sid, trans)
+        # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')
             path = f'music/{get_phone(message)}/'
