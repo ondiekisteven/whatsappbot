@@ -1,10 +1,12 @@
 try:
     from pprint import pprint
     from PyDictionary import PyDictionary
+    from googletrans import Translator
 except Exception as e:
     print('Modules missing {}'.format(e))
 
 dictionary = PyDictionary()
+translator = Translator()
 
 language_code = [
     {
@@ -56,8 +58,10 @@ def transFr(words):
     #pprint(language_code)
     #code = input('Chose code to translate to e.g en: ')
     many = words.split()
-    trans = PyDictionary(many)
+    #trans = PyDictionary(many)
+    
+    
     print('Translating') 
-    return trans.translateTo("fr")
+    return translator.translate(many, dest='fr'))
 
 

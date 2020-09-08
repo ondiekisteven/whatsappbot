@@ -241,6 +241,10 @@ class WaBot:
         	term = remove_first_word(text)
         	trans = translateWord(term)
         	return self.send_message(sid, trans)
+        elif text.lower().startswith('transf'):
+        	term = remove_first_word(text)
+        	trans = transFr(term)
+        	return self.send_message(sid, trans)
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')
