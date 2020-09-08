@@ -203,9 +203,9 @@ class WaBot:
     def group(self, author):
         phone = author.replace('@c.us', '')
         data = {
-            "groupName": 'Group with the bot Python',
+            "groupName": 'My awesome group',
             "phones": phone,
-            'messageText': 'It is your group. Enjoy'
+            'messageText': 'Welcome to your new group.'
         }
         answer = self.send_requests('group', data)
         return answer
@@ -240,7 +240,7 @@ class WaBot:
         elif text.lower().startswith('french'):
         	term = remove_first_word(text)
         	trans = transFr(term)
-        	return send_message(sid, trans)
+        	return self.send_message(sid, trans)
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')
@@ -302,6 +302,7 @@ class WaBot:
                 return 'Cant add user here'
         elif text.lower().startswith('group'):
             db.updateLastCommand(sid, 'audio')
+            self.send_message(sid, "Created a group for you called 'My awesoms group'. Go back and check it out ")
             return self.group(message['author'])
         elif text.lower().startswith('diagnose'):
             response = remove_first_word(text)
