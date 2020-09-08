@@ -1,5 +1,5 @@
 import requests
-from json import dumps
+from json import dumps, load
 from genius import Genius
 from whatsappHandler import register, remove_first_word, is_group
 import uuid
@@ -244,7 +244,8 @@ class WaBot:
         elif text.lower().startswith('transf'):
         	term = remove_first_word(text)
         	trans = transFr(term)
-        	return self.send_message(sid, trans)
+        	print(f'Translated: {trans}') 
+        	return self.send_message(sid, load(trans))
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')
