@@ -52,7 +52,7 @@ def translateWord(word):
     return dictionary.translate(word, 'fr')
 
 
-def transFr(words):
+def transFr(words, lang='fr'):
     translation = translator.translate(words, dest=lang)
     final = f"{translation.origin} ({translation.src}) --> {translation.text} ({translation.dest})"
     return final
