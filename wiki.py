@@ -3,4 +3,7 @@ import wikipedia
 
 def page(title):
 	page = wikipedia.page(title)
-	return page.content
+	return {
+	"t": page.title,
+	"d": page.content
+	}

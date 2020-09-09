@@ -249,7 +249,9 @@ class WaBot:
         	return self.send_message(sid, trans)
         elif text.lower().startswith('wiki'):
         	search = remove_first_word(text)
-        	return self.send_message(sid, page(search))
+        	self.send_message(sid, f"Searching for {search}...")
+        	res = page(search)
+        	return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')
