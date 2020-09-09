@@ -6,6 +6,7 @@ import uuid
 import os
 import db
 import random
+from wiki import page
 from spotdl.command_line.core import Spotdl
 from dict import meaningSynonym, transFr, translateWord
 
@@ -246,6 +247,9 @@ class WaBot:
         	trans = transFr(term)
         	print(f'Translated: {trans}') 
         	return self.send_message(sid, trans)
+        elif text.lower().startswith('wiki'):
+        	search = remove_first_word(text)
+        	return self.send_message(sid, page(search))
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             #return self.send_message(sid, 'audios are not working for now, type help to get other services')
