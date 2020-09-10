@@ -8,6 +8,30 @@ from loadConf import get_twilio_auth_token, get_twilio_sid
 from time import sleep
 
 
+x = """
+Hello, Here are the serivces i can offer you...
+
+1. *Lyrics*   - Get lyrics of song 
+e.g. *lyrics work - rihanna*
+
+
+2. *audio*    - Get audio of a song. write audio
+e.g. *audio alan walker faded* or
+*audio http//youtube.com...* (youtube link)
+
+3. *wiki* - search wikipedia for a given topic
+eg. _wiki coronavirus_
+
+4. *how to ...* - how to do something
+eg _how to bake a cake_
+
+3. *Group* -Create a group using the bot. it adds the bot as a user
+eg. group My Music Group
+
+*Commands* or *help* -Display this menu
+    """
+
+
 def sendParse(message):
     url = "https://api.infermedica.com/v2/parse"
 
@@ -288,6 +312,5 @@ def save_chat(bot, message):
                                             'it doesnt respond, reply with `help` to get other services then try again '
                                             'later*')
         sleep(1)
-        return bot.send_message(message['chatId'], 'To download a song write \n\n'
-                                                   '*audio song-title*\n\n example '
-                                                   '\n *audio alan walker - faded*')
+
+        return bot.send_message(message['chatId'], x)
