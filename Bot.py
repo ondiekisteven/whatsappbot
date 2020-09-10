@@ -354,6 +354,9 @@ eg. group My Music Group
                 return self.diagnose(message['author'], sid, response.strip())
 
         else:
+            if text == '0':
+                db.updateLastCommand(sid, 'join')
+                return ''
             # check if the user is using diagnosis command
             if db.getLastCommand(sid) == 'diagnose':
                 if is_group(message['chatId']):
@@ -372,7 +375,8 @@ eg. group My Music Group
                         translation = transFr(term[1], language_code[choice-1])
                         return self.send_message(sid, translation)
                     else:
-                        return self.send_message(sid, 'Invalid choice, please try again')
+                        return self.send_message(sid, 'Invalid choice, Please try again. Type 0 to stop me from '
+                                                      'disturbing you')
                 except ValueError:
                     return self.send_message(sid, 'Invalid choice, Please try again')
             elif db.getLastCommand(sid) == 'translation-text':
@@ -389,7 +393,8 @@ eg. group My Music Group
                         reply = search_howto_index(user_search[1], choice-1)
                         return self.send_message(sid, reply)
                     else:
-                        return self.send_message(sid, 'Invalid choice, Please try again')
+                        return self.send_message(sid, 'Invalid choice, Please try again. Type 0 to stop me from '
+                                                      'disturbing you')
                 except ValueError:
                     return self.send_message(sid, 'Invalid choice, Please try again')
             return ''
