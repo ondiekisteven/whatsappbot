@@ -330,8 +330,12 @@ eg. group My Music Group
                 return 'Cant add user here'
         elif text.lower().startswith('group'):
             db.updateLastCommand(sid, 'group')
-            self.send_message(sid, "Created a group for you called 'My awesome group'. Go back and check it out ")
-            return self.group(message['author'])
+            grName = remove_first_word(text).strip()
+            if grName:
+                self.send_message(sid, f"Creating your group called '{grName}'. Go back and check it out")
+                return self.group(message['author'], grName)
+            self.send_message(sid, f'Creating for you a group called "My awesome group". Go back and check it out')
+            return self.group(message['author'], )
         elif text.lower().startswith('diagnose'):
             response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
