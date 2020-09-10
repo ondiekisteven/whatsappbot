@@ -1,4 +1,5 @@
 import pymysql
+from pymysql import IntegrityError
 from loadConf import get_database_host, get_database_user, get_database_pass
 
 
@@ -303,3 +304,49 @@ def delete_downloading(chat_id):
     cursor = db.cursor()
     cursor.execute(f"DELETE FROM downloading_users WHERE chat_id = '{chat_id}'")
     db.commit()
+
+
+# --------------------------- TRANSLATION HANDLER ------------------------
+def add_translating(chat_id, text=None, to_lang=None):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'INSERT INTO translating_text(chat_id) VALUES ({chat_id})')
+    db.commit()
+
+
+def update_translating(chat_id, text=None):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'UPDATE translating_text SET text = "{text}" WHERE chat_id = {chat_id}')
+    db.commit()
+    cursor.close()
+    db.close()
+
+
+def get_translating_text(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'SELECT * FROM translating_text WHERE chat_id = {chat_id}')
+    return cursor.fetchone()
+
+
+# ------------------------------------ HOW-TO SEARCH HANDLER -------------------------------
+
+def add_how_to_search(chat_id, term, size):
+    db = getDb()
+    cursor = db.cursor()
+    try:
+        cursor.execute(f'INSERT INTO howto_search_term (chat_id, search_term, size) VALUES ("{chat_id}", "{term}", {size})')
+    except IntegrityError:
+        cursor.execute(f'UPDATE howto_search_term SET search_term = "{term}", size = {size} WHERE chat_id = "{chat_id}"')
+    finally:
+        db.commit()
+        cursor.close()
+        db.close()        
+
+
+def get_how_to_search(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'SELECT * FROM howto_search_term WHERE chat_id = "{chat_id}"')
+    return cursor.fetchone()

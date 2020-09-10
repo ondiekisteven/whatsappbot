@@ -1,15 +1,16 @@
 import requests
-from json import dumps, load
+from json import dumps
+
+from pymysql import IntegrityError
 from genius import Genius
 from whatsappHandler import register, remove_first_word, is_group
 import uuid
 import os
 import db
 import random
-from wiki import page
+from wiki import page, search_howto, search_howto_index
 from spotdl.command_line.core import Spotdl
-from dict import meaningSynonym, transFr, translateWord
-
+from dict import meaningSynonym, transFr, translateWord, get_languages_as_text, languages_list, language_code
 
 adverts = [
     'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
@@ -66,9 +67,9 @@ class WaBot:
         if contents:
             for c in contents:
                 if c.endswith('.mp3'):
-                    #print(f'Found one song: -> {c}')
-                    #path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(self.message)}/{c}'
-                    return c #self.send_file(self.message['chatId'], path, 'audio.mp3', 'audio')
+                    # print(f'Found one song: -> {c}')
+                    # path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(self.message)}/{c}'
+                    return c  # self.send_file(self.message['chatId'], path, 'audio.mp3', 'audio')
 
         else:
             return "empty directory"
@@ -103,7 +104,6 @@ class WaBot:
         return answer
 
     def download_audio(self, song, user):
-
         path = f'music/{user}/'
 
         args = {
@@ -117,37 +117,32 @@ class WaBot:
         return path
 
     def welcome(self, chat_id, name):
-        welcome_string = """Hi, use these commands to control me
-    Commands:
-    [Music channel]
-    *Lyrics*   - Get lyrics of song 
-    
-    example
-    *lyrics work - rihanna*
-    
-    
-    *audio*    - Get audio of a song. write audio
-    
-    example
-    *audio alan walker faded* or
-    *audio http//youtube.com...* (youtube link)
-    
-                    
-                    
-    [health]
-    *Diagnose* - Get self diagnosis service
-    
-    example:
-    *diagnose i feel pain in my back*
-    
-    
-    *Group* -Create a group using the bot. it adds the bot as a user
-    
-    *Commands* or *help* -Display this menu
+        welcome_string = """
+Hello, Here are the serivces i can offer you...
+
+1. *Lyrics*   - Get lyrics of song 
+e.g. *lyrics work - rihanna*
+
+
+2. *audio*    - Get audio of a song. write audio
+e.g. *audio alan walker faded* or
+*audio http//youtube.com...* (youtube link)
+
+3. *wiki* - search wikipedia for a given topic
+eg. _wiki coronavirus_
+
+4. *how to ...* - how to do something
+eg _how to bake a cake_
+
+3. *Group* -Create a group using the bot. it adds the bot as a user
+eg. group My Music Group
+
+*Commands* or *help* -Display this menu
     """
 
         text = f'{name} \n{welcome_string}'
-        return self.send_message(chat_id, text)
+        self.send_message(chat_id, text)
+        return self.send_message(chat_id, 'Remember to start with the words in bold, for the bot to understand')
 
     def genius_lyrics(self, chat_id, search, phone, download=False, ):
         bot = Genius()
@@ -158,11 +153,11 @@ class WaBot:
         lyrics = bot.retrieve_lyrics(song_id)
         thumbnail = sid['song_thumbnail']
         name = sid['song_title']
-        self.send_file(chat_id, thumbnail, uuid.uuid4().hex+'.jpg', name)
+        self.send_file(chat_id, thumbnail, uuid.uuid4().hex + '.jpg', name)
         text = f'TITLE: {name}\n\n{lyrics}'
 
         message_send = self.send_message(chat_id, text)
-        #if download:
+        # if download:
         #    path = self.download_audio(search, phone)
         #    song = get_song(path)
         #    if song == 'empty directory':
@@ -181,12 +176,12 @@ class WaBot:
         #        return self.send_message(sid, f'Your song has downloaded. If you dont receive it quickly, send the '
         #                                      f'command *join bot* to refresh the bot. It will send your song')
         #    return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
-            # path = download_audio(name, phone, bot)
-            # audio = get_song(path)
-            # audio_path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{audio}'
-            # audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
-            # print(f'sending audio -> {audio_sending}')
-            # os.remove(f'music/{phone}/{audio}')
+        # path = download_audio(name, phone, bot)
+        # audio = get_song(path)
+        # audio_path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{audio}'
+        # audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
+        # print(f'sending audio -> {audio_sending}')
+        # os.remove(f'music/{phone}/{audio}')
 
         return message_send
 
@@ -201,12 +196,13 @@ class WaBot:
         self.send_message(chat_id, reply)
         return reply
 
-    def group(self, author):
+    def group(self, author, name='My awesome group'):
         phone = author.replace('@c.us', '')
         data = {
-            "groupName": 'My awesome group',
+            "groupName": name,
             "phones": phone,
-            'messageText': 'Welcome to your new group.'
+            'messageText': 'Welcome to your new group. Use the command *adduser* <phone number> so that i can add '
+                           'users here '
         }
         answer = self.send_requests('group', data)
         return answer
@@ -234,27 +230,47 @@ class WaBot:
         if text.lower().startswith('command') or text.lower().startswith('help'):
             db.updateLastCommand(sid, 'help')
             return self.welcome(sid, name)
+        elif text.lower().startswith('transl'):
+            try:
+                db.add_translating(get_phone(message))
+            except IntegrityError:
+                pass
+            term = remove_first_word(text)
+            if term:
+                # user has defined sentence to be translated...
+                db.updateLastCommand(sid, 'translation-language')
+                db.update_translating(get_phone(message), term)
+                return self.send_message(sid, f"Select the language to translate to\n\n{get_languages_as_text(languages_list)}")
+            else:
+                # user has not defined sentence to be translated...
+                db.updateLastCommand(sid, 'translation-text')
+                return self.send_message(sid, 'Enter the word or sentence you want to translate')
         elif text.lower().startswith('def'):
-        	term = remove_first_word(text)
-        	meaning = meaningSynonym(term)
-        	return self.send_message(sid, meaning)
+            term = remove_first_word(text)
+            meaning = meaningSynonym(term)
+            return self.send_message(sid, meaning)
         elif text.lower().startswith('french'):
-        	term = remove_first_word(text)
-        	trans = translateWord(term)
-        	return self.send_message(sid, trans)
+            term = remove_first_word(text)
+            trans = translateWord(term)
+            return self.send_message(sid, trans)
         elif text.lower().startswith('transf'):
-        	term = remove_first_word(text)
-        	trans = transFr(term)
-        	print(f'Translated: {trans}') 
-        	return self.send_message(sid, trans)
+            term = remove_first_word(text)
+            trans = transFr(term)
+            print(f'Translated: {trans}')
+            return self.send_message(sid, trans)
         elif text.lower().startswith('wiki'):
-        	search = remove_first_word(text)
-        	self.send_message(sid, f"Searching for {search}...")
-        	res = page(search)
-        	return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
+            search = remove_first_word(text)
+            self.send_message(sid, f"Searching for {search}...")
+            res = page(search)
+            return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
+        elif text.lower().startswith('how to'):
+            db.updateLastCommand(sid, 'choice how-to')
+            hts = search_howto(text.lower())
+            db.add_how_to_search(sid, text.lower(), hts['size'])
+            return self.send_message(sid, hts['articles'])
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
-            #return self.send_message(sid, 'audios are not working for now, type help to get other services')
+            # return self.send_message(sid, 'audios are not working for now, type help to get other services')
             path = f'music/{get_phone(message)}/'
             if not os.path.exists(path):
                 print("[*] Directory not found, Creating...")
@@ -266,11 +282,11 @@ class WaBot:
                     if files == 'empty directory':
                         db.delete_downloading(sid)
                     else:
-                    	db.delete_downloading(sid)
-                    	return self.send_message(sid, 'Wait for last song to download')
+                        db.delete_downloading(sid)
+                        return self.send_message(sid, 'Wait for last song to download')
                 except FileNotFoundError:
                     os.mkdir(path)
-            self.send_message(sid, "Downloading your song... please wait")       
+            self.send_message(sid, "Downloading your song... please wait")
             db.add_downloading_user(sid)
             search = remove_first_word(text)
 
@@ -312,8 +328,8 @@ class WaBot:
             else:
                 return 'Cant add user here'
         elif text.lower().startswith('group'):
-            db.updateLastCommand(sid, 'audio')
-            self.send_message(sid, "Created a group for you called 'My awesoms group'. Go back and check it out ")
+            db.updateLastCommand(sid, 'group')
+            self.send_message(sid, "Created a group for you called 'My awesome group'. Go back and check it out ")
             return self.group(message['author'])
         elif text.lower().startswith('diagnose'):
             response = remove_first_word(text)
@@ -322,8 +338,8 @@ class WaBot:
                 # check if
                 if db.getFinishedRegistration(get_phone(message)):
                     delete_diagnosis_user(message)
-                    register(get_phone(message), 'OK') 
-                    return self.diagnose(message['author'], sid, response. strip())
+                    register(get_phone(message), 'OK')
+                    return self.diagnose(message['author'], sid, response.strip())
                 else:
                     # should continue registering user here or start a new one
                     regResponse = register(get_phone(message), text)
@@ -337,12 +353,41 @@ class WaBot:
                 return self.diagnose(message['author'], sid, response.strip())
 
         else:
-            if is_group(message['chatId']):
-                return ''
             # check if the user is using diagnosis command
             if db.getLastCommand(sid) == 'diagnose':
-                res = self.diagnose(message['author'], sid, text.lower()[1:])
+                if is_group(message['chatId']):
+                    return ''
+                res = self.diagnose(message['author'], sid, text.lower())
                 if 'conditions were discovered' in res:
                     delete_diagnosis_user(message)
                     return self.send_message(sid, 'Thanks for using our service. \n\nSend *diagnose* to restart')
+            elif db.getLastCommand(sid) == 'translation-language':
+                print("Selecting language")
+                try:
+                    choice = int(text)
+                    if choice in range(1, len(languages_list) + 1):
+                        term = db.get_translating_text(get_phone(message))
+                        print(f'Selected language is... {language_code[choice-1]}')
+                        translation = transFr(term[1], language_code[choice-1])
+                        return self.send_message(sid, translation)
+                    else:
+                        return self.send_message(sid, 'Invalid choice, please try again')
+                except ValueError:
+                    return self.send_message(sid, 'Invalid choice, Please try again')
+            elif db.getLastCommand(sid) == 'translation-text':
+                print("Getting translation text")
+                db.updateLastCommand(sid, 'translation-language')
+                db.update_translating(get_phone(message), text)
+                return self.send_message(sid, f"Select the language to translate to\n\n{get_languages_as_text(languages_list)}")
+            elif db.getLastCommand(sid) == 'choice how-to':
+                try:
+                    choice = int(text)
+                    user_search = db.get_how_to_search(sid)
+                    if choice in range(user_search[2] + 1):
+                        reply = search_howto_index(user_search[1], choice-1)
+                        return self.send_message(sid, reply)
+                    else:
+                        return self.send_message(sid, 'Invalid choice, Please try again')
+                except ValueError:
+                    return self.send_message(sid, 'Invalid choice, Please try again')
             return ''
