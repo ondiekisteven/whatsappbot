@@ -143,6 +143,8 @@ eg. define gallery
 7. *Group* -Create a group using the bot. it adds the bot as a user
 eg. group My Music Group
 
+8. *adduser* - Add a user to a group. For this to work, make me an admin in the group.
+
 *Commands* or *help* -Display this menu
     """
 
