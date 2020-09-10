@@ -124,7 +124,7 @@ Hello, Here are the serivces i can offer you...
 e.g. *lyrics work - rihanna*
 
 
-2. *audio*    - Get audio of a song. write audio
+2. *audio*    - Get audio of a song.
 e.g. *audio alan walker faded* or
 *audio http//youtube.com...* (youtube link)
 
@@ -137,7 +137,10 @@ eg _how to bake a cake_
 5. *translate* - translate sentences to other languages
 e.g. _translate Good morning_
 
-6. *Group* -Create a group using the bot. it adds the bot as a user
+6. *define* - get definition of a term. It has to be just one word.
+eg. define gallery
+
+7. *Group* -Create a group using the bot. it adds the bot as a user
 eg. group My Music Group
 
 *Commands* or *help* -Display this menu
