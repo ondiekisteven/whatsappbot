@@ -25,7 +25,10 @@ eg. _wiki coronavirus_
 4. *how to ...* - how to do something
 eg _how to bake a cake_
 
-3. *Group* -Create a group using the bot. it adds the bot as a user
+5. *translate* - translate sentences to other languages
+e.g. _translate Good morning_
+
+6. *Group* -Create a group using the bot. it adds the bot as a user
 eg. group My Music Group
 
 *Commands* or *help* -Display this menu
