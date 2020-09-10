@@ -264,6 +264,7 @@ eg. group My Music Group
             res = page(search)
             return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
         elif text.lower().startswith('how to'):
+            self.send_message(sid, 'Searching, please wait...')
             db.updateLastCommand(sid, 'choice how-to')
             hts = search_howto(text.lower())
             db.add_how_to_search(sid, text.lower(), hts['size'])
@@ -367,7 +368,7 @@ eg. group My Music Group
                     choice = int(text)
                     if choice in range(1, len(languages_list) + 1):
                         term = db.get_translating_text(get_phone(message))
-                        print(f'Selected language is... {language_code[choice-1]}')
+                        self.send_message(sid, 'Translating, please wait...')
                         translation = transFr(term[1], language_code[choice-1])
                         return self.send_message(sid, translation)
                     else:
@@ -384,6 +385,7 @@ eg. group My Music Group
                     choice = int(text)
                     user_search = db.get_how_to_search(sid)
                     if choice in range(user_search[2] + 1):
+                        self.send_message(sid, 'Searching, please wait...')
                         reply = search_howto_index(user_search[1], choice-1)
                         return self.send_message(sid, reply)
                     else:
