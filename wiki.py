@@ -43,6 +43,7 @@ def search_howto(term: str):
     }
 
 
-def random_how_to(term: str):
+def random_how_to():
     r_h_t = RandomHowTo()
+    return parse_search_howto(r_h_t)
 

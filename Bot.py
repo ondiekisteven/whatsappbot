@@ -8,7 +8,7 @@ import uuid
 import os
 import db
 import random
-from wiki import page, search_howto, search_howto_index
+from wiki import page, search_howto, search_howto_index, random_how_to
 from spotdl.command_line.core import Spotdl
 from dict import meaningSynonym, transFr, translateWord, get_languages_as_text, languages_list, language_code
 
@@ -257,30 +257,23 @@ eg. group My Music Group
             term = remove_first_word(text)
             meaning = meaningSynonym(term)
             return self.send_message(sid, meaning)
-        elif text.lower().startswith('french'):
-            term = remove_first_word(text)
-            trans = translateWord(term)
-            return self.send_message(sid, trans)
-        # elif text.lower().startswith('transl'):
-        #     term = remove_first_word(text)
-        #     trans = transFr(term)
-        #     print(f'Translated: {trans}')
-        #     return self.send_message(sid, trans)
         elif text.lower().startswith('wiki'):
             search = remove_first_word(text)
             self.send_message(sid, f"Searching for {search}...")
             res = page(search)
             return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
         elif text.lower().startswith('how to'):
-            db.updateLastCommand(sid, 'choice how-to')
             if text.lower().replace('how to', '').strip():
+                db.updateLastCommand(sid, 'choice how-to')
                 self.send_message(sid, 'Searching, please wait...')
                 hts = search_howto(text.lower())
                 db.add_how_to_search(sid, text.lower(), hts['size'])
                 return self.send_message(sid, hts['articles'])
             else:
                 self.send_message(sid, 'You did not specify what to search. Searching for random how-to item')
-
+                db.updateLastCommand(sid, 'join bot')
+                rht = random_how_to()
+                return self.send_message(sid, rht)
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             # return self.send_message(sid, 'audios are not working for now, type help to get other services')
