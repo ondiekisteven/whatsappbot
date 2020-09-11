@@ -40,7 +40,6 @@ languages_list = [
 ]
 
 
-
 def get_languages_as_text(languages):
     text = ''
     for index, item in enumerate(languages):

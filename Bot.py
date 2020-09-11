@@ -242,7 +242,7 @@ eg. group My Music Group
             try:
                 db.add_translating(get_phone(message))
             except IntegrityError:
-                pass
+                print()
             term = remove_first_word(text)
             if term:
                 # user has defined sentence to be translated...
@@ -261,22 +261,26 @@ eg. group My Music Group
             term = remove_first_word(text)
             trans = translateWord(term)
             return self.send_message(sid, trans)
-        elif text.lower().startswith('transf'):
-            term = remove_first_word(text)
-            trans = transFr(term)
-            print(f'Translated: {trans}')
-            return self.send_message(sid, trans)
+        # elif text.lower().startswith('transl'):
+        #     term = remove_first_word(text)
+        #     trans = transFr(term)
+        #     print(f'Translated: {trans}')
+        #     return self.send_message(sid, trans)
         elif text.lower().startswith('wiki'):
             search = remove_first_word(text)
             self.send_message(sid, f"Searching for {search}...")
             res = page(search)
             return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
         elif text.lower().startswith('how to'):
-            self.send_message(sid, 'Searching, please wait...')
             db.updateLastCommand(sid, 'choice how-to')
-            hts = search_howto(text.lower())
-            db.add_how_to_search(sid, text.lower(), hts['size'])
-            return self.send_message(sid, hts['articles'])
+            if text.lower().replace('how to', '').strip():
+                self.send_message(sid, 'Searching, please wait...')
+                hts = search_howto(text.lower())
+                db.add_how_to_search(sid, text.lower(), hts['size'])
+                return self.send_message(sid, hts['articles'])
+            else:
+                self.send_message(sid, 'You did not specify what to search. Searching for random how-to item')
+
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             # return self.send_message(sid, 'audios are not working for now, type help to get other services')
@@ -385,6 +389,7 @@ eg. group My Music Group
                         term = db.get_translating_text(get_phone(message))
                         self.send_message(sid, 'Translating, please wait...')
                         translation = transFr(term[1], language_code[choice-1])
+                        db.updateLastCommand(sid, 'join')
                         return self.send_message(sid, translation)
                     else:
                         return self.send_message(sid, 'Invalid choice, Please try again. Type 0 to stop me from '

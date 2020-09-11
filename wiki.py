@@ -1,5 +1,5 @@
 import wikipedia 
-from pywikihow import search_wikihow, HowTo
+from pywikihow import search_wikihow, HowTo, RandomHowTo
 
 
 # ------------------------------------ WIKIPEDIA ------------------------------------------
@@ -41,3 +41,8 @@ def search_howto(term: str):
         'articles': res,
         'size': len(how_tos)
     }
+
+
+def random_how_to(term: str):
+    r_h_t = RandomHowTo()
+
