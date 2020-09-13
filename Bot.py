@@ -21,7 +21,6 @@ adverts = [
     'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'The bot downloads songs from spotify and youtube. If we didnt find your song, its probably not in youtube yet',
     'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
-    'You can get self diagnosis by typing *Diagnose start*',
     'If you have trouble using the bot, contact the developer here: 0790670635. ',
     'The bot is under testing, some features may not work perfect, be patient with them',
     'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
@@ -49,7 +48,7 @@ def send_ppt(chat_id, audio):
         "chatId": chat_id,
         "audio": audio
     }
-    answer = requests.post('https://eu162.chat-api.com/instance169504/sendPTT?token=18tge8h634rmjh5t', data=data)
+    answer = requests.post('https://eu156.chat-api.com/instance171855/sendPTT?token=18tge8h634rmjh5t', data=data)
 
     return answer
 
@@ -58,8 +57,8 @@ class WaBot:
 
     def __init__(self, json):
         self.message = json
-        self.APIUrl = 'https://eu172.chat-api.com/instance170892/'
-        self.token = 's7yjhndngseqqtxe'
+        self.APIUrl = 'https://eu156.chat-api.com/instance171855/'
+        self.token = '0gv4i7vjn99zgizr'
         self.last_command = "last command"
 
     def get_song(self, path):
