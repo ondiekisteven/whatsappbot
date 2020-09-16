@@ -275,6 +275,10 @@ eg. group My Music Group
                 return self.send_message(sid, rht)
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
+
+            search = remove_first_word(text)
+            if not search:
+                return self.send_message(sid, 'To download audio, write audio then the name of the song or audio then a youtube link.')
             # return self.send_message(sid, 'audios are not working for now, type help to get other services')
             path = f'music/{get_phone(message)}/'
             if not os.path.exists(path):
@@ -288,19 +292,18 @@ eg. group My Music Group
                         db.delete_downloading(sid)
                     else:
                         db.delete_downloading(sid)
-                        return self.send_message(sid, 'Wait for last song to download')
+                        return self.send_message(sid, 'Another song is downloading. Try again after 20 seconds. ')
                 except FileNotFoundError:
                     os.mkdir(path)
             self.send_message(sid, "Downloading your song... please wait")
             db.add_downloading_user(sid)
-            search = remove_first_word(text)
 
             path = self.download_audio(search, get_phone(message))
             song = self.get_song(path)
 
             if song == 'empty directory':
                 db.delete_downloading(sid)
-                return self.send_message(sid, 'Error downloading song')
+                return self.send_message(sid, 'Error downloading song. Try again later.')
             # return song
             print('path not empty')
             path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(message)}/{song}'
