@@ -58,7 +58,7 @@ class WaBot:
     def __init__(self, json):
         self.message = json
         self.APIUrl = 'https://eu79.chat-api.com/instance175046/'
-        self.token = 'e9944zapg7c5stkr'
+        self.token = 'fe2jfja6x8krgeyg'
         self.last_command = "last command"
 
     def get_song(self, path):
