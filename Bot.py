@@ -53,6 +53,15 @@ def send_ppt(chat_id, audio):
     return answer
 
 
+def parse_phone(phone):
+    # phone = '+254790670635'
+    if phone.startswith('+'):
+        phone = phone[1:]
+    elif phone.startswith('0'):
+        phone = f'254{phone[1:]}'
+    return f'{phone.replace(" ", "")}@c.us'
+
+
 class WaBot:
 
     def __init__(self, json):
@@ -219,7 +228,8 @@ eg. group My Music Group
             'groupId': group_id
         }
         if participant_phone:
-            data['participantPhone'] = participant_phone
+            phone_to_add = parse_phone(participant_phone)
+            data['participantPhone'] = phone_to_add
         elif participant_id:
             data['participantChatId'] = participant_id
         else:
