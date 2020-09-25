@@ -196,8 +196,7 @@ eg. group My Music Group
         data = {
             "groupName": name,
             "phones": phone,
-            'messageText': 'Welcome to your new group. Use the command *adduser* <phone number> so that i can add '
-                           'users here '
+            'messageText': 'Welcome to your new group. send the command join bot to activate the bot here.'
         }
         answer = self.send_requests('group', data)
         return answer
@@ -320,10 +319,11 @@ eg. group My Music Group
             db.updateLastCommand(sid, 'lyrics')
             return res
         elif text.lower().startswith('adduser'):
+            
             if is_group(message['chatId']):
-                return self.add_participant(message['chatId'], text)
+                return self.add_participant(message['chatId'], participant_phone=remove_first_word(text))
             else:
-                return 'Cant add user here'
+                return self.send_message(sid, 'Cant add user here. Send this command from a group where i am an admin')
         elif text.lower().startswith('group'):
             db.updateLastCommand(sid, 'group')
             grName = remove_first_word(text).strip()
