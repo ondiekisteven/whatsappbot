@@ -59,6 +59,7 @@ def parse_phone(phone):
         phone = phone[1:]
     elif phone.startswith('0'):
         phone = f'254{phone[1:]}'
+    print(f'Adding user {phone.replace(" ", "")}@c.us')
     return f'{phone.replace(" ", "")}@c.us'
 
 
@@ -161,43 +162,21 @@ eg. group My Music Group
         return self.send_message(chat_id, 'Remember to start with the words in bold, for the bot to understand')
 
     def genius_lyrics(self, chat_id, search, phone, download=False, ):
-        bot = Genius()
-        sid = bot.search_song(search)
-        if 'Could not find' in sid:
-            return 'Could not find song'
-        song_id = sid['song_id']
-        lyrics = bot.retrieve_lyrics(song_id)
-        thumbnail = sid['song_thumbnail']
-        name = sid['song_title']
-        self.send_file(chat_id, thumbnail, uuid.uuid4().hex + '.jpg', name)
-        text = f'TITLE: {name}\n\n{lyrics}'
+        try:
+            bot = Genius()
+            sid = bot.search_song(search)
+            if 'Could not find' in sid:
+                return 'Could not find song'
+            song_id = sid['song_id']
+            lyrics = bot.retrieve_lyrics(song_id)
+            thumbnail = sid['song_thumbnail']
+            name = sid['song_title']
+            self.send_file(chat_id, thumbnail, uuid.uuid4().hex + '.jpg', name)
+            text = f'TITLE: {name}\n\n{lyrics}'
+        except IndexError:
+            text = "Could not find lyrics"
 
         message_send = self.send_message(chat_id, text)
-        # if download:
-        #    path = self.download_audio(search, phone)
-        #    song = get_song(path)
-        #    if song == 'empty directory':
-        #        db.delete_downloading(sid)
-        #        return self.send_message(sid, 'Song not found in Directory')
-        #    path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{song}'
-        #    if path == 'File not found':
-        #        return self.send_message(sid, 'Error serving your song')
-        #    audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-        #    print(f'sending audio -> {audio_sending}')
-        #    if os.path.exists(f'music/{phone}/{song}'):
-        #        os.remove(f'music/{phone}/{song}')
-        #        db.delete_downloading(sid)
-        #        db.updateLastCommand(sid, 'audio')
-
-        #        return self.send_message(sid, f'Your song has downloaded. If you dont receive it quickly, send the '
-        #                                      f'command *join bot* to refresh the bot. It will send your song')
-        #    return self.send_message(sid, 'An error occurred. type help.\n You can contact 0790670635 to report')
-        # path = download_audio(name, phone, bot)
-        # audio = get_song(path)
-        # audio_path = f'https://som-whatsapp.herokuapp.com/files/music/{phone}/{audio}'
-        # audio_sending = self.send_file(chat_id, audio_path, uuid.uuid4().hex + "audio.mp3", "audio")
-        # print(f'sending audio -> {audio_sending}')
-        # os.remove(f'music/{phone}/{audio}')
 
         return message_send
 
