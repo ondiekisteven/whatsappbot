@@ -8,7 +8,7 @@ import tasks
 app = Flask(__name__)
 
 
-@app.route('/', methos=['GET'])
+@app.route('/', methods=['GET'])
 def test():
     return {"success" : "API is working"}
 
