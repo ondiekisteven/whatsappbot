@@ -1,5 +1,5 @@
 import requests
-from json import dumps
+from json import dumps, loads
 
 from pymysql import IntegrityError
 from genius import Genius
@@ -67,8 +67,8 @@ class WaBot:
 
     def __init__(self, json):
         self.message = json
-        self.APIUrl = 'https://eu156.chat-api.com/instance176241/'
-        self.token = 'vjt7eklozbcf6fip'
+        self.APIUrl = 'https://eu122.chat-api.com/instance177295/'
+        self.token = 'hyw554es46ksmsck'
         self.last_command = "last command"
 
     def get_song(self, path):
@@ -213,8 +213,28 @@ eg. group My Music Group
         else:
             return 'Missing user to add'
         ans = self.send_requests('addGroupParticipant', data)
-
+        print(ans)
+        ans = loads(ans)
+        
         return self.send_message(group_id, ans['message'])
+    
+    def remove_participant(self, group_id, participant_phone=None, participant_id=None, ):
+        data = {
+            'groupId': group_id
+        }
+        if participant_phone:
+            phone_to_add = parse_phone(participant_phone)
+            data['participantPhone'] = phone_to_add
+        elif participant_id:
+            data['participantChatId'] = participant_id
+        else:
+            return 'Missing user to add'
+        ans = self.send_requests('addGroupParticipant', data)
+        print(ans)
+        ans = loads(ans)
+        
+        return self.send_message(group_id, ans['message'])
+    
 
     def processing(self):
         message = self.message
