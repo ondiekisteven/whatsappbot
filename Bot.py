@@ -353,28 +353,18 @@ eg. group My Music Group
             self.send_message(sid, f'Creating for you a group called "My awesome group". Go back and check it out')
             return self.group(message['author'], )
         elif text.lower().startswith('diagnose'):
-            response = remove_first_word(text)
+            user_response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
-            if response.strip() == 'start' or None:
-                # check if
-                if db.getFinishedRegistration(get_phone(message)):
-                    delete_diagnosis_user(message)
-                    register(get_phone(message), 'OK')
-                    return self.diagnose(message['author'], sid, response.strip())
-                else:
-                    # should continue registering user here or start a new one
-                    regResponse = register(get_phone(message), text)
-                    return self.send_message(sid, regResponse)
-
-            elif response.strip() == 'restart':
-                print('We need to restart diagnosis using the provided condition')
-                delete_diagnosis_user(message)
-
-                register(get_phone(message), 'OK')
-                return self.diagnose(message['author'], sid, response.strip())
-
+            if not user_response:
+                print(f'response is "start"')
+                user_response = 'start'
+            respons = self.diagnose(message['author'], sid, user_response)
+            return respons
         else:
             if text == '0':
+                if db.getLastCommand(sid) == 'diagnose':
+                    delete_diagnosis_user(message)
+                    self.diagnose(message['author'], sid, 'ok')
                 db.updateLastCommand(sid, 'join')
                 return ''
             # check if the user is using diagnosis command
