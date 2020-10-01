@@ -1,5 +1,5 @@
 from flask import Flask, request, send_file
-from whatsappHandler import send_, register, search_lyrics, save_chat, getAllowedChats
+from whatsappHandler import register, search_lyrics, save_chat, getAllowedChats
 import Bot
 from sendQueue import to_queue
 from json import dumps
@@ -8,22 +8,28 @@ import tasks
 app = Flask(__name__)
 
 
+@app.route('/', methods=['GET'])
+def test():
+    return {"success" : "API is working"}
+
+
 @app.route('/whatsapp/twilio/messages', methods=['POST', 'GET'])
 def hello_world():
-    if request.method == 'POST':
-        message = request.form['Body']
-        sender = request.form['From']
-        print(f'message from {sender}: {message}')
-        numeric_filter = filter(str.isdigit, sender)
-        numeric_string = "".join(numeric_filter)
+    pass
+    # if request.method == 'POST':
+    #     message = request.form['Body']
+    #     sender = request.form['From']
+    #     print(f'message from {sender}: {message}')
+    #     numeric_filter = filter(str.isdigit, sender)
+    #     numeric_string = "".join(numeric_filter)
 
-        if message.lower().startswith("lyrics"):
-            print(message.lower())
-            result = search_lyrics(message)
-            return send_(sender, result)
-        else:
-            response = register(numeric_string, message)
-            return send_(sender, response)
+    #     if message.lower().startswith("lyrics"):
+    #         print(message.lower())
+    #         result = search_lyrics(message)
+    #         return send_(sender, result)
+    #     else:
+    #         response = register(numeric_string, message)
+    #         return send_(sender, response)
 
 
 @app.route('/whatsapp/chatapi/messages/', methods=['POST'])

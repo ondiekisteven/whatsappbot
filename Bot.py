@@ -1,5 +1,5 @@
 import requests
-from json import dumps
+from json import dumps, loads
 
 from pymysql import IntegrityError
 from genius import Genius
@@ -67,8 +67,8 @@ class WaBot:
 
     def __init__(self, json):
         self.message = json
-        self.APIUrl = 'https://eu56.chat-api.com/instance178096/'
-        self.token = 'yh6ty89tj7xpjdvz'
+        self.APIUrl = 'https://eu122.chat-api.com/instance177295/'
+        self.token = 'hyw554es46ksmsck'
         self.last_command = "last command"
 
     def get_song(self, path):
@@ -169,8 +169,6 @@ eg. group My Music Group
                 return 'Could not find song'
             song_id = sid['song_id']
             lyrics = bot.retrieve_lyrics(song_id)
-            if 'Could not find lyrics' in lyrics:
-                return self.send_message(chat_id, 'Could not find lyrics')
             thumbnail = sid['song_thumbnail']
             name = sid['song_title']
             self.send_file(chat_id, thumbnail, uuid.uuid4().hex + '.jpg', name)
@@ -215,8 +213,28 @@ eg. group My Music Group
         else:
             return 'Missing user to add'
         ans = self.send_requests('addGroupParticipant', data)
-
+        print(ans)
+        ans = loads(ans)
+        
         return self.send_message(group_id, ans['message'])
+    
+    def remove_participant(self, group_id, participant_phone=None, participant_id=None, ):
+        data = {
+            'groupId': group_id
+        }
+        if participant_phone:
+            phone_to_add = parse_phone(participant_phone)
+            data['participantPhone'] = phone_to_add
+        elif participant_id:
+            data['participantChatId'] = participant_id
+        else:
+            return 'Missing user to add'
+        ans = self.send_requests('addGroupParticipant', data)
+        print(ans)
+        ans = loads(ans)
+        
+        return self.send_message(group_id, ans['message'])
+    
 
     def processing(self):
         message = self.message
@@ -335,22 +353,28 @@ eg. group My Music Group
             self.send_message(sid, f'Creating for you a group called "My awesome group". Go back and check it out')
             return self.group(message['author'], )
         elif text.lower().startswith('diagnose'):
-            user_response = remove_first_word(text)
+            response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
-            if user_response == 'restart':
+            if response.strip() == 'start' or None:
+                # check if
+                if db.getFinishedRegistration(get_phone(message)):
+                    delete_diagnosis_user(message)
+                    register(get_phone(message), 'OK')
+                    return self.diagnose(message['author'], sid, response.strip())
+                else:
+                    # should continue registering user here or start a new one
+                    regResponse = register(get_phone(message), text)
+                    return self.send_message(sid, regResponse)
+
+            elif response.strip() == 'restart':
+                print('We need to restart diagnosis using the provided condition')
                 delete_diagnosis_user(message)
-                self.diagnose(message['author'], sid, 'yes')
-            if not user_response:
-                print(f'response is "start"')
-                user_response = 'start'
-            respons = self.diagnose(message['author'], sid, user_response)
-            print(respons)
-            return respons
+
+                register(get_phone(message), 'OK')
+                return self.diagnose(message['author'], sid, response.strip())
+
         else:
             if text == '0':
-                if db.getLastCommand(sid) == 'diagnose':
-                    delete_diagnosis_user(message)
-                    self.diagnose(message['author'], sid, 'ok')
                 db.updateLastCommand(sid, 'join')
                 return ''
             # check if the user is using diagnosis command
