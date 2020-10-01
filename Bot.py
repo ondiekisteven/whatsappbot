@@ -67,8 +67,8 @@ class WaBot:
 
     def __init__(self, json):
         self.message = json
-        self.APIUrl = 'https://eu156.chat-api.com/instance176241/'
-        self.token = 'vjt7eklozbcf6fip'
+        self.APIUrl = 'https://eu56.chat-api.com/instance178096/'
+        self.token = 'yh6ty89tj7xpjdvz'
         self.last_command = "last command"
 
     def get_song(self, path):
@@ -169,6 +169,8 @@ eg. group My Music Group
                 return 'Could not find song'
             song_id = sid['song_id']
             lyrics = bot.retrieve_lyrics(song_id)
+            if 'Could not find lyrics' in lyrics:
+                return self.send_message(chat_id, 'Could not find lyrics')
             thumbnail = sid['song_thumbnail']
             name = sid['song_title']
             self.send_file(chat_id, thumbnail, uuid.uuid4().hex + '.jpg', name)
@@ -333,28 +335,22 @@ eg. group My Music Group
             self.send_message(sid, f'Creating for you a group called "My awesome group". Go back and check it out')
             return self.group(message['author'], )
         elif text.lower().startswith('diagnose'):
-            response = remove_first_word(text)
+            user_response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
-            if response.strip() == 'start' or None:
-                # check if
-                if db.getFinishedRegistration(get_phone(message)):
-                    delete_diagnosis_user(message)
-                    register(get_phone(message), 'OK')
-                    return self.diagnose(message['author'], sid, response.strip())
-                else:
-                    # should continue registering user here or start a new one
-                    regResponse = register(get_phone(message), text)
-                    return self.send_message(sid, regResponse)
-
-            elif response.strip() == 'restart':
-                print('We need to restart diagnosis using the provided condition')
+            if user_response == 'restart':
                 delete_diagnosis_user(message)
-
-                register(get_phone(message), 'OK')
-                return self.diagnose(message['author'], sid, response.strip())
-
+                self.diagnose(message['author'], sid, 'yes')
+            if not user_response:
+                print(f'response is "start"')
+                user_response = 'start'
+            respons = self.diagnose(message['author'], sid, user_response)
+            print(respons)
+            return respons
         else:
             if text == '0':
+                if db.getLastCommand(sid) == 'diagnose':
+                    delete_diagnosis_user(message)
+                    self.diagnose(message['author'], sid, 'ok')
                 db.updateLastCommand(sid, 'join')
                 return ''
             # check if the user is using diagnosis command

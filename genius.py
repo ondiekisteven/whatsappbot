@@ -82,14 +82,17 @@ class Genius:
 
     def retrieve_lyrics(self, song_id):
         '''Retrieves lyrics from html page.'''
-        path = self.connect_lyrics(song_id)
-        URL = "http://genius.com" + path
-        page = requests.get(URL)
-        # Extract the page's HTML as a string
-        html = BeautifulSoup(page.text, "html.parser")
+        try:
+            path = self.connect_lyrics(song_id)
+            URL = "http://genius.com" + path
+            page = requests.get(URL)
+            # Extract the page's HTML as a string
+            html = BeautifulSoup(page.text, "html.parser")
 
-        # Scrape the song lyrics from the HTML
-        lyr = html.find("div", class_="lyrics").get_text()
+            # Scrape the song lyrics from the HTML
+            lyr = html.find("div", class_="lyrics").get_text()
+        except AttributeError:
+            lyr = 'Could not find lyrics. Try again with different keywords'
         return lyr
 
     def encode_audio(self, file_path):

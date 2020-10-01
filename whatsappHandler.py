@@ -9,7 +9,7 @@ from time import sleep
 
 
 x = """
-Hello, Here are the serivces i can offer you...
+Hello, Here are the services i can offer you...
 
 1. *Lyrics*   - Get lyrics of song 
 e.g. *lyrics work - rihanna*
@@ -92,6 +92,7 @@ def send_(receiver, text):
 
 def register(tg_id, response):
     if not db.getUserById(tg_id):  # if user is not registered, register them
+        print('user not found')
         db.saveUser(tg_id=tg_id, first_name="", last_name="")
         db.getUserById(tg_id)
 
@@ -145,12 +146,12 @@ def register(tg_id, response):
 
     # return registration question from database if user hasn't finished registering
     if can_continue:
-
         nextQ = db.getQuestion(current_count + 1)
         if 'our system' in nextQ:
             nextQ += '\n1 - Yes\n2 - No'
         elif '[male/female]' in nextQ:
             nextQ += '\n1 - Yes\n2 - No'
+        return nextQ
     else:
         # go to diagnosis part if registration is complete
         if db.getOnGoingUser(tg_id) is None:
