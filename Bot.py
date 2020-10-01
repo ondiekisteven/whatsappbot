@@ -67,8 +67,10 @@ class WaBot:
 
     def __init__(self, json):
         self.message = json
-        self.APIUrl = 'https://eu122.chat-api.com/instance177295/'
-        self.token = 'hyw554es46ksmsck'
+        # self.APIUrl = 'https://eu122.chat-api.com/instance177295/'
+        # self.token = 'hyw554es46ksmsck'
+        self.APIUrl = 'https://eu56.chat-api.com/instance178096/'
+        self.token = 'yh6ty89tj7xpjdvz'
         self.last_command = "last command"
 
     def get_song(self, path):
@@ -355,11 +357,23 @@ eg. group My Music Group
         elif text.lower().startswith('diagnose'):
             user_response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
+            # if user has not finished registration, get the question they should be answering and ask them
+            if not db.getFinishedRegistration(get_phone(message)):
+                print("user has not finished registering. Getting last question asked")
+                nextQ = db.getQuestion(db.getCurrentCount(get_phone(message)))
+                if 'our system' in nextQ:
+                    nextQ += '\n1 - Yes\n2 - No'
+                elif '[male/female]' in nextQ:
+                    nextQ += '\n1 - Yes\n2 - No'
+                return self.send_message(sid, nextQ)
+
             if not user_response:
-                print(f'response is "start"')
-                user_response = 'start'
-            respons = self.diagnose(message['author'], sid, user_response)
-            return respons
+                delete_diagnosis_user(message)
+                resp = self.diagnose(message['author'], sid, 'ok')
+            else:
+                delete_diagnosis_user(message)
+                resp = self.diagnose(message['author'], sid, user_response)
+            return resp
         else:
             if text == '0':
                 if db.getLastCommand(sid) == 'diagnose':
