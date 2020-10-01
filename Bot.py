@@ -69,6 +69,7 @@ class WaBot:
         self.message = json
         self.APIUrl = 'https://eu122.chat-api.com/instance177295/'
         self.token = 'hyw554es46ksmsck'
+        # -----TESTING URL AND TOKEN ----
         # self.APIUrl = 'https://eu56.chat-api.com/instance178096/'
         # self.token = 'yh6ty89tj7xpjdvz'
         self.last_command = "last command"
