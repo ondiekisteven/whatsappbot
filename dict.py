@@ -10,6 +10,7 @@ translator = Translator()
 
 language_code = [
         'en',
+        'sw',
         'hi',
         'es',
         'fr',
@@ -25,6 +26,7 @@ language_code = [
 ]
 languages_list = [
     'English',
+    'Kiswahili',
     'Hindi',
     'Spanish',
     'French',
@@ -47,13 +49,25 @@ def get_languages_as_text(languages):
     return text
 
 
+def parse_meaning(result: dict):
+    final_text = ''
+    m_keys = result.keys()
+    for key in m_keys:
+        interim_text = f"--{key}--\n"
+        for item in result[key]:
+            interim_text += '+ ' + item + "\n"
+        final_text += interim_text
+
+    return final_text
+
+
 def meaningSynonym(word):
+    word = word.split(' ')[0]
+    print(word)
     # word = input('Enter a word or words separated by space to get meaning: ')
-    many = word.split()
     res = ''
-    for i in many:
-        res += f'MEANING: {dictionary.meaning(i)}\n\n\n'
-        res += f'SYNONYM: {dictionary.synonym(i)}\n\n'
+    res += f'MEANING: {parse_meaning(dictionary.meaning(word))}\n\n\n'
+    res += f'SYNONYM: {parse_meaning(dictionary.synonym(word))}\n\n'
 
     return res
 
