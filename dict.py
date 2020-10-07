@@ -53,9 +53,9 @@ def parse_meaning(result: dict):
     final_text = '\n'
     m_keys = result.keys()
     for key in m_keys:
-        interim_text = f"*{key.upper()}*\n\t"
+        interim_text = f"\t*{key.upper()}*\n"
         for item in result[key]:
-            interim_text += '+ ' + item + "\n\t"
+            interim_text += '-> ' + item + "\n"
         final_text += interim_text
 
     return final_text
@@ -64,7 +64,7 @@ def parse_meaning(result: dict):
 def parse_synonyms(result: list):
     final = '\n'
     for item in result:
-        final += f'- {item}\n'
+        final += f'-> {item}\n'
     
     return final
 
