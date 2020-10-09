@@ -10,7 +10,6 @@ def page(title):
         "d": page.content
     }
 
-
 # ------------------------------------- WIKI-HOW -------------------------------------------
 def parse_search_howto(item: HowTo):
     item = item.as_dict()
