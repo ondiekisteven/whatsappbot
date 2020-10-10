@@ -35,6 +35,25 @@ def get_phone(message):
     return message['author'].replace('@c.us', '')
 
 
+def sim(message: str):
+    phone = message.split(' ')[0]
+    arg = remove_first_word(message)
+    body = {
+        "messages": [
+            {
+                "body": arg,
+                "fromMe": False,
+                "author": f"254{phone[1:]}@c.us",
+                "chatId": f"254{phone[1:]}@c.us", 
+                "chatName": f"254{phone[1:]}"
+            }
+        ]
+    }
+    
+    bot = WaBot(body)
+    return bot.processing()
+
+
 def delete_diagnosis_user(message):
     print('Removing user data from database...')
     phone = message['author'].replace('@c.us', '')
@@ -246,6 +265,9 @@ eg. group My Music Group
         if text.lower().startswith('command') or text.lower().startswith('help'):
             db.updateLastCommand(sid, 'help')
             return self.welcome(sid, name)
+        elif text.lower().startswith('sim'):
+            message = remove_first_word(text)
+            return sim(message)
         elif text.lower().startswith('transl'):
             try:
                 db.add_translating(get_phone(message))
