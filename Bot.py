@@ -30,8 +30,8 @@ adverts = [
 ]
 
 heroku_url = os.getenv('HEROKU_URL')
-api_url = os.environ('API_URL')
-api_token = os.environ('API_TOKEN')
+api_url = os.getenv('API_URL')
+api_token = os.getenv('API_TOKEN')
 
 
 def get_phone(message):
