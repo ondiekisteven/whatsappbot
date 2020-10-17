@@ -30,6 +30,9 @@ adverts = [
 ]
 
 heroku_url = os.getenv('HEROKU_URL')
+api_url = os.getenv('API_URL')
+api_token = os.getenv('API_TOKEN')
+
 
 def get_phone(message):
     return message['author'].replace('@c.us', '')
@@ -87,8 +90,8 @@ class WaBot:
 
     def __init__(self, json):
         self.message = json
-        self.APIUrl = 'https://eu109.chat-api.com/instance184186/'
-        self.token = "rw6ygr5pf6ha3z29"
+        self.APIUrl = api_url
+        self.token = api_token
         self.last_command = "last command"
 
     def get_song(self, path):
