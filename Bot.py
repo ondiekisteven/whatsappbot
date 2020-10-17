@@ -13,20 +13,30 @@ from spotdl.command_line.core import Spotdl
 from dict import meaningSynonym, transFr, translateWord, get_languages_as_text, languages_list, language_code
 
 adverts = [
-    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'If the bot is not responsive, text Sonia @ +254771816217 and get the same services',
     'Audio downloads are not stable yet, Dont download many songs in a short time, it will crash the bot',
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'This bot can also be found here> +254771816217',
     'Remember whatsapp has a size limit. Therefore, dont download dj mixes and other big files, They wont be sent here',
-    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
-    'Lyrics are not guaranteed to be exactly as you wanted. Most songs\' lyrics are not recorded.',
-    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'You can now get the same services from Sonia: +254771816217',
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'This bot can also be found here> +254771816217',
+    'You can now get the same services from Sonia: +254771816217',
     'The bot downloads songs from spotify and youtube. If we didnt find your song, its probably not in youtube yet',
+    'This bot can also be found here> +254771816217',
     'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
-    'If you have trouble using the bot, contact the developer here: 0790670635. ',
+    'You can now get the same services from Sonia: +254771816217',
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'This bot can also be found here> +254771816217',
+    'If the bot is not responsive, text Sonia @ +254771816217 and get the same services',
     'The bot is under testing, some features may not work perfect, be patient with them',
-    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'You can now get the same services from Sonia: +254771816217',
     'If you want to join in developing the bot, contact here: 0790670635',
-    'Sometimes audios can take up to one minute to deliver on your phone, be patient',
-    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'If the bot is not responsive, text Sonia @ +254771816217 and get the same services',
+    'You can now get the same services from Sonia: +254771816217',
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
 ]
 
 heroku_url = os.getenv('HEROKU_URL')
