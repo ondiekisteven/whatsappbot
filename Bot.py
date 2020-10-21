@@ -14,29 +14,38 @@ from dict import meaningSynonym, transFr, translateWord, get_languages_as_text, 
 
 adverts = [
     'If the bot is not responsive, text Sonia @ +254771816217 and get the same services',
+    'You can now get the same services from: +254771816217',
     'Audio downloads are not stable yet, Dont download many songs in a short time, it will crash the bot',
-    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
     'This bot can also be found here> +254771816217',
     'Remember whatsapp has a size limit. Therefore, dont download dj mixes and other big files, They wont be sent here',
+    'You can now get the same services from: +254771816217',
     'You can now get the same services from Sonia: +254771816217',
-    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
     'This bot can also be found here> +254771816217',
-    'You can now get the same services from Sonia: +254771816217',
+    'You can now get the same services from: +254771816217',
     'The bot downloads songs from spotify and youtube. If we didnt find your song, its probably not in youtube yet',
+    'You can now get the same services from: +254771816217',
     'This bot can also be found here> +254771816217',
     'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
     'You can now get the same services from Sonia: +254771816217',
-    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
-    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
+    'You can now get the same services from: +254771816217',
+    'You can now get the same services from: +254771816217',
     'This bot can also be found here> +254771816217',
     'If the bot is not responsive, text Sonia @ +254771816217 and get the same services',
     'The bot is under testing, some features may not work perfect, be patient with them',
     'You can now get the same services from Sonia: +254771816217',
+    'You can now get the same services from: +254771816217',
     'If you want to join in developing the bot, contact here: 0790670635',
-    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
+    'You can now get the same services from: +254771816217',
     'If the bot is not responsive, text Sonia @ +254771816217 and get the same services',
     'You can now get the same services from Sonia: +254771816217',
-    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services'
+    'You can now get the same services from: +254771816217',
+    'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
+    'You can now get the same services from: +254771816217',
 ]
 
 heroku_url = os.getenv('HEROKU_URL')
@@ -347,7 +356,7 @@ eg. group My Music Group
 
             if song == 'empty directory':
                 db.delete_downloading(sid)
-                return self.send_message(sid, 'Error downloading song. Try again later.')
+                return self.send_message(sid, 'Error downloading song. Try downloading using this -> +254771816217\n\n')
             # return song
             print('path not empty')
             path = f'{heroku_url}files/music/{get_phone(message)}/{song}'
@@ -361,7 +370,7 @@ eg. group My Music Group
                 selected_adv = random.choice(adverts)
                 txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
                 return self.send_message(sid, txt)
-            return self.send_message(sid, f'Song not found in directory music/{get_phone(message)}/{song}')
+            return self.send_message(sid, f'Song not found in directory music/{get_phone(message)}/{song} \n\n {random.choice(adverts)}')
         elif text.lower().startswith('lyrics'):
             # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
             self.send_message(sid, 'Searching lyrics...')
