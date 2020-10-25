@@ -10,7 +10,6 @@ certifi==2020.6.20
 chardet==3.0.4
 click==7.1.2
 coloredlogs==14.0
-contextvars==2.4
 Flask==1.1.2
 futures==3.1.1
 googletrans==3.0.0
@@ -25,8 +24,6 @@ httpx==0.13.3
 humanfriendly==8.2
 hyperframe==5.2.0
 idna==2.10
-immutables==0.14
-importlib-metadata==2.0.0
 infermedica-api==0.1.1
 itsdangerous==1.1.0
 Jinja2==2.11.2
@@ -47,7 +44,6 @@ pytube3==9.6.4
 pytz==2020.1
 pywikihow==0.5.7
 PyYAML==5.3.1
-rapidfuzz==0.12.4
 redis==3.5.3
 requests==2.24.0
 requests-cache==0.5.2
@@ -56,7 +52,7 @@ rq==1.5.1
 six==1.15.0
 sniffio==1.1.0
 soupsieve==2.0.1
-spotdl==3.1.2
+spotdl==2.2.2
 spotipy==2.13.0
 timeloop==1.0.2
 tqdm==4.48.2
@@ -70,4 +66,3 @@ Werkzeug==1.0.1
 wikipedia==1.4.0
 yarl==1.5.1
 youtube-dl==2020.7.28
-zipp==3.2.0

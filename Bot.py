@@ -328,7 +328,7 @@ eg. group My Music Group
                 return self.send_message(sid, rht)
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
-            return self.send_message(sid, "Audio is not working for now because Youtube have updated their site, We are working to make audios availabe asap")
+
             search = remove_first_word(text)
             if not search:
                 return self.send_message(sid, 'To download audio, write audio then the name of the song or audio then a youtube link.')
