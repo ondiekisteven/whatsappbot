@@ -16,7 +16,6 @@ def getUserById(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute('SELECT * FROM users WHERE tg_id=%s' % tg_id)
-    cursor.close()
     return cursor.fetchone()
 
 
@@ -26,8 +25,6 @@ def saveUser(tg_id, first_name, last_name):
     cursor.execute(f'INSERT INTO users(tg_id, first_name, last_name) VALUES ("%s", "%s", "%s")' %
                    (tg_id, first_name, last_name))
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def saveAge(tg_id, age):
@@ -43,10 +40,7 @@ def getAge(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute('SELECT age FROM users WHERE tg_id=%s' % tg_id)
-    data = cursor.fetchone()[0]
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()[0]
 
 
 def saveGender(tg_id, gender):
@@ -62,10 +56,7 @@ def getGender(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute('SELECT sex FROM users WHERE tg_id=%s' % tg_id)
-    data = cursor.fetchone()[0]
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()[0]
 
 
 def saveFirstName(tg_id, first_name):
@@ -91,28 +82,20 @@ def saveControlBoard(tg_id, count):
     cursor = db.cursor()
     cursor.execute('INSERT INTO control_board (tg_id, count) VALUES(%s, %s)' % (tg_id, count))
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def getCurrentCount(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute("SELECT * from control_board where tg_id = %s order  by `count` desc limit 1" % tg_id)
-    data = cursor.fetchone()[2]
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()[2]
 
 
 def getQuestion(question_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute('SELECT text FROM registration_questions WHERE question_id=%s' % question_id)
-    data = cursor.fetchone()[0]
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()[0]
 
 
 def saveOnGoingUser(tg_id):
@@ -120,17 +103,13 @@ def saveOnGoingUser(tg_id):
     cursor = db.cursor()
     cursor.execute('INSERT INTO on_going_diagnosis (tg_id) VALUES (%s)' % tg_id)
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def getOnGoingUser(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute('SELECT * FROM on_going_diagnosis WHERE tg_id = %s' % tg_id)
-    data = cursor.fetchone()
-    cursor.close()
-    db.close()
+    return cursor.fetchone()
 
 
 def saveSymptom(tg_id, s_id, c_id):
@@ -138,22 +117,17 @@ def saveSymptom(tg_id, s_id, c_id):
     cursor = db.cursor()
     cursor.execute(f'INSERT INTO user_symptoms (tg_id, symptom_id, choice_id) VALUES({tg_id}, "{s_id}", "{c_id}")')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def saveCurrentQuestion(tg_id, q_id, q_text):
-    db = getDb()
     try:
+        db = getDb()
         cursor = db.cursor()
         cursor.execute('INSERT INTO current_question (tg_id, question_id, question_text) VALUES (%s, "%s", "%s")' %
                        (tg_id, q_id, q_text))
         db.commit()
     except pymysql.err.IntegrityError:
         print({'Error': 'User record exists, skipping...'})
-    finally:
-        cursor.close()
-        db.close()
 
 
 def updateCurrentQuestion(tg_id, q_id, q_text):
@@ -162,18 +136,13 @@ def updateCurrentQuestion(tg_id, q_id, q_text):
     cursor.execute('UPDATE current_question SET question_id = "%s", question_text = "%s" WHERE tg_id = %s'
                    % (q_id, q_text, tg_id))
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def getCurrentQuestion(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT * FROM current_question WHERE tg_id = {tg_id}')
-    data = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()
 
 
 def deleteCurrentQuestion(tg_id):
@@ -181,8 +150,6 @@ def deleteCurrentQuestion(tg_id):
     cursor = db.cursor()
     cursor.execute(f'DELETE FROM current_question WHERE  tg_id = {tg_id}')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def saveInitialSymptom(tg_id, symptom_id, choice_id, initial):
@@ -192,18 +159,13 @@ def saveInitialSymptom(tg_id, symptom_id, choice_id, initial):
                    f'"{symptom_id}", "{choice_id}", {initial})')
     saveCurrentQuestion(tg_id, "", "")
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def getSymptoms(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT * FROM user_symptoms WHERE tg_id = {tg_id}')
-    data = cursor.fetchall()
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchall()
 
 
 def saveFinishedRegistration(tg_id):
@@ -211,18 +173,13 @@ def saveFinishedRegistration(tg_id):
     cursor = db.cursor()
     cursor.execute(f'INSERT INTO finished_registrations(tg_id) VALUE ({tg_id})')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def getFinishedRegistration(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT * FROM finished_registrations WHERE tg_id = {tg_id}')
-    data = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()
 
 
 def saveCurrentSymptom(tg_id):
@@ -230,8 +187,6 @@ def saveCurrentSymptom(tg_id):
     cursor = db.cursor()
     cursor.execute(f'INSERT INTO current_symptoms(tg_id) VALUE ({tg_id})')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def updateCurrentSymptom(tg_id, symptoms):
@@ -239,18 +194,13 @@ def updateCurrentSymptom(tg_id, symptoms):
     cursor = db.cursor()
     cursor.execute(f'UPDATE current_symptoms SET symptoms = "{symptoms}" WHERE tg_id = {tg_id}')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def getCurrentSymptoms(tg_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT * FROM current_symptoms WHERE tg_id = {tg_id}')
-    data = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()
 
 
 def deleteUser(tg_id):
@@ -258,8 +208,6 @@ def deleteUser(tg_id):
     cursor = db.cursor()
     cursor.execute(f'DELETE FROM users WHERE tg_id = {tg_id}')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def deleteUserSymptoms(tg_id):
@@ -267,8 +215,6 @@ def deleteUserSymptoms(tg_id):
     cursor = db.cursor()
     cursor.execute(f'DELETE FROM user_symptoms WHERE tg_id = {tg_id}')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def deleteUserCurrentSymptom(tg_id):
@@ -276,8 +222,6 @@ def deleteUserCurrentSymptom(tg_id):
     cursor = db.cursor()
     cursor.execute(f'DELETE FROM current_symptoms WHERE tg_id = {tg_id}')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def deleteUserOngoingDiagnosis(tg_id):
@@ -285,8 +229,6 @@ def deleteUserOngoingDiagnosis(tg_id):
     cursor = db.cursor()
     cursor.execute(f'DELETE FROM on_going_diagnosis WHERE tg_id = {tg_id}')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def addAllowedBotChat(chat_id, chat_name):
@@ -302,20 +244,14 @@ def getAllowedBotChat():
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT * FROM allowed_bot_chats')
-    data = cursor.fetchall()
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchall()
 
 
 def checkAllowedChatBot(chat_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT * FROM allowed_bot_chats WHERE chat_id = "{chat_id}"')
-    data = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()
 
 
 def deleteFromAllowedChat(chat_id):
@@ -323,8 +259,6 @@ def deleteFromAllowedChat(chat_id):
     cursor = db.cursor()
     cursor.execute(f'DELETE FROM allowed_bot_chats WHERE chat_id="{chat_id}"')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def addLastCommand(chat_id, command):
@@ -332,8 +266,6 @@ def addLastCommand(chat_id, command):
     cursor = db.cursor()
     cursor.execute(f"INSERT INTO last_command (chat_id, command) VALUES ('{chat_id}', '{command}') ")
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def updateLastCommand(chat_id, new_command):
@@ -341,8 +273,6 @@ def updateLastCommand(chat_id, new_command):
     cursor = db.cursor()
     cursor.execute(f'UPDATE last_command SET command = "{new_command}" WHERE chat_id = "{chat_id}"')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def getLastCommand(chat_id):
@@ -350,10 +280,7 @@ def getLastCommand(chat_id):
     cursor = db.cursor()
     cursor.execute(f'SELECT command FROM last_command WHERE chat_id = "{chat_id}"')
     com = cursor.fetchone()
-    data = com[0] or 'join'
-    cursor.close()
-    db.close()
-    return data
+    return com[0] or 'join'
 
 
 def add_downloading_user(chat_id):
@@ -361,8 +288,6 @@ def add_downloading_user(chat_id):
     cursor = db.cursor()
     cursor.execute(f'INSERT INTO downloading_users (chat_id) VALUE ("{chat_id}")')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def is_downloading(chat_id):
@@ -393,8 +318,6 @@ def add_translating(chat_id, text=None, to_lang=None):
     cursor = db.cursor()
     cursor.execute(f'INSERT INTO translating_text(chat_id) VALUES ({chat_id})')
     db.commit()
-    cursor.close()
-    db.close()
 
 
 def update_translating(chat_id, text=None):
@@ -410,10 +333,7 @@ def get_translating_text(chat_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT * FROM translating_text WHERE chat_id = {chat_id}')
-    data = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()
 
 
 # ------------------------------------ HOW-TO SEARCH HANDLER -------------------------------
@@ -435,7 +355,4 @@ def get_how_to_search(chat_id):
     db = getDb()
     cursor = db.cursor()
     cursor.execute(f'SELECT * FROM howto_search_term WHERE chat_id = "{chat_id}"')
-    data = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return data
+    return cursor.fetchone()
