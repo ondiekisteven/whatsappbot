@@ -1,6 +1,7 @@
 import requests
 from json import dumps, loads
 
+from dl import *
 from pymysql import IntegrityError
 from genius import Genius
 from whatsappHandler import register, remove_first_word, is_group
@@ -327,49 +328,59 @@ eg. group My Music Group
                 return self.send_message(sid, rht)
         # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
-            # return self.send_message(sid, "Audio is not working for now because Youtube have updated their site, We are working to make audios availabe asap. Sorry for inconvenience caused")
             search = remove_first_word(text)
             if not search:
-                return self.send_message(sid, 'To download audio, write audio then the name of the song or audio then a youtube link.')
-            # return self.send_message(sid, 'audios are not working for now, type help to get other services')
-            path = f'music/{get_phone(message)}/'
-            if not os.path.exists(path):
-                print("[*] Directory not found, Creating...")
-                os.mkdir(path)
-                print(f"[x] Created directory in {path}")
-            if db.is_downloading(sid):
-                try:
-                    files = self.get_song(path)
-                    if files == 'empty directory':
-                        db.delete_downloading(sid)
-                    else:
-                        db.delete_downloading(sid)
-                        return self.send_message(sid, 'Another song is downloading. Try again after 20 seconds. ')
-                except FileNotFoundError:
-                    os.mkdir(path)
-            self.send_message(sid, "Downloading your song... please wait")
-            db.add_downloading_user(sid)
+                return self.send_message(sid,
+                                         'To download audio, write audio then the name of the song or audio then a '
+                                         'youtube link.')
+            db.updateLastCommand(sid, 'audio')
+            ytsearch = MySearch(search, get_phone(message)).get_printable()
+            return self.send_message(sid, ytsearch)
 
-            path = self.download_audio(search, get_phone(message))
-            song = self.get_song(path)
-
-            if song == 'empty directory':
-                db.delete_downloading(sid)
-                return self.send_message(sid, 'Error downloading song. Try downloading using this -> +254771816217\n\n')
-            # return song
-            print('path not empty')
-            path = f'{heroku_url}files/music/{get_phone(message)}/{song}'
-            if os.path.exists(f'music/{get_phone(message)}/{song}'):
-                print(f"Song found in music/{get_phone(message)}/{song}")
-                audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                print(f'sending audio -> {audio_sending}')
-                os.remove(f'music/{get_phone(message)}/{song}')
-                db.delete_downloading(sid)
-                db.updateLastCommand(sid, 'audio')
-                selected_adv = random.choice(adverts)
-                txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
-                return self.send_message(sid, txt)
-            return self.send_message(sid, f'Song not found in directory music/{get_phone(message)}/{song} \n\n {random.choice(adverts)}')
+        # elif text.lower().startswith('audio'):
+        #     # return self.send_message(sid, "Audio is not working for now because Youtube have updated their site, We are working to make audios availabe asap. Sorry for inconvenience caused")
+        #     search = remove_first_word(text)
+        #     if not search:
+        #         return self.send_message(sid, 'To download audio, write audio then the name of the song or audio then a youtube link.')
+        #     # return self.send_message(sid, 'audios are not working for now, type help to get other services')
+        #     path = f'music/{get_phone(message)}/'
+        #     if not os.path.exists(path):
+        #         print("[*] Directory not found, Creating...")
+        #         os.mkdir(path)
+        #         print(f"[x] Created directory in {path}")
+        #     if db.is_downloading(sid):
+        #         try:
+        #             files = self.get_song(path)
+        #             if files == 'empty directory':
+        #                 db.delete_downloading(sid)
+        #             else:
+        #                 db.delete_downloading(sid)
+        #                 return self.send_message(sid, 'Another song is downloading. Try again after 20 seconds. ')
+        #         except FileNotFoundError:
+        #             os.mkdir(path)
+        #     self.send_message(sid, "Downloading your song... please wait")
+        #     db.add_downloading_user(sid)
+        #
+        #     path = self.download_audio(search, get_phone(message))
+        #     song = self.get_song(path)
+        #
+        #     if song == 'empty directory':
+        #         db.delete_downloading(sid)
+        #         return self.send_message(sid, 'Error downloading song. Try downloading using this -> +254771816217\n\n')
+        #     # return song
+        #     print('path not empty')
+        #     path = f'{heroku_url}files/music/{get_phone(message)}/{song}'
+        #     if os.path.exists(f'music/{get_phone(message)}/{song}'):
+        #         print(f"Song found in music/{get_phone(message)}/{song}")
+        #         audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+        #         print(f'sending audio -> {audio_sending}')
+        #         os.remove(f'music/{get_phone(message)}/{song}')
+        #         db.delete_downloading(sid)
+        #         db.updateLastCommand(sid, 'audio')
+        #         selected_adv = random.choice(adverts)
+        #         txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
+        #         return self.send_message(sid, txt)
+        #     return self.send_message(sid, f'Song not found in directory music/{get_phone(message)}/{song} \n\n {random.choice(adverts)}')
         elif text.lower().startswith('lyrics'):
             # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
             self.send_message(sid, 'Searching lyrics...')
@@ -464,4 +475,33 @@ eg. group My Music Group
                                                       'disturbing you')
                 except ValueError:
                     return self.send_message(sid, 'Invalid choice, Please try again')
+            elif db.getLastCommand(sid) == 'audio':
+                try:
+                    choice = int(text)
+                    if choice not in range(1, 6):
+                        return self.send_message(sid, 'Invalid choice, Please try again')
+
+                except ValueError:
+                    return self.send_message(sid, 'Invalid choice, Please try again')
+                self.send_message(sid, "Downloading your song... please wait")
+                db.add_downloading_user(sid)
+                path = Downloader(get_phone(message), choice).download_audio()
+                audio_name = Converter(path).convert()
+                path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
+                folder = f'music/{get_phone(message)}'
+                if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
+                    print(f"Song found in {folder}/{audio_name}")
+                    audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+                    print(f'sending audio -> {audio_sending}')
+                    for file in os.listdir(folder):
+                        file_path = os.path.join(folder, file)
+                        os.unlink(file_path)
+                    db.delete_downloading(sid)
+                    db.updateLastCommand(sid, 'audio')
+                    selected_adv = random.choice(adverts)
+                    txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
+                    return self.send_message(sid, txt)
+                return self.send_message(sid,
+                                         f'Song not found in directory music/{get_phone(message)}/{audio_name} \n\n '
+                                         f'{random.choice(adverts)}')
             return ''

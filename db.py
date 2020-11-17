@@ -236,6 +236,8 @@ def addAllowedBotChat(chat_id, chat_name):
     cursor = db.cursor()
     cursor.execute(f'INSERT INTO allowed_bot_chats (chat_id, chat_name) VALUES ("{chat_id}", "{chat_name}")')
     db.commit()
+    cursor.close()
+    db.close()
 
 
 def getAllowedBotChat():
@@ -293,6 +295,8 @@ def is_downloading(chat_id):
     cursor = db.cursor()
     cursor.execute(f"SELECT chat_id FROM downloading_users WHERE chat_id = '{chat_id}'")
     data = cursor.fetchone()
+    cursor.close()
+    db.close()
     if data:
         return True
     else:
@@ -304,6 +308,8 @@ def delete_downloading(chat_id):
     cursor = db.cursor()
     cursor.execute(f"DELETE FROM downloading_users WHERE chat_id = '{chat_id}'")
     db.commit()
+    cursor.close()
+    db.close()
 
 
 # --------------------------- TRANSLATION HANDLER ------------------------
