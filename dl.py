@@ -85,8 +85,6 @@ class Downloader(DlSelector):
     def __init__(self, sid, choice: int):
         super().__init__(sid, choice)
         self.url = self.get_choice_url()
-        self.sid = sid
-        self.user_directory = f'music/{self.sid}'
 
     def download_audio(self):
         yt = YouTube(self.url)

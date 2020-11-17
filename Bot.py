@@ -48,7 +48,8 @@ adverts = [
     'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
     'You can now get the same services from: +254771816217',
 ]
-
+os.environ["API_URL"] = 'https://eu218.chat-api.com/instance195919/'
+os.environ["API_TOKEN"] = 'zw8rs2246vp2ocaw'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
@@ -485,9 +486,11 @@ eg. group My Music Group
                     return self.send_message(sid, 'Invalid choice, Please try again')
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
-                path = Downloader(get_phone(message), choice).download_audio()
+                downloader = Downloader(get_phone(message), choice)
+                path = downloader.download_audio()
                 audio_name = Converter(path).convert()
-                path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
+                # path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
+                path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
                 folder = f'music/{get_phone(message)}'
                 if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
                     print(f"Song found in {folder}/{audio_name}")
@@ -495,7 +498,9 @@ eg. group My Music Group
                     print(f'sending audio -> {audio_sending}')
                     for file in os.listdir(folder):
                         file_path = os.path.join(folder, file)
-                        os.unlink(file_path)
+                        if file_path.startswith('YOUTUBE_LINKS'):
+                            continue
+                        # os.unlink(file_path)
                     db.delete_downloading(sid)
                     db.updateLastCommand(sid, 'audio')
                     selected_adv = random.choice(adverts)
