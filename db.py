@@ -3,13 +3,13 @@ from pymysql import IntegrityError
 from loadConf import get_database_host, get_database_user, get_database_pass
 
 
-def getDb():
-    db = pymysql.connect(get_database_host(), get_database_user(), get_database_pass(), "heroku_2c9ec56dd042196")
-    return db
-
 # def getDb():
-#     db = pymysql.connect("localhost", "root", "", "infermedica")
+#     db = pymysql.connect(get_database_host(), get_database_user(), get_database_pass(), "heroku_2c9ec56dd042196")
 #     return db
+
+def getDb():
+    db = pymysql.connect("localhost", "root", "", "infermedica")
+    return db
 
 
 def getUserById(tg_id):

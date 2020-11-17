@@ -48,8 +48,8 @@ adverts = [
     'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
     'You can now get the same services from: +254771816217',
 ]
-# os.environ["API_URL"] = 'https://eu218.chat-api.com/instance195919/'
-# os.environ["API_TOKEN"] = 'zw8rs2246vp2ocaw'
+os.environ["API_URL"] = 'https://eu218.chat-api.com/instance195919/'
+os.environ["API_TOKEN"] = 'zw8rs2246vp2ocaw'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
@@ -489,8 +489,8 @@ eg. group My Music Group
                 downloader = Downloader(get_phone(message), choice)
                 path = downloader.download_audio()
                 audio_name = Converter(path).convert()
-                path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
-                # path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
+                # path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
+                path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
                 folder = f'music/{get_phone(message)}'
                 if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
                     print(f"Song found in {folder}/{audio_name}")
