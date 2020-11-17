@@ -47,8 +47,8 @@ PyDictionary==2.0.1
 PyJWT==1.7.1
 PyMySQL==0.10.0
 pyreadline==2.1
-pytube @ git+https://github.com/nficano/pytube@b0434113a03d0ea2982e42f43dc8cae63e3793ff
 pytube3==9.6.4
+pytubeX==0.1.4
 pytz==2020.1
 pywikihow==0.5.7
 PyYAML==5.3.1
