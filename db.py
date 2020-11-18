@@ -152,7 +152,7 @@ def saveCurrentQuestion(tg_id, q_id, q_text):
                        (tg_id, q_id, q_text))
         db.commit()
     except pymysql.err.IntegrityError:
-        print({'Error': 'User record exists, skipping...'}
+        print({'Error': 'User record exists, skipping...'})
     finally:
         cursor.close()
         db.close()
