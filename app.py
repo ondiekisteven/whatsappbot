@@ -4,6 +4,8 @@ import Bot
 from sendQueue import to_queue
 from json import dumps
 import tasks
+from dict import find_links, ACCEPTED_LINKS, VERIFIED_USERS
+from whatsappHandler import is_group
 
 app = Flask(__name__)
 
@@ -34,6 +36,7 @@ def hello_world():
 
 @app.route('/whatsapp/chatapi/messages/', methods=['POST'])
 def receive():
+    print("processing message")
     messages = request.json['messages']
     allowed_chats = getAllowedChats()
     for message in messages:
@@ -43,8 +46,21 @@ def receive():
 
         if message['body'].lower() == 'join bot':
             return save_chat(bot, message)
+
         elif message['chatId'] in allowed_chats and not message['fromMe']:
-            # tasks.work.delay(message)
+            allowed_groups = ['254745021668-1599248192@g.us', '254745021668-1605898758@g.us']
+            print(f"{message['chatId']}")
+            if message['chatId'] in allowed_groups:
+                if is_group(message['chatId']):
+                    text = message['body']
+                    links = find_links(text)
+                    if links:
+                        for link in links:
+                            if link not in ACCEPTED_LINKS and message['author'] not in VERIFIED_USERS:
+                                bot.send_message(message['chatId'], "Links found in message. Removing user...")
+                                return bot.remove_participant(message['chatId'], participant_id=message['author'])
+                            else:
+                                print("link in allowed links")
             return bot.processing()
         else:
             return ""

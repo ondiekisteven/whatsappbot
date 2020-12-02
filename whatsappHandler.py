@@ -314,10 +314,10 @@ def save_chat(bot, message):
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
         db.addLastCommand(str(message['chatId']), 'join')
-        bot.send_message(message['chatId'], text)
-        bot.send_message(message['chatId'], '*Please note the bot is not perfect yet, its being developed still. If '
-                                            'it doesnt respond, reply with `help` to get other services then try again '
-                                            'later*')
-        sleep(1)
+        # bot.send_message(message['chatId'], text)
+        # bot.send_message(message['chatId'], '*Please note the bot is not perfect yet, its being developed still. If '
+        #                                     'it doesnt respond, reply with `help` to get other services then try again '
+        #                                     'later*')
+        # sleep(1)
 
-        return bot.send_message(message['chatId'], x)
+        return bot.send_message(message['chatId'], "User registered successfully")

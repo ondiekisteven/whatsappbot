@@ -4,6 +4,26 @@ try:
     from googletrans import Translator
 except Exception as e:
     print('Modules missing {}'.format(e))
+import re
+
+ACCEPTED_LINKS = [
+    'https://auctionx.herokuapp.com/',
+    'https://chat.whatsapp.com/INP90Mpbh8NHPk3SNOoAFi',
+]
+
+VERIFIED_USERS = [
+    # '254790670635@c.us',
+    '254797000135@c.us',
+    '254704661895@c.us',
+]
+
+def find_links(string):
+    # findall() has been used
+    # with valid conditions for urls in string
+    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+    url = re.findall(regex, string)
+    return [x[0] for x in url]
+
 
 dictionary = PyDictionary()
 translator = Translator()

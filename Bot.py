@@ -11,7 +11,7 @@ import db
 import random
 from wiki import page, search_howto, search_howto_index, random_how_to
 from spotdl.command_line.core import Spotdl
-from dict import meaningSynonym, transFr, translateWord, get_languages_as_text, languages_list, language_code
+from dict import meaningSynonym, transFr, find_links, ACCEPTED_LINKS, get_languages_as_text, languages_list, language_code
 
 adverts = [
     'If the bot is not responsive, text Sonia @ +254771816217 and get the same services',
@@ -48,8 +48,8 @@ adverts = [
     'Good news! i have a sister Sonia. She can do the same things like me. Text her here +254771816217 to get the same services',
     'You can now get the same services from: +254771816217',
 ]
-# os.environ["API_URL"] = 'https://eu218.chat-api.com/instance195919/'
-# os.environ["API_TOKEN"] = 'zw8rs2246vp2ocaw'
+os.environ["API_URL"] = 'https://eu68.chat-api.com/instance201713/'
+os.environ["API_TOKEN"] = '127dt61io1yns34t'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
@@ -272,12 +272,11 @@ eg. group My Music Group
         elif participant_id:
             data['participantChatId'] = participant_id
         else:
-            return 'Missing user to add'
-        ans = self.send_requests('addGroupParticipant', data)
-        print(ans)
+            return 'Missing user to remove'
+        ans = self.send_requests('removeGroupParticipant', data)
         ans = loads(ans)
         
-        return self.send_message(group_id, ans['message'])
+        return self.send_message(group_id, ans['message'] + "\nReason: Sending message with links")
 
     def processing(self):
         message = self.message
@@ -285,6 +284,13 @@ eg. group My Music Group
 
         sid = message['chatId']
         name = message['author']
+        links = find_links(text)
+
+        if links:
+            for link in links:
+                if link not in ACCEPTED_LINKS:
+                    return self.remove_participant(sid, )
+
         if text.lower().startswith('command') or text.lower().startswith('help'):
             db.updateLastCommand(sid, 'help')
             return self.welcome(sid, name)
@@ -489,8 +495,8 @@ eg. group My Music Group
                 downloader = Downloader(get_phone(message), choice)
                 path = downloader.download_audio()
                 audio_name = Converter(path).convert()
-                path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
-                # path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
+                # path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
+                path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
                 folder = f'music/{get_phone(message)}'
                 if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
                     print(f"Song found in {folder}/{audio_name}")
