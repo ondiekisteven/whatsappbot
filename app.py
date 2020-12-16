@@ -4,7 +4,7 @@ import Bot
 from sendQueue import to_queue
 from json import dumps
 import tasks
-from dict import find_links, ACCEPTED_LINKS, VERIFIED_USERS
+from dict import find_links, ACCEPTED_LINKS, VERIFIED_USERS, get_tld
 from whatsappHandler import is_group
 
 app = Flask(__name__)
@@ -56,11 +56,11 @@ def receive():
                     links = find_links(text)
                     if links:
                         for link in links:
-                            if link not in ACCEPTED_LINKS and message['author'] not in VERIFIED_USERS:
-                                bot.send_message(message['chatId'], "Links found in message. Removing user...")
-                                return bot.remove_participant(message['chatId'], participant_id=message['author'])
-                            else:
-                                print("link in allowed links")
+                            if get_tld(link) not in ACCEPTED_LINKS:
+                                if link not in ACCEPTED_LINKS and message['author'] not in VERIFIED_USERS:
+                                    bot.send_message(message['chatId'], "Unwanted links found. Removing user.")
+                                    return bot.remove_participant(message['chatId'], participant_id=message['author'])
+
             return bot.processing()
         else:
             return ""

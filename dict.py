@@ -5,9 +5,20 @@ try:
 except Exception as e:
     print('Modules missing {}'.format(e))
 import re
+from urllib.parse import urlparse
+
+
+def get_tld(link):
+    parsed_uri = urlparse(link )
+    return '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+
 
 ACCEPTED_LINKS = [
-    'https://auctionx.herokuapp.com/',
+    'https://youtube.com/'
+    'https://m.youtube.com/'
+    'https://youtu.be/'
+    'https://www.trustfuse.org/',
+    'https://trustfuse.org/',
     'https://chat.whatsapp.com/INP90Mpbh8NHPk3SNOoAFi',
 ]
 
@@ -17,6 +28,7 @@ VERIFIED_USERS = [
     '254726422225@c.us',
     '254704661895@c.us',
 ]
+
 
 def find_links(string):
     # findall() has been used
