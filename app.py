@@ -41,8 +41,6 @@ def receive():
     allowed_chats = getAllowedChats()
     for message in messages:
         bot = Bot.WaBot(message)
-        if not message['fromMe']:
-            print(f'Message from {request.json["messages"][0]["chatName"]}: {request.json["messages"][0]["body"]}')
 
         if message['body'].lower() == 'join bot':
             return save_chat(bot, message)

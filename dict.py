@@ -19,7 +19,21 @@ ACCEPTED_LINKS = [
     'https://youtu.be/'
     'https://www.trustfuse.org/',
     'https://trustfuse.org/',
+    'https://s3.eu-central-1.wasabisys.com/',
     'https://chat.whatsapp.com/INP90Mpbh8NHPk3SNOoAFi',
+    'https://chat.whatsapp.com/Jk3Lbvq6BDpEMcvpkNicer',
+    'https://chat.whatsapp.com/C0j0hF7dnl7HNAtYwwzehd',
+    'https://chat.whatsapp.com/GjZLqIIwHKh7JjzQMqjVg1',
+    'https://chat.whatsapp.com/GDOp9ec0AqrJ3ejpYte8Yk',
+    'https://chat.whatsapp.com/ES5fvzNcXhUL0TsAgd2Tf2',
+    'https://chat.whatsapp.com/HJKCjcJqzWk84MVSRTxmDt',
+    'https://chat.whatsapp.com/INP90Mpbh8NHPk3SNOoAFi',
+    'https://chat.whatsapp.com/IopDTNMYs5JHCh0qwrNaQo',
+    'https://chat.whatsapp.com/Cv0btoePfVuG147t43VDEZ',
+    'https://chat.whatsapp.com/J813vypIJVK7M9P4ZJiNEZ',
+    'https://chat.whatsapp.com/LrSkf3wtaWF0bQ22jx011H',
+    'https://chat.whatsapp.com/KzjP03mNueRFlrSHmWcRST',
+    'https://chat.whatsapp.com/CMw0xd9YcjG3deAaQLwjnL',
 ]
 
 VERIFIED_USERS = [

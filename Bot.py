@@ -257,7 +257,6 @@ eg. group My Music Group
         else:
             return 'Missing user to add'
         ans = self.send_requests('addGroupParticipant', data)
-        print(ans)
         ans = loads(ans)
         
         return self.send_message(group_id, ans['message'])
@@ -301,7 +300,7 @@ eg. group My Music Group
             try:
                 db.add_translating(get_phone(message))
             except IntegrityError:
-                print()
+                pass
             term = remove_first_word(text)
             if term:
                 # user has defined sentence to be translated...
@@ -352,9 +351,7 @@ eg. group My Music Group
             # return self.send_message(sid, 'audios are not working for now, type help to get other services')
             path = f'music/{get_phone(message)}/'
             if not os.path.exists(path):
-                print("[*] Directory not found, Creating...")
                 os.mkdir(path)
-                print(f"[x] Created directory in {path}")
             if db.is_downloading(sid):
                 try:
                     files = self.get_song(path)
