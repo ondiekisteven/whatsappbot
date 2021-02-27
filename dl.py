@@ -3,6 +3,7 @@ from moviepy.editor import *
 import os
 from json import dumps, loads
 
+from youtube_dl import YoutubeDL
 from youtube_search import YoutubeSearch
 #
 # results = YoutubeSearch('alan walker - faded', max_results=3).to_json()
@@ -87,18 +88,21 @@ class Downloader(DlSelector):
         self.url = self.get_choice_url()
 
     def download_audio(self):
-        yt = YouTube(self.url)
-        print(f'[*] downloading song...')
-        downloaded_path = yt.streams.filter(only_audio=True).first().download(self.user_directory)
-        return downloaded_path
+        outtmpl = self.user_directory + '/%(title)s' + '.%(ext)s'
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': outtmpl,
+            'postprocessors': [
+                {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
+                 'preferredquality': '192',
+                 },
+                {'key': 'FFmpegMetadata'},
+            ],
+        }
 
-
-# downloader = Downloader(12345, 1)
-# print(f'downloaded file path: {downloader.download_audio()}')
-
-# yt = YouTube('https://www.youtube.com/watch?v=974iac8LwZY')
-
-# print(yt.streams.filter(only_audio=True).first().download('music/steve'))
+        with YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(self.url, download=True)
+        return info_dict["title"] + ".mp3"
 
 
 class Converter:
@@ -113,17 +117,3 @@ class Converter:
         a_c = AudioFileClip(self.file_path)
         a_c.write_audiofile(self.audio_path)
         return os.path.basename(self.audio_path)
-
-
-# path = "C:\\Users\\steven\\PycharmProjects\\fwhatsapp\\music/12345\\Martin Garrix & Dua Lipa - Scared To Be Lonely (Official Video).mp4"
-# dl = Converter(path)
-# print(dl.convert())
-# converting video to audio
-# file = 'alan.mp4'
-# audio = 'alan.mp3'
-
-# video_clip = VideoFileClip(file)
-# audio_clip = video_clip.audio
-
-# print('[*] converting...')
-# audio_clip.write_audiofile(audio)
