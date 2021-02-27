@@ -25,9 +25,6 @@ eg. _wiki coronavirus_
 4. *how to ...* - how to do something
 eg _how to bake a cake_
 
-5. *translate* - translate sentences to other languages
-e.g. _translate Good morning_
-
 6. *define* - get definition of a term. It has to be just one word.
 eg. define gallery
 

@@ -44,7 +44,7 @@ class MySearch(YoutubeSearch):
         dict_result = self.to_dict()
         result = ''
         for index, item in enumerate(dict_result):
-            result += f'{index + 1}. - {item["title"]}\n'
+            result += f'{index + 1}. - _{item["title"]}_\n\n'
         self.save_to_file(dumps(dict_result))
         return result
 
