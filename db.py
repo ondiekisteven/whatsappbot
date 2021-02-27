@@ -332,7 +332,10 @@ def deleteFromAllowedChat(chat_id):
 def addLastCommand(chat_id, command):
     db = getDb()
     cursor = db.cursor()
-    cursor.execute(f"INSERT INTO last_command (chat_id, command) VALUES ('{chat_id}', '{command}') ")
+    try:
+        cursor.execute(f"INSERT INTO last_command (chat_id, command) VALUES ('{chat_id}', '{command}') ")
+    except IntegrityError:
+        return
     db.commit()
     cursor.close()
     db.close()
