@@ -310,7 +310,7 @@ def save_chat(bot, message):
     """
     user = db.checkAllowedChatBot(str(message['chatId']))
     if user:
-        return bot.send_message(message['chatId'], 'You are already registered :)')
+        return bot.send_message(message['chatId'], 'You are already registered :). Type help to see commands')
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
         db.addLastCommand(str(message['chatId']), 'join')
@@ -320,4 +320,4 @@ def save_chat(bot, message):
         #                                     'later*')
         # sleep(1)
 
-        return bot.send_message(message['chatId'], "User registered successfully")
+        return bot.send_message(message['chatId'], "User registered successfully. Type help to see commands")
