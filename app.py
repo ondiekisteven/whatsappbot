@@ -36,7 +36,6 @@ def hello_world():
 
 @app.route('/whatsapp/chatapi/messages/', methods=['POST'])
 def receive():
-    print("processing message")
     messages = request.json['messages']
     allowed_chats = getAllowedChats()
     for message in messages:
@@ -46,19 +45,6 @@ def receive():
             return save_chat(bot, message)
 
         elif message['chatId'] in allowed_chats and not message['fromMe']:
-            allowed_groups = ['254745021668-1599248192@g.us', '254745021668-1605898758@g.us']
-            print(f"{message['chatId']}")
-            if message['chatId'] in allowed_groups:
-                if is_group(message['chatId']):
-                    text = message['body']
-                    links = find_links(text)
-                    if links:
-                        for link in links:
-                            if get_tld(link) not in ACCEPTED_LINKS:
-                                if link not in ACCEPTED_LINKS and message['author'] not in VERIFIED_USERS:
-                                    bot.send_message(message['chatId'], "Unwanted links found. Removing user.")
-                                    return bot.remove_participant(message['chatId'], participant_id=message['author'])
-
             return bot.processing()
         else:
             return ""
