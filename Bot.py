@@ -425,10 +425,9 @@ eg. group My Music Group
                         db.updateLastCommand(sid, 'join')
                         return self.send_message(sid, translation)
                     else:
-                        return self.send_message(sid, 'Invalid choice, Please try again. Type 0 to stop me from '
-                                                      'disturbing you')
+                        return ""
                 except ValueError:
-                    return self.send_message(sid, 'Invalid choice, Please try again')
+                    return ""
             elif db.getLastCommand(sid) == 'translation-text':
                 print("Getting translation text")
                 db.updateLastCommand(sid, 'translation-language')
@@ -443,18 +442,17 @@ eg. group My Music Group
                         reply = search_howto_index(user_search[1], choice-1)
                         return self.send_message(sid, reply)
                     else:
-                        return self.send_message(sid, 'Invalid choice, Please try again. Type 0 to stop me from '
-                                                      'disturbing you')
+                        return ''
                 except ValueError:
-                    return self.send_message(sid, 'Invalid choice, Please try again')
+                    return ''
             elif db.getLastCommand(sid) == 'audio':
                 try:
                     choice = int(text)
                     if choice not in range(1, 6):
-                        return self.send_message(sid, 'Invalid choice, Please try again')
+                        return ''
 
                 except ValueError:
-                    return self.send_message(sid, 'Invalid choice, Please try again')
+                    return ''
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
