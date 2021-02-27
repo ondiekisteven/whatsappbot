@@ -115,21 +115,6 @@ class WaBot:
         self.token = api_token
         self.last_command = "last command"
 
-    def get_song(self, path):
-        contents = os.listdir(path)
-        if contents:
-            for c in contents:
-                if c.endswith('.mp3'):
-                    # print(f'Found one song: -> {c}')
-                    # path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(self.message)}/{c}'
-                    return c  # self.send_file(self.message['chatId'], path, 'audio.mp3', 'audio')
-
-        else:
-            return "empty directory"
-
-    def get_last_command(self):
-        pass
-
     def send_requests(self, method, data):
         url = f'{self.APIUrl}{method}?token={self.token}'
         headers = {'content-type': 'application/json'}
@@ -155,6 +140,21 @@ class WaBot:
         }
         answer = self.send_requests('sendFile', data)
         return answer
+
+    def get_song(self, path):
+        contents = os.listdir(path)
+        if contents:
+            for c in contents:
+                if c.endswith('.mp3'):
+                    # print(f'Found one song: -> {c}')
+                    # path = f'https://som-whatsapp.herokuapp.com/files/music/{get_phone(self.message)}/{c}'
+                    return c  # self.send_file(self.message['chatId'], path, 'audio.mp3', 'audio')
+
+        else:
+            return "empty directory"
+
+    def get_last_command(self):
+        pass
 
     def download_audio(self, song, user):
         path = f'music/{user}/'
@@ -344,7 +344,6 @@ eg. group My Music Group
             return self.send_message(sid, ytsearch)
 
         elif text.lower().startswith('dl'):
-            # return self.send_message(sid, "Audio is not working for now because Youtube have updated their site, We are working to make audios availabe asap. Sorry for inconvenience caused")
             search = remove_first_word(text)
             if not search:
                 return self.send_message(sid, 'To download audio, write audio then the name of the song or audio then a youtube link.')
@@ -371,11 +370,9 @@ eg. group My Music Group
             if song == 'empty directory':
                 db.delete_downloading(sid)
                 return self.send_message(sid, 'Error downloading song. Try downloading using this -> +254771816217\n\n')
-            # return song
-            print('path not empty')
+
             path = f'{heroku_url}files/music/{get_phone(message)}/{song}'
             if os.path.exists(f'music/{get_phone(message)}/{song}'):
-                print(f"Song found in music/{get_phone(message)}/{song}")
                 audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
                 print(f'sending audio -> {audio_sending}')
                 os.remove(f'music/{get_phone(message)}/{song}')
@@ -416,7 +413,6 @@ eg. group My Music Group
             db.updateLastCommand(sid, 'diagnose')
             # if user has not finished registration, get the question they should be answering and ask them
             if not db.getFinishedRegistration(get_phone(message)):
-                print("user has not finished registering. Getting last question asked")
                 nextQ = db.getQuestion(db.getCurrentCount(get_phone(message)))
                 if 'our system' in nextQ:
                     nextQ += '\n1 - Yes\n2 - No'
@@ -447,7 +443,6 @@ eg. group My Music Group
                     delete_diagnosis_user(message)
                     return self.send_message(sid, 'Thanks for using our service. \n\nSend *diagnose* to restart')
             elif db.getLastCommand(sid) == 'translation-language':
-                print("Selecting language")
                 try:
                     choice = int(text)
                     if choice in range(1, len(languages_list) + 1):
@@ -490,10 +485,10 @@ eg. group My Music Group
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
-                path = downloader.download_audio()
-                audio_name = Converter(path).convert()
-                # path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
-                path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
+                audio_name = downloader.download_audio()
+                # audio_name = Converter(path).convert()
+                path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
+                # path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
                 folder = f'music/{get_phone(message)}'
                 if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
                     print(f"Song found in {folder}/{audio_name}")
