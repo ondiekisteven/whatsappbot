@@ -326,7 +326,6 @@ eg. group My Music Group
                 db.updateLastCommand(sid, 'join bot')
                 rht = random_how_to()
                 return self.send_message(sid, rht)
-        # for  audio from youtube or spotify or elsewhere
         elif text.lower().startswith('audio'):
             search = remove_first_word(text)
             if not search:
@@ -433,16 +432,6 @@ eg. group My Music Group
         elif text.lower().startswith('diagnose'):
             user_response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
-            # if user has not finished registration, get the question they should be answering and ask them
-            if not db.getCurrentCount(get_phone(message)):
-                return self.diagnose()
-            if not db.getFinishedRegistration(get_phone(message)):
-                nextQ = db.getQuestion(db.getCurrentCount(get_phone(message)))
-                if 'our system' in nextQ:
-                    nextQ += '\n1 - Yes\n2 - No'
-                elif '[male/female]' in nextQ:
-                    nextQ += '\n1 - Yes\n2 - No'
-                return self.send_message(sid, nextQ)
 
             if not user_response:
                 delete_diagnosis_user(message)

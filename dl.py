@@ -1,6 +1,7 @@
 from pytube import YouTube
 from moviepy.editor import *
 import os
+import db
 from json import dumps, loads
 
 from youtube_dl import YoutubeDL
@@ -33,8 +34,10 @@ class MySearch(YoutubeSearch):
         """
         if not self.user_directory_exists():
             self.create_user_directory()
-        file = open(self.URLS_FILE, 'w')
-        file.write(json_result)
+        # file = open(self.URLS_FILE, 'w')
+        # file.write(json_result)
+        print("saving search result to database")
+        db.save_link(f'{self.sid}@c.us', json_result)
 
     def get_printable(self):
         """
@@ -72,8 +75,8 @@ class DlSelector:
         self.URLS_FILE = os.path.join(self.user_directory, 'YOUTUBE_LINKS.txt')
 
     def read_urls(self):
-        file = open(self.URLS_FILE)
-        contents = file.read()
+        # file = open(self.URLS_FILE)
+        contents = db.get_link_text(f'{self.sid}@c.us')
         return contents
 
     def get_choice_url(self):

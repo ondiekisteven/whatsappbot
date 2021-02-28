@@ -436,6 +436,31 @@ def add_how_to_search(chat_id, term, size):
         db.close()        
 
 
+def save_link(chat_id, text):
+    db = getDb()
+    cursor = db.cursor()
+    try:
+        sql = 'INSERT INTO link_text (user_id, text) VALUES (%s, %s)'
+        cursor.execute(sql, (chat_id, text))
+    except IntegrityError:
+        sql = 'UPDATE link_text SET text = %s WHERE user_id = %s'
+        cursor.execute(sql, (text, chat_id))
+    finally:
+        db.commit()
+        cursor.close()
+        db.close()
+
+
+def get_link_text(chat_id):
+    db = getDb()
+    cursor = db.cursor()
+    cursor.execute(f'SELECT * FROM link_text WHERE user_id = "{chat_id}"')
+    data = cursor.fetchone()[1]
+    cursor.close()
+    db.close()
+    return data
+
+
 def get_how_to_search(chat_id):
     db = getDb()
     cursor = db.cursor()
