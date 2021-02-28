@@ -22,9 +22,9 @@ adverts = [
     'The bot is under testing, some features may not work perfect, be patient with them',
     'If you want to join in developing the bot, contact here: 0790670635',
 ]
-os.environ["API_URL"] = 'https://eu279.chat-api.com/instance233210/'
-os.environ["API_TOKEN"] = '0hlavaku44kpob1y'
-os.environ["HEROKU_URL"] = 'https://a42b318d1da0.ngrok.io/'
+# os.environ["API_URL"] = 'https://eu279.chat-api.com/instance233210/'
+# os.environ["API_TOKEN"] = '0hlavaku44kpob1y'
+# os.environ["HEROKU_URL"] = 'https://a42b318d1da0.ngrok.io/'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
