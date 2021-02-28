@@ -117,3 +117,25 @@ class Converter:
         a_c = AudioFileClip(self.file_path)
         a_c.write_audiofile(self.audio_path)
         return os.path.basename(self.audio_path)
+
+
+def download_song(song_url, user_dir):
+    """
+    Download a song using youtube url and song title
+    """
+
+    outtmpl = user_dir + '/%(title)s' + '.%(ext)s'
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'outtmpl': outtmpl,
+        'postprocessors': [
+            {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
+             'preferredquality': '192',
+             },
+            {'key': 'FFmpegMetadata'},
+        ],
+    }
+
+    with YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(song_url, download=True)
+    return info_dict["title"] + ".mp3"

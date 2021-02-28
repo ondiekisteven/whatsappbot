@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 
 def get_tld(link):
-    parsed_uri = urlparse(link )
+    parsed_uri = urlparse(link)
     return '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
 
 
@@ -18,6 +18,8 @@ ACCEPTED_LINKS = [
     'https://m.youtube.com/'
     'https://youtu.be/'
     'https://www.trustfuse.org/',
+    'www.trustfuse.org',
+    'trustfuse.org',
     'https://trustfuse.org/',
     'https://s3.eu-central-1.wasabisys.com/',
     'https://chat.whatsapp.com/INP90Mpbh8NHPk3SNOoAFi',

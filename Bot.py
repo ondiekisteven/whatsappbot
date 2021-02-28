@@ -11,7 +11,8 @@ import db
 import random
 from wiki import page, search_howto, search_howto_index, random_how_to
 from spotdl.command_line.core import Spotdl
-from dict import meaningSynonym, transFr, find_links, ACCEPTED_LINKS, get_languages_as_text, languages_list, language_code
+from dict import meaningSynonym, transFr, find_links, ACCEPTED_LINKS, get_languages_as_text, languages_list, \
+    language_code, get_tld
 
 adverts = [
     'Audio downloads are not stable yet, Dont download many songs in a short time, it will crash the bot',
@@ -21,8 +22,9 @@ adverts = [
     'The bot is under testing, some features may not work perfect, be patient with them',
     'If you want to join in developing the bot, contact here: 0790670635',
 ]
-# os.environ["API_URL"] = 'https://eu68.chat-api.com/instance201713/'
-# os.environ["API_TOKEN"] = '127dt61io1yns34t'
+os.environ["API_URL"] = 'https://eu279.chat-api.com/instance233210/'
+os.environ["API_TOKEN"] = '0hlavaku44kpob1y'
+os.environ["HEROKU_URL"] = 'https://a42b318d1da0.ngrok.io/'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
@@ -176,7 +178,7 @@ eg. group My Music Group
 
         text = f'{name} \n{welcome_string}'
         self.send_message(chat_id, text)
-        return self.send_message(chat_id, 'Remember to start with the words in bold, for the bot to understand')
+        return self.send_message(chat_id, 'use the examples given in each command to understand how it works')
 
     def genius_lyrics(self, chat_id, search, phone, download=False, ):
         try:
@@ -257,12 +259,31 @@ eg. group My Music Group
         sid = message['chatId']
         name = message['author']
         links = find_links(text)
-
         if links:
+            self.send_message(sid, 'Checking link...')
             for link in links:
-                if link not in ACCEPTED_LINKS:
-                    return self.remove_participant(sid, )
-
+                if get_tld(link) in ['https://youtu.be/', 'https://www.youtube.com/', 'youtu.be', 'www.youtube.com']:
+                    song_title = YoutubeDL().extract_info(link, download=False)['title']
+                    self.send_message(sid, f'Detected song: *{song_title}*\n\nDownloading song...')
+                    audio_name = download_song(link, f'music/{get_phone(message)}')
+                    path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
+                    folder = f'music/{get_phone(message)}'
+                    if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
+                        print(f"Song found in {folder}/{audio_name}")
+                        audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+                        print(f'sending audio -> {audio_sending}')
+                        for file in os.listdir(folder):
+                            file_path = os.path.join(folder, file)
+                            if file_path.startswith('YOUTUBE_LINKS'):
+                                continue
+                            # os.unlink(file_path)
+                        db.delete_downloading(sid)
+                        db.updateLastCommand(sid, 'audio')
+                        selected_adv = random.choice(adverts)
+                        txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
+                        return self.send_message(sid, txt)
+                    break
+            return 'probably no youtube link'
         if text.lower().startswith('command') or text.lower().startswith('help'):
             db.updateLastCommand(sid, 'help')
             return self.welcome(sid, name)
@@ -313,13 +334,41 @@ eg. group My Music Group
                                          'To download audio, write audio then the name of the song or audio then a '
                                          'youtube link.')
             db.updateLastCommand(sid, 'audio')
-            ytsearch = MySearch(search, get_phone(message)).get_printable()
-            return self.send_message(sid, ytsearch)
+            links = find_links(search)
+            if links:
+                self.send_message(sid, 'Checking link...')
+                for link in links:
+                    if get_tld(link) in ['https://youtu.be/', 'https://www.youtube.com/', 'youtu.be', 'www.youtube.com']:
+                        song_title = YoutubeDL().extract_info(link, download=False)['title']
+                        self.send_message(sid, f'Detected song: *{song_title}*\n\nDownloading song...')
+                        audio_name = download_song(link, f'music/{get_phone(message)}')
+                        path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
+                        folder = f'music/{get_phone(message)}'
+                        if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
+                            print(f"Song found in {folder}/{audio_name}")
+                            audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+                            print(f'sending audio -> {audio_sending}')
+                            for file in os.listdir(folder):
+                                file_path = os.path.join(folder, file)
+                                if file_path.startswith('YOUTUBE_LINKS'):
+                                    continue
+                                # os.unlink(file_path)
+                            db.delete_downloading(sid)
+                            db.updateLastCommand(sid, 'audio')
+                            selected_adv = random.choice(adverts)
+                            txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
+                            return self.send_message(sid, txt)
+                        break
+                return 'probably no youtube link'
+            else:
+                ytsearch = MySearch(search, get_phone(message)).get_printable()
+                return self.send_message(sid, ytsearch)
 
         elif text.lower().startswith('dl'):
             search = remove_first_word(text)
             if not search:
-                return self.send_message(sid, 'To download audio, write audio then the name of the song or audio then a youtube link.')
+                return self.send_message(sid, 'To download audio, write audio then the name of the song or audio then '
+                                              'a youtube link.')
             # return self.send_message(sid, 'audios are not working for now, type help to get other services')
             path = f'music/{get_phone(message)}/'
             if not os.path.exists(path):
@@ -385,6 +434,8 @@ eg. group My Music Group
             user_response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
             # if user has not finished registration, get the question they should be answering and ask them
+            if not db.getCurrentCount(get_phone(message)):
+                return self.diagnose()
             if not db.getFinishedRegistration(get_phone(message)):
                 nextQ = db.getQuestion(db.getCurrentCount(get_phone(message)))
                 if 'our system' in nextQ:
@@ -450,7 +501,6 @@ eg. group My Music Group
                     choice = int(text)
                     if choice not in range(1, 6):
                         return ''
-
                 except ValueError:
                     return ''
                 self.send_message(sid, "Downloading your song... please wait")
