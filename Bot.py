@@ -162,8 +162,6 @@ eg. _wiki coronavirus_
 4. *how to ...* - how to do something
 eg _how to bake a cake_
 
-5. *translate* - translate sentences to other languages
-e.g. _translate Good morning_
 
 6. *define* - get definition of a term. It has to be just one word.
 eg. define gallery
@@ -291,20 +289,21 @@ eg. group My Music Group
             message = remove_first_word(text)
             return sim(message)
         elif text.lower().startswith('transl'):
-            try:
-                db.add_translating(get_phone(message))
-            except IntegrityError:
-                pass
-            term = remove_first_word(text)
-            if term:
-                # user has defined sentence to be translated...
-                db.updateLastCommand(sid, 'translation-language')
-                db.update_translating(get_phone(message), term)
-                return self.send_message(sid, f"Select the language to translate to\n\n{get_languages_as_text(languages_list)}")
-            else:
-                # user has not defined sentence to be translated...
-                db.updateLastCommand(sid, 'translation-text')
-                return self.send_message(sid, 'Enter the word or sentence you want to translate')
+            return ''
+            # try:
+            #     db.add_translating(get_phone(message))
+            # except IntegrityError:
+            #     pass
+            # term = remove_first_word(text)
+            # if term:
+            #     # user has defined sentence to be translated...
+            #     db.updateLastCommand(sid, 'translation-language')
+            #     db.update_translating(get_phone(message), term)
+            #     return self.send_message(sid, f"Select the language to translate to\n\n{get_languages_as_text(languages_list)}")
+            # else:
+            #     # user has not defined sentence to be translated...
+            #     db.updateLastCommand(sid, 'translation-text')
+            #     return self.send_message(sid, 'Enter the word or sentence you want to translate')
         elif text.lower().startswith('def'):
             term = remove_first_word(text)
             meaning = meaningSynonym(term)
@@ -501,7 +500,6 @@ eg. group My Music Group
                 # path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
                 folder = f'music/{get_phone(message)}'
                 if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
-                    print(f"Song found in {folder}/{audio_name}")
                     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
                     print(f'sending audio -> {audio_sending}')
                     for file in os.listdir(folder):
