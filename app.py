@@ -38,7 +38,7 @@ def hello_world():
 def receive():
     messages = request.json['messages']
     allowed_chats = getAllowedChats()
-    blocked_chats = ['254702381629-1608391772@g.us', '254738239601-1609837284@g.us', '254745021668-1614495315@g.us']
+    blocked_chats = ['254702381629-1608391772@g.us', '254738239601-1609837284@g.us']
     for message in messages:
         bot = Bot.WaBot(message)
 
