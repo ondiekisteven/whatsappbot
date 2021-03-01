@@ -38,13 +38,14 @@ def hello_world():
 def receive():
     messages = request.json['messages']
     allowed_chats = getAllowedChats()
+    blocked_chats = ['254702381629-1608391772@g.us', '254738239601-1609837284@g.us']
     for message in messages:
         bot = Bot.WaBot(message)
 
         if message['body'].lower() == 'join bot':
             return save_chat(bot, message)
 
-        elif message['chatId'] in allowed_chats and not message['fromMe']:
+        elif message['chatId'] in allowed_chats and not message['fromMe'] and not message['chatId'] in blocked_chats:
             return bot.processing()
         else:
             return ""
