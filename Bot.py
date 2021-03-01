@@ -251,16 +251,19 @@ eg. group My Music Group
         return self.send_message(group_id, ans['message'] + "\nReason: Sending message with links")
 
     def processing(self):
+
         message = self.message
         text = message['body']
 
         sid = message['chatId']
         name = message['author']
         links = find_links(text)
+        if not os.path.exists(f'music/{get_phone(message)}'):
+            os.mkdir(f'music/{get_phone(message)}')
         if links:
-            self.send_message(sid, 'Checking link...')
             for link in links:
                 if get_tld(link) in ['https://youtu.be/', 'https://www.youtube.com/', 'youtu.be', 'www.youtube.com']:
+                    self.send_message(sid, 'Checking youtube link...')
                     song_title = YoutubeDL().extract_info(link, download=False)['title']
                     self.send_message(sid, f'Detected song: *{song_title}*\n\nDownloading song...')
                     audio_name = download_song(link, f'music/{get_phone(message)}')
@@ -272,9 +275,7 @@ eg. group My Music Group
                         print(f'sending audio -> {audio_sending}')
                         for file in os.listdir(folder):
                             file_path = os.path.join(folder, file)
-                            if file_path.startswith('YOUTUBE_LINKS'):
-                                continue
-                            # os.unlink(file_path)
+                            os.unlink(file_path)
                         db.delete_downloading(sid)
                         db.updateLastCommand(sid, 'audio')
                         selected_adv = random.choice(adverts)
