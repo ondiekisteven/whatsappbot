@@ -503,9 +503,12 @@ eg. group My Music Group
                     return ''
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
-                downloader = Downloader(sid, choice)
-                audio_name = downloader.download_audio()
-
+                try:
+                    downloader = Downloader(sid, choice)
+                    audio_name = downloader.download_audio()
+                except Exception as e:
+                    print(e)
+                    return self.send_message(sid, "could not complete the download. Try downloading in the bot's inbox")
                 # audio_name = Converter(path).convert()
                 path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
                 # path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
