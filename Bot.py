@@ -25,9 +25,9 @@ adverts = [
     'The bot is under testing, some features may not work perfect, be patient with them',
     'If you want to join in developing the bot, contact here: 0790670635',
 ]
-os.environ["API_URL"] = 'https://api.chat-api.com/instance236876/'
-os.environ["API_TOKEN"] = 'ry73iv1a9delxbwu'
-os.environ["HEROKU_URL"] = 'http://localhost:5000/'
+# os.environ["API_URL"] = 'https://api.chat-api.com/instance236876/'
+# os.environ["API_TOKEN"] = 'ry73iv1a9delxbwu'
+# os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
