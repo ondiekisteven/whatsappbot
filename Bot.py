@@ -231,7 +231,7 @@ eg. group My Music Group
         elif participant_id:
             data['participantChatId'] = participant_id
         else:
-            return 'Missing user to add'
+            return self.send_message(group_id, 'Missing user to add. use this format: adduser 07... ')
         ans = self.send_requests('addGroupParticipant', data)
         ans = loads(ans)
         
@@ -506,7 +506,8 @@ eg. group My Music Group
                 try:
                     downloader = Downloader(sid, choice)
                     audio_name = downloader.download_audio()
-                except:
+                except Exception as e:
+                    print(e)
                     return self.send_message(sid, "could not complete the download. Try registering yourself in the "
                                                   "bot's inbox and try again")
                 # audio_name = Converter(path).convert()
