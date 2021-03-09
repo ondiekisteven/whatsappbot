@@ -1,6 +1,9 @@
 import requests
 from json import dumps, loads
 
+import wikipedia
+from wikipedia import PageError, DisambiguationError
+
 from dl import *
 from pymysql import IntegrityError
 from genius import Genius
@@ -22,9 +25,9 @@ adverts = [
     'The bot is under testing, some features may not work perfect, be patient with them',
     'If you want to join in developing the bot, contact here: 0790670635',
 ]
-# os.environ["API_URL"] = 'https://eu279.chat-api.com/instance233210/'
-# os.environ["API_TOKEN"] = '0hlavaku44kpob1y'
-# os.environ["HEROKU_URL"] = 'https://a42b318d1da0.ngrok.io/'
+os.environ["API_URL"] = 'https://api.chat-api.com/instance236876/'
+os.environ["API_TOKEN"] = 'ry73iv1a9delxbwu'
+os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
@@ -312,8 +315,14 @@ eg. group My Music Group
         elif text.lower().startswith('wiki'):
             search = remove_first_word(text)
             self.send_message(sid, f"Searching for {search}...")
-            res = page(search)
-            return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
+            try:
+                res = page(search)
+                return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
+            except PageError:
+                return self.send_message(sid, f"The page you searched  wasn't found.")
+            except DisambiguationError as e:
+                print(e)
+                return self.send_message(sid, f"ERROR: {e}")
         elif text.lower().startswith('how to'):
             if text.lower().replace('how to', '').strip():
                 db.updateLastCommand(sid, 'choice how-to')
@@ -494,8 +503,12 @@ eg. group My Music Group
                     return ''
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
-                downloader = Downloader(get_phone(message), choice)
-                audio_name = downloader.download_audio()
+                try:
+                    downloader = Downloader(sid, choice)
+                    audio_name = downloader.download_audio()
+                except:
+                    return self.send_message(sid, "could not complete the download. Try registering yourself in the "
+                                                  "bot's inbox and try again")
                 # audio_name = Converter(path).convert()
                 path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
                 # path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
