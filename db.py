@@ -1,6 +1,8 @@
 import pymysql
 from pymysql import IntegrityError
 from loadConf import get_database_host, get_database_user, get_database_pass
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 
 def getDb():
@@ -438,15 +440,19 @@ def add_how_to_search(chat_id, term, size):
 
 
 def save_link(chat_id, text):
+    logging.info('[*]saving user link...')
+    logging.info(f'chat_id: -> {chat_id}')
     db = getDb()
     cursor = db.cursor()
     try:
         sql = 'INSERT INTO link_text (user_id, text) VALUES (%s, %s)'
         cursor.execute(sql, (chat_id, text))
     except IntegrityError:
+        logging.info('user found, updating link text')
         sql = 'UPDATE link_text SET text = %s WHERE user_id = %s'
         cursor.execute(sql, (text, chat_id))
     finally:
+        logging.info('[OK] done')
         db.commit()
         cursor.close()
         db.close()
