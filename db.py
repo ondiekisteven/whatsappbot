@@ -146,9 +146,9 @@ def saveSymptom(tg_id, s_id, c_id):
 
 
 def saveCurrentQuestion(tg_id, q_id, q_text):
+    db = getDb()
+    cursor = db.cursor()
     try:
-        db = getDb()
-        cursor = db.cursor()
         cursor.execute('INSERT INTO current_question (tg_id, question_id, question_text) VALUES (%s, "%s", "%s")' %
                        (tg_id, q_id, q_text))
         db.commit()

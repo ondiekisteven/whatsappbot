@@ -27,12 +27,14 @@ adverts = [
 ]
 # os.environ["API_URL"] = 'https://api.chat-api.com/instance241226/'
 # os.environ["API_TOKEN"] = 'fwdetb64e29aig52'
-# os.environ["HEROKU_URL"] = 'https://442ed21f8240.ngrok.io/'
+# os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
+
 
 def get_phone(message):
     return message['author'].replace('@c.us', '')
@@ -47,12 +49,12 @@ def sim(message: str):
                 "body": arg,
                 "fromMe": False,
                 "author": f"254{phone[1:]}@c.us",
-                "chatId": f"254{phone[1:]}@c.us", 
+                "chatId": f"254{phone[1:]}@c.us",
                 "chatName": f"254{phone[1:]}"
             }
         ]
     }
-    
+
     bot = WaBot(body)
     return bot.processing()
 
@@ -117,6 +119,7 @@ class WaBot:
             'filename': file_name,
             'caption': caption
         }
+        logging.debug(f'send_file data -> {data}')
         answer = self.send_requests('sendFile', data)
         return answer
 
@@ -235,9 +238,9 @@ eg. group My Music Group
             return self.send_message(group_id, 'Missing user to add. use this format: adduser 07... ')
         ans = self.send_requests('addGroupParticipant', data)
         ans = loads(ans)
-        
+
         return self.send_message(group_id, ans['message'])
-    
+
     def remove_participant(self, group_id, participant_phone=None, participant_id=None, ):
         data = {
             'groupId': group_id
@@ -251,7 +254,7 @@ eg. group My Music Group
             return 'Missing user to remove'
         ans = self.send_requests('removeGroupParticipant', data)
         ans = loads(ans)
-        
+
         return self.send_message(group_id, ans['message'] + "\nReason: Sending message with links")
 
     def processing(self):
@@ -339,7 +342,6 @@ eg. group My Music Group
         elif text.lower().startswith("audio"):
             return self.send_message(sid, 'Audio downloading feature has been temporarily disabled. ')
         elif text.lower().startswith('dl'):
-            # return self.send_message(sid, 'audio download is disabled for fixing. continue using other services. check out the new service by typing in the bot\'s inbox: diagnose')
             search = remove_first_word(text)
             if not search:
                 return self.send_message(sid,
@@ -350,7 +352,8 @@ eg. group My Music Group
             if links:
                 self.send_message(sid, 'Checking link...')
                 for link in links:
-                    if get_tld(link) in ['https://youtu.be/', 'https://www.youtube.com/', 'youtu.be', 'www.youtube.com']:
+                    if get_tld(link) in ['https://youtu.be/', 'https://www.youtube.com/', 'youtu.be',
+                                         'www.youtube.com']:
                         audio_name = download_song(link)
                         path = f'{heroku_url}files/music/{audio_name}'
                         if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
@@ -381,7 +384,7 @@ eg. group My Music Group
             db.updateLastCommand(sid, 'lyrics')
             return res
         elif text.lower().startswith('adduser'):
-            
+
             if is_group(message['chatId']):
                 return self.add_participant(message['chatId'], participant_phone=remove_first_word(text))
             else:
@@ -429,7 +432,7 @@ eg. group My Music Group
                     if choice in range(1, len(languages_list) + 1):
                         term = db.get_translating_text(get_phone(message))
                         self.send_message(sid, 'Translating, please wait...')
-                        translation = transFr(term[1], language_code[choice-1])
+                        translation = transFr(term[1], language_code[choice - 1])
                         db.updateLastCommand(sid, 'join')
                         return self.send_message(sid, translation)
                     else:
@@ -440,14 +443,15 @@ eg. group My Music Group
                 print("Getting translation text")
                 db.updateLastCommand(sid, 'translation-language')
                 db.update_translating(get_phone(message), text)
-                return self.send_message(sid, f"Select the language to translate to\n\n{get_languages_as_text(languages_list)}")
+                return self.send_message(sid,
+                                         f"Select the language to translate to\n\n{get_languages_as_text(languages_list)}")
             elif db.getLastCommand(sid) == 'choice how-to':
                 try:
                     choice = int(text)
                     user_search = db.get_how_to_search(sid)
                     if choice in range(user_search[2] + 1):
                         self.send_message(sid, 'Searching, please wait...')
-                        reply = search_howto_index(user_search[1], choice-1)
+                        reply = search_howto_index(user_search[1], choice - 1)
                         return self.send_message(sid, reply)
                     else:
                         return ''
@@ -456,26 +460,25 @@ eg. group My Music Group
             elif db.getLastCommand(sid) == 'audio':
                 try:
                     choice = int(text)
-                    if choice not in range(1, 6):
+                    if choice not in range(1, 11):
                         return ''
                 except ValueError:
                     return ''
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
-                downloader = Downloader(sid, choice)
+                downloader = Downloader(get_phone(message), choice)
                 logging.info('[*] DOWNLOADING AUDIO... ')
                 audio_name = downloader.download_audio()
-                logging.info(audio_name)
-
                 path = f'{heroku_url}files/music/{audio_name}'
+                logging.info(f'path -> {path}')
                 if os.path.exists(f'music/{audio_name}'):
                     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
                     logging.info(f'sending audio -> {audio_sending}')
                     db.delete_downloading(sid)
                     db.updateLastCommand(sid, 'audio')
                     selected_adv = random.choice(adverts)
-                    logging.info('deleting sent song')
-                    os.unlink(f"music/{audio_name}")
+                    # logging.info('deleting sent song')
+                    # os.unlink(f"music/{audio_name}")
                     txt = f'You song has downloaded.\n\n[*Note*] {selected_adv}'
                     return self.send_message(sid, txt)
                 return self.send_message(sid,

@@ -17,27 +17,15 @@ class MySearch(YoutubeSearch):
     :param search_terms: the keywords of the song being searched
     """
     def __init__(self, search_terms: str, sid):
-        super().__init__(search_terms, max_results=5)
+        super().__init__(search_terms, max_results=10)
         self.sid = sid
-        self.user_directory = f'music/{self.sid}'
-        self.URLS_FILE = os.path.join(self.user_directory, 'YOUTUBE_LINKS.txt')
-
-    def user_directory_exists(self):
-        return os.path.exists(self.user_directory)
-
-    def create_user_directory(self):
-        os.mkdir(self.user_directory)
 
     def save_to_file(self, json_result):
         """
         This function saves the search results to a file. contents are a dictionary in string
         """
-        if not self.user_directory_exists():
-            self.create_user_directory()
-        # file = open(self.URLS_FILE, 'w')
-        # file.write(json_result)
-        print("saving search result to database")
-        db.save_link(f'{self.sid}@c.us', json_result)
+
+        db.save_link(f'{self.sid}', json_result)
 
     def get_printable(self):
         """
