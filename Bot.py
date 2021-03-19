@@ -25,9 +25,9 @@ adverts = [
     'The bot is under testing, some features may not work perfect, be patient with them',
     'If you want to join in developing the bot, contact here: 0790670635',
 ]
-# os.environ["API_URL"] = 'https://api.chat-api.com/instance241226/'
-# os.environ["API_TOKEN"] = 'fwdetb64e29aig52'
-# os.environ["HEROKU_URL"] = 'http://localhost:5000/'
+os.environ["API_URL"] = 'https://api.chat-api.com/instance241226/'
+os.environ["API_TOKEN"] = 'fwdetb64e29aig52'
+os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
@@ -507,11 +507,12 @@ eg. group My Music Group
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
                 try:
+                    print("trying")
                     downloader = Downloader(sid, choice)
                     audio_name = downloader.download_audio()
                 except Exception as e:
                     print(e)
-                    return self.send_message(sid, "could not complete the download. Try downloading in the bot's inbox")
+                    return self.send_message(sid, "could not complete the download. Try later. Check the new service by typing 'diagnose' in the bot's inbox.")
                 # audio_name = Converter(path).convert()
                 path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
                 # path = f'localhost:5000/files/music/{get_phone(message)}/{audio_name}'
