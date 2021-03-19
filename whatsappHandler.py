@@ -210,7 +210,7 @@ def register(tg_id, response):
                 nextQuestionId = response["next_question"]["items"][0]["id"]
                 db.updateCurrentQuestion(tg_id, nextQuestionId, response["next_question"]["text"])
                 return f'{response["next_question"]["text"]}\n1 - Yes\n2 - No\n3 - Dont know\n\n_0 - Cancel diagnosis_' \
-                       f'and restart '
+                       f'and restart_ '
             elif 'stop' in response:
                 conditions = response['conditions']
                 message = "After Diagnosis, the following conditions were discovered:\n\n"

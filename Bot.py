@@ -25,8 +25,8 @@ adverts = [
     'The bot is under testing, some features may not work perfect, be patient with them',
     'If you want to join in developing the bot, contact here: 0790670635',
 ]
-# os.environ["API_URL"] = 'https://api.chat-api.com/instance236876/'
-# os.environ["API_TOKEN"] = 'ry73iv1a9delxbwu'
+# os.environ["API_URL"] = 'https://api.chat-api.com/instance241226/'
+# os.environ["API_TOKEN"] = 'fwdetb64e29aig52'
 # os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
@@ -443,8 +443,11 @@ eg. group My Music Group
             db.updateLastCommand(sid, 'diagnose')
 
             if not user_response:
-                delete_diagnosis_user(message)
-                resp = self.diagnose(message['author'], sid, 'ok')
+                try:
+                    delete_diagnosis_user(message)
+                    resp = self.diagnose(message['author'], sid, 'ok')
+                except:
+                    resp = ""
             else:
                 delete_diagnosis_user(message)
                 resp = self.diagnose(message['author'], sid, user_response)

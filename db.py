@@ -48,6 +48,7 @@ def getAge(tg_id):
     data = cursor.fetchone()[0]
     cursor.close()
     db.close()
+    return data
 
 
 def saveGender(tg_id, gender):
