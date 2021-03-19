@@ -31,7 +31,8 @@ adverts = [
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 def get_phone(message):
     return message['author'].replace('@c.us', '')
@@ -452,7 +453,7 @@ eg. group My Music Group
                         return ''
                 except ValueError:
                     return ''
-            elif db.getLastCommand(sid) == 'dl':
+            elif db.getLastCommand(sid) == 'audio':
                 try:
                     choice = int(text)
                     if choice not in range(1, 6):
@@ -462,15 +463,18 @@ eg. group My Music Group
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
                 downloader = Downloader(sid, choice)
+                logging.info('[*] DOWNLOADING AUDIO... ')
                 audio_name = downloader.download_audio()
+                logging.info(audio_name)
 
                 path = f'{heroku_url}files/music/{audio_name}'
                 if os.path.exists(f'music/{audio_name}'):
                     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                    print(f'sending audio -> {audio_sending}')
+                    logging.info(f'sending audio -> {audio_sending}')
                     db.delete_downloading(sid)
                     db.updateLastCommand(sid, 'audio')
                     selected_adv = random.choice(adverts)
+                    logging.info('deleting sent song')
                     os.unlink(f"music/{audio_name}")
                     txt = f'You song has downloaded.\n\n[*Note*] {selected_adv}'
                     return self.send_message(sid, txt)

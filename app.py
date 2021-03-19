@@ -1,7 +1,8 @@
 from flask import Flask, request, send_file
 from whatsappHandler import save_chat, getAllowedChats
 import Bot
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 
 
@@ -40,10 +41,15 @@ def receive():
         bot = Bot.WaBot(message)
 
         if message['body'].lower() == 'join bot':
+            logging.info("NEW USER REGISTERING")
+            logging.info(message)
             return save_chat(bot, message)
 
         elif message['chatId'] in allowed_chats and not message['fromMe'] and not message['chatId'] in blocked_chats:
-            print(F"NEW MESSAGE FROM {message['chatId']}")
+            logging.info(f'NEW MESSAGE FROM {message["chatId"]}')
+            logging.info(f'-----------------------------------------------')
+            logging.info({message["body"]})
+            logging.info(f'-----------------------------------------------')
             return bot.processing()
         else:
             return ""
@@ -52,6 +58,7 @@ def receive():
 @app.route('/files/music/<filename>/', methods=['GET'])
 def download_audio(filename):
     file_path = f'music/{filename}'
+    logging.info(file_path)
     if not file_path:
         return 'File not found'
     return send_file(file_path, as_attachment=True)
