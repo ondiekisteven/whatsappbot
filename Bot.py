@@ -336,6 +336,7 @@ eg. group My Music Group
                 rht = random_how_to()
                 return self.send_message(sid, rht)
         elif text.lower().startswith('audio'):
+            return self.send_message(sid, 'audio download is disabled for fixing. continue using other services. check out the new service by typing: diagnose')
             search = remove_first_word(text)
             if not search:
                 return self.send_message(sid,
