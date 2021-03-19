@@ -335,7 +335,9 @@ eg. group My Music Group
                 db.updateLastCommand(sid, 'join bot')
                 rht = random_how_to()
                 return self.send_message(sid, rht)
-        elif text.lower().startswith('audio'):
+        elif text.lower().startswith("audio"):
+            return self.send_message(sid, 'Audio downloading feature has been temporarily disabled. ')
+        elif text.lower().startswith('dl'):
             # return self.send_message(sid, 'audio download is disabled for fixing. continue using other services. check out the new service by typing in the bot\'s inbox: diagnose')
             search = remove_first_word(text)
             if not search:
@@ -450,7 +452,7 @@ eg. group My Music Group
                         return ''
                 except ValueError:
                     return ''
-            elif db.getLastCommand(sid) == 'audio':
+            elif db.getLastCommand(sid) == 'dl':
                 try:
                     choice = int(text)
                     if choice not in range(1, 6):
