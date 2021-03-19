@@ -1,18 +1,13 @@
 from flask import Flask, request, send_file
-from whatsappHandler import register, search_lyrics, save_chat, getAllowedChats
+from whatsappHandler import save_chat, getAllowedChats
 import Bot
-from sendQueue import to_queue
-from json import dumps
-import tasks
-from dict import find_links, ACCEPTED_LINKS, VERIFIED_USERS, get_tld
-from whatsappHandler import is_group
 
 app = Flask(__name__)
 
 
 @app.route('/', methods=['GET'])
 def test():
-    return {"success" : "API is working"}
+    return {"success": "API is working"}
 
 
 @app.route('/whatsapp/twilio/messages', methods=['POST', 'GET'])
@@ -48,14 +43,15 @@ def receive():
             return save_chat(bot, message)
 
         elif message['chatId'] in allowed_chats and not message['fromMe'] and not message['chatId'] in blocked_chats:
+            print(F"NEW MESSAGE FROM {message['chatId']}")
             return bot.processing()
         else:
             return ""
 
 
-@app.route('/files/music/<sid>/<filename>', methods=['GET'])
-def download_audio(sid, filename):
-    file_path = f'music/{sid}/{filename}'
+@app.route('/files/music/<filename>/', methods=['GET'])
+def download_audio(filename):
+    file_path = f'music/{filename}'
     if not file_path:
         return 'File not found'
     return send_file(file_path, as_attachment=True)

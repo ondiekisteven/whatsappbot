@@ -76,7 +76,7 @@ class DlSelector:
 
     def read_urls(self):
         # file = open(self.URLS_FILE)
-        contents = db.get_link_text(f'{self.sid}@c.us')
+        contents = db.get_link_text(self.sid)
         return contents
 
     def get_choice_url(self):
@@ -91,7 +91,7 @@ class Downloader(DlSelector):
         self.url = self.get_choice_url()
 
     def download_audio(self):
-        outtmpl = self.user_directory + '/%(title)s' + '.%(ext)s'
+        outtmpl = 'music/%(id)s' + '.%(ext)s'
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
@@ -105,7 +105,7 @@ class Downloader(DlSelector):
 
         with YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(self.url, download=True)
-        return info_dict["title"] + ".mp3"
+        return info_dict["id"] + ".mp3"
 
 
 class Converter:
@@ -122,12 +122,12 @@ class Converter:
         return os.path.basename(self.audio_path)
 
 
-def download_song(song_url, user_dir):
+def download_song(song_url):
     """
     Download a song using youtube url and song title
     """
 
-    outtmpl = user_dir + '/%(title)s' + '.%(ext)s'
+    outtmpl = 'music/%(id)s' + '.%(ext)s'
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': outtmpl,
@@ -141,4 +141,4 @@ def download_song(song_url, user_dir):
 
     with YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(song_url, download=True)
-    return info_dict["title"] + ".mp3"
+    return info_dict["id"] + ".mp3"
