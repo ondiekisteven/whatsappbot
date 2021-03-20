@@ -274,15 +274,10 @@ eg. group My Music Group
                     song_title = YoutubeDL().extract_info(link, download=False)['title']
                     self.send_message(sid, f'Detected song: *{song_title}*\n\nDownloading song...')
                     audio_name = download_song(link)
-                    path = f'{heroku_url}files/music/{get_phone(message)}/{audio_name}'
-                    folder = f'music/{get_phone(message)}'
-                    if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
-                        print(f"Song found in {folder}/{audio_name}")
+                    path = f'{heroku_url}files/music/{audio_name}'
+                    if os.path.exists(f'music/{audio_name}'):
                         audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                        print(f'sending audio -> {audio_sending}')
-                        for file in os.listdir(folder):
-                            file_path = os.path.join(folder, file)
-                            os.unlink(file_path)
+                        logging.info(f'sending audio -> {audio_sending}')
                         db.delete_downloading(sid)
                         db.updateLastCommand(sid, 'audio')
                         selected_adv = random.choice(adverts)
@@ -358,7 +353,7 @@ eg. group My Music Group
                         path = f'{heroku_url}files/music/{audio_name}'
                         if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
                             audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                            print(f'sending audio -> {audio_sending}')
+                            logging.info(f'sending audio -> {audio_sending}')
 
                             db.delete_downloading(sid)
                             db.updateLastCommand(sid, 'audio')
@@ -464,9 +459,13 @@ eg. group My Music Group
                         return ''
                 except ValueError:
                     return ''
+
                 self.send_message(sid, "Downloading your song... please wait")
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
+                duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
+                if duration > 600:
+                    return self.send_message(sid, "This song is large. Cannot complete downloading")
                 logging.info('[*] DOWNLOADING AUDIO... ')
                 audio_name = downloader.download_audio()
                 path = f'{heroku_url}files/music/{audio_name}'
