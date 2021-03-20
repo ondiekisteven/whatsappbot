@@ -19,10 +19,12 @@ from dict import meaningSynonym, transFr, find_links, ACCEPTED_LINKS, get_langua
 
 adverts = [
     'audio download is back',
-    'audio download is back',
-    'audio download is back',
-    'audio download is back',
+    'The command \'Wiki\' is not for any questions you have. it is used to search about a given topic, or someone\'s biography.',
+    'The command \'Wiki\' is not for any questions you have. it is used to search about a given topic, or someone\'s biography.',
+    'Use the wiki command to search about a topic, not to ask the bot random questions.',
+    'Use the wiki command to search about a topic, not to ask the bot random questions.',
     'Whenever you can, help your friends. Dont let them suffer when you can help.',
+    'This bot is a free project. Do not pay to use it'
     'Audio is back, if you have not tried just type audio then name of song.',
     'This bot is not for commercial use. Use it for fun, everyone else does so',
     "Here's a fact about Corona Virus. Thermal scanners CAN detect if you have a fever but CANNOT detect whether you "
@@ -324,7 +326,7 @@ eg. group My Music Group
                 res = page(search)
                 return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
             except PageError:
-                return self.send_message(sid, f"The page you searched  wasn't found.")
+                return self.send_message(sid, f"The page you searched  wasn't found. Use the wiki command to search about a topic, not to ask the bot random questions.',")
             except DisambiguationError as e:
                 print(e)
                 return self.send_message(sid, f"ERROR: {e}")
