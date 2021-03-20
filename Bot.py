@@ -340,8 +340,7 @@ eg. group My Music Group
                 db.updateLastCommand(sid, 'join bot')
                 rht = random_how_to()
                 return self.send_message(sid, rht)
-        elif text.lower().startswith("audio"):
-            return self.send_message(sid, 'Audio downloading feature has been temporarily disabled. ')
+
         elif text.lower().startswith('audio'):
             search = remove_first_word(text)
             if not search:
