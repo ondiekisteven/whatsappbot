@@ -18,12 +18,17 @@ from dict import meaningSynonym, transFr, find_links, ACCEPTED_LINKS, get_langua
     language_code, get_tld
 
 adverts = [
-    'Audio downloads are not stable yet, Dont download many songs in a short time, it will crash the bot',
-    'Remember whatsapp has a size limit. Therefore, dont download dj mixes and other big files, They wont be sent here',
+    'audio download is back',
+    'audio download is back',
+    'audio download is back',
+    'audio download is back',
+    'Whenever you can, help your friends. Dont let them suffer when you can help.',
+    'Audio is back, if you have not tried just type audio then name of song.',
+    'This bot is not for commercial use. Use it for fun, everyone else does so',
+    "Here's a fact about Corona Virus. Thermal scanners CAN detect if you have a fever but CANNOT detect whether you "
+    "have the virus. STAY SAFE",
     'The bot downloads songs from  youtube. If we didnt find your song, its probably not in youtube yet',
     'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
-    'The bot is under testing, some features may not work perfect, be patient with them',
-    'If you want to join in developing the bot, contact here: 0790670635',
 ]
 # os.environ["API_URL"] = 'https://api.chat-api.com/instance241226/'
 # os.environ["API_TOKEN"] = 'fwdetb64e29aig52'
@@ -169,6 +174,7 @@ eg. _wiki coronavirus_
 4. *how to ...* - how to do something
 eg _how to bake a cake_
 
+5. *diagnose* - this command will start a conversation to do diagnosis. use it in the bot's inbox
 
 6. *define* - get definition of a term. It has to be just one word.
 eg. define gallery
@@ -200,9 +206,9 @@ eg. group My Music Group
         except IndexError:
             text = "Could not find lyrics"
 
-        message_send = self.send_message(chat_id, text)
+            self.send_message(chat_id, text)
 
-        return message_send
+        return self.send_message(chat_id, random.choice(adverts))
 
     def lyrics(self, chat_id, search):
         pass
@@ -336,7 +342,7 @@ eg. group My Music Group
                 return self.send_message(sid, rht)
         elif text.lower().startswith("audio"):
             return self.send_message(sid, 'Audio downloading feature has been temporarily disabled. ')
-        elif text.lower().startswith('dl'):
+        elif text.lower().startswith('audio'):
             search = remove_first_word(text)
             if not search:
                 return self.send_message(sid,
@@ -393,6 +399,8 @@ eg. group My Music Group
             self.send_message(sid, f'Creating for you a group called "My awesome group". Go back and check it out')
             return self.group(message['author'], )
         elif text.lower().startswith('diagnose'):
+            if is_group(sid):
+                return self.send_message(sid, "Diagnosis is meant to be confidential. Use it in the bot's inbox")
             user_response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
 
