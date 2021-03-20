@@ -448,7 +448,7 @@ def save_link(chat_id, text):
         sql = 'INSERT INTO link_text (user_id, text) VALUES (%s, %s)'
         cursor.execute(sql, (chat_id, text))
     except Exception as e:
-        logging.info(f'Error :{e.message}')
+        logging.error(f'Error :{e}')
         sql = 'UPDATE link_text SET text = %s WHERE user_id = %s'
         cursor.execute(sql, (text, chat_id))
     finally:

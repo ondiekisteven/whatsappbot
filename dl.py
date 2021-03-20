@@ -24,7 +24,6 @@ class MySearch(YoutubeSearch):
         """
         This function saves the search results to a file. contents are a dictionary in string
         """
-
         db.save_link(f'{self.sid}', json_result)
 
     def get_printable(self):
