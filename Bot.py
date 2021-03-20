@@ -206,7 +206,7 @@ eg. group My Music Group
         except IndexError:
             text = "Could not find lyrics"
 
-            self.send_message(chat_id, text)
+        self.send_message(chat_id, text)
 
         return self.send_message(chat_id, random.choice(adverts))
 
