@@ -343,6 +343,36 @@ eg. group My Music Group
                 rht = random_how_to()
                 return self.send_message(sid, rht)
 
+        elif text.lower().startswith('dl'):
+            db.updateLastCommand(sid, 'dl')
+            search = remove_first_word(text)
+            if not search:
+                return self.send_message(sid,
+                                         'To download audio, write audio then the name of the song or audio then a '
+                                         'youtube link.')
+            links = find_links(search)
+            if links:
+                self.send_message(sid, 'Checking link...')
+                for link in links:
+                    if get_tld(link) in ['https://youtu.be/', 'https://www.youtube.com/', 'youtu.be',
+                                         'www.youtube.com']:
+                        audio_name = download_song(link)
+                        path = f'{heroku_url}files/music/{audio_name}'
+                        if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
+                            audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+                            logging.info(f'sending audio -> {audio_sending}')
+
+                            db.delete_downloading(sid)
+                            db.updateLastCommand(sid, 'audio')
+                            selected_adv = random.choice(adverts)
+                            txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
+                            return self.send_message(sid, txt)
+                        break
+                return 'probably no youtube link'
+            else:
+                ytsearch = MySearch(search, get_phone(message)).get_printable()
+                return self.send_message(sid, ytsearch)
+
         elif text.lower().startswith('audio'):
             search = remove_first_word(text)
             if not search:
@@ -461,6 +491,34 @@ eg. group My Music Group
                         return ''
                 except ValueError:
                     return ''
+            elif db.getLastCommand(sid) == 'dl':
+                try:
+                    choice = int(text)
+                    if choice not in range(1, 11):
+                        return ''
+                except ValueError:
+                    return ''
+
+                self.send_message(sid, "...")
+                db.add_downloading_user(sid)
+                downloader = Downloader(get_phone(message), choice)
+                duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
+                logging.info('[*] DOWNLOADING AUDIO... ')
+                audio_name = downloader.download_audio()
+                path = f'{heroku_url}files/music/{audio_name}'
+                logging.info(f'path -> {path}')
+                if os.path.exists(f'music/{audio_name}'):
+                    audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+                    logging.info(f'sending audio -> {audio_sending}')
+                    db.delete_downloading(sid)
+                    db.updateLastCommand(sid, 'audio')
+                    selected_adv = random.choice(adverts)
+                    # logging.info('deleting sent song')
+                    # os.unlink(f"music/{audio_name}")
+                    return ""
+                return self.send_message(sid,
+                                         f'Song not found in directory music/{audio_name} \n\n '
+                                         f'{random.choice(adverts)}')
             elif db.getLastCommand(sid) == 'audio':
                 try:
                     choice = int(text)
@@ -492,4 +550,5 @@ eg. group My Music Group
                 return self.send_message(sid,
                                          f'Song not found in directory music/{audio_name} \n\n '
                                          f'{random.choice(adverts)}')
+
             return ''
