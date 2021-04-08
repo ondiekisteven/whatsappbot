@@ -210,7 +210,7 @@ eg. group My Music Group
 
         self.send_message(chat_id, text)
 
-        return self.send_message(chat_id, random.choice(adverts))
+        return 'DONE'
 
     def lyrics(self, chat_id, search):
         pass
@@ -288,9 +288,9 @@ eg. group My Music Group
                         logging.info(f'sending audio -> {audio_sending}')
                         db.delete_downloading(sid)
                         db.updateLastCommand(sid, 'audio')
-                        selected_adv = random.choice(adverts)
-                        txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
-                        return self.send_message(sid, txt)
+                        # selected_adv = random.choice(adverts)
+                        # txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
+                        return 'DONE'
                     break
             return 'probably no youtube link'
         if text.lower().startswith('command') or text.lower().startswith('help'):
@@ -364,9 +364,10 @@ eg. group My Music Group
 
                             db.delete_downloading(sid)
                             db.updateLastCommand(sid, 'audio')
-                            selected_adv = random.choice(adverts)
-                            txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
-                            return self.send_message(sid, txt)
+                            # selected_adv = random.choice(adverts)
+                            # txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
+                            # return self.send_message(sid, txt)
+                            return 'DONE'
                         break
                 return 'probably no youtube link'
             else:
@@ -394,9 +395,9 @@ eg. group My Music Group
 
                             db.delete_downloading(sid)
                             db.updateLastCommand(sid, 'audio')
-                            selected_adv = random.choice(adverts)
-                            txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
-                            return self.send_message(sid, txt)
+                            # selected_adv = random.choice(adverts)
+                            # txt = f'You song has downloaded.\n\n'
+                            return "DONE"
                         break
                 return 'probably no youtube link'
             else:
@@ -512,13 +513,12 @@ eg. group My Music Group
                     logging.info(f'sending audio -> {audio_sending}')
                     db.delete_downloading(sid)
                     db.updateLastCommand(sid, 'audio')
-                    selected_adv = random.choice(adverts)
+                    # selected_adv = random.choice(adverts)
                     # logging.info('deleting sent song')
                     # os.unlink(f"music/{audio_name}")
                     return ""
                 return self.send_message(sid,
-                                         f'Song not found in directory music/{audio_name} \n\n '
-                                         f'{random.choice(adverts)}')
+                                         f'Song not found in directory music/{audio_name}')
             elif db.getLastCommand(sid) == 'audio':
                 try:
                     choice = int(text)
@@ -549,7 +549,6 @@ eg. group My Music Group
                     # return self.send_message(sid, txt)
                     return 'DONE'
                 return self.send_message(sid,
-                                         f'Song not found in directory music/{audio_name} \n\n '
-                                         f'{random.choice(adverts)}')
+                                         f'Song not found in directory music/{audio_name}')
 
             return ''
