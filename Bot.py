@@ -542,11 +542,12 @@ eg. group My Music Group
                     logging.info(f'sending audio -> {audio_sending}')
                     db.delete_downloading(sid)
                     db.updateLastCommand(sid, 'audio')
-                    selected_adv = random.choice(adverts)
+                    # selected_adv = random.choice(adverts)
                     # logging.info('deleting sent song')
                     # os.unlink(f"music/{audio_name}")
-                    txt = f'You song has downloaded.\n\n[*Note*] {selected_adv}'
-                    return self.send_message(sid, txt)
+                    # txt = f'You song has downloaded.\n\n[*Note*] {selected_adv}'
+                    # return self.send_message(sid, txt)
+                    return 'DONE'
                 return self.send_message(sid,
                                          f'Song not found in directory music/{audio_name} \n\n '
                                          f'{random.choice(adverts)}')
