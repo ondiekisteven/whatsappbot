@@ -1,39 +1,15 @@
 import os
-from spotdl import Spotdl
-import celery
-from timeloop import Timeloop
-from datetime import timedelta
-from Bot import WaBot
 
+import redis
+from rq import Worker, Queue, Connection
 
-tl = Timeloop()
-app = celery.Celery("tasks")
+listen = ['high', 'default', 'low']
 
-REDIS_URL = 'redis://h:pffa2ba6288eb64eebf2bff97dc93ef56f156dd8a2758163f96fb52b5db387a5f@ec2-52-72-186-42.compute-1' \
-            '.amazonaws.com:27749'
+redis_url = os.getenv('REDISTOGO_URL', 'redis://h:pffa2ba6288eb64eebf2bff97dc93ef56f156dd8a2758163f96fb52b5db387a5f@ec2-54-235-172-120.compute-1.amazonaws.com:10199')
 
-app.conf.update(BROKER_URL=REDIS_URL, CELERY_RESULT_BACKEND=REDIS_URL)
+conn = redis.from_url(redis_url)
 
-
-@app.task
-def download_audio(self, song, user):
-    path = f'music/{user}'
-    if not os.path.exists(path):
-        print("Directory not found, Creating...")
-        os.mkdir(path)
-    args = {
-        "song": [song],
-        'output_file': path + '/{artist} - {track-name}.{output-ext}'
-    }
-    print(f'Downloading {song}')
-    self.send_message(f'{user}"c.us', 'Downloading your song...')
-    with Spotdl(args) as spotdl_handler:
-        spotdl_handler.match_arguments()
-
-    return path
-
-
-@app.task
-def work(json):
-    bot = WaBot(json)
-    return bot.processing()
+if __name__ == '__main__':
+    with Connection(conn):
+        worker = Worker(map(Queue, listen))
+        worker.work()

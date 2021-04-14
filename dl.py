@@ -114,7 +114,7 @@ def download_song(song_url):
     Download a song using youtube url and song title
     """
 
-    outtmpl = 'music/%(id)s' + '.%(ext)s'
+    outtmpl = 'music/%(alt_title)s' + '.%(ext)s'
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': outtmpl,
@@ -128,4 +128,4 @@ def download_song(song_url):
 
     with YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(song_url, download=True)
-    return info_dict["id"] + ".mp3"
+    return info_dict["alt_title"] + ".mp3"
