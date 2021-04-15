@@ -2,7 +2,7 @@ import pymysql
 from pymysql import IntegrityError
 from loadConf import get_database_host, get_database_user, get_database_pass
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def getDb():
