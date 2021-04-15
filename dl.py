@@ -78,7 +78,7 @@ class Downloader(DlSelector):
         self.url = self.get_choice_url()
 
     def download_audio(self):
-        outtmpl = 'music/%(id)s' + '.%(ext)s'
+        outtmpl = '/tmp/music/%(id)s' + '.%(ext)s'
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
@@ -114,7 +114,7 @@ def download_song(song_url):
     Download a song using youtube url and song title
     """
 
-    outtmpl = 'music/%(alt_title)s' + '.%(ext)s'
+    outtmpl = '/tmp/music/%(alt_title)s' + '.%(ext)s'
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': outtmpl,
@@ -132,7 +132,7 @@ def download_song(song_url):
 
 
 def save_to_s3(file_name):
-    file_path = f'music/{file_name}'
+    file_path = f'/tmp/music/{file_name}'
     uploader = S3Uploader()
     uploader.upload_file(file_path)
     return f'https://som-whatsapp.s3.us-east-2.amazonaws.com/{file_path}'
