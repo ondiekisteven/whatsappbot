@@ -5,7 +5,7 @@ from tasks import conn
 from rq import Queue
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 # r = redis.Redis()

@@ -6,8 +6,6 @@ from json import dumps, loads
 
 from youtube_dl import YoutubeDL
 from youtube_search import YoutubeSearch
-#
-# results = YoutubeSearch('alan walker - faded', max_results=3).to_json()
 
 
 class MySearch(YoutubeSearch):
@@ -135,4 +133,4 @@ def save_to_s3(file_name):
     file_path = f'/tmp/music/{file_name}'
     uploader = S3Uploader()
     uploader.upload_file(file_path, f'music/{file_name}')
-    return f'https://som-whatsapp.s3.us-east-2.amazonaws.com/{file_path}'
+    return f'https://som-whatsapp.s3.us-east-2.amazonaws.com/music/{file_name}'

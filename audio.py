@@ -10,12 +10,16 @@ class S3Uploader:
 
     @property
     def client(self):
-        return boto3.client(
+
+        s3 = boto3.client(
             self.service,
             aws_access_key_id=self.KEY,
             aws_secret_access_key=self.TOKEN
         )
+        return s3
 
     def upload_file(self, file_name, object_name):
         self.client.upload_file(file_name, self.bucket, object_name)
 
+    def delete_file(self, file_name):
+        self.client.delete_object(Bucket=self.bucket, Key=f'music/{file_name}')

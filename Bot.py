@@ -11,6 +11,7 @@ from wiki import page, search_howto, search_howto_index, random_how_to
 from spotdl.command_line.core import Spotdl
 from dict import meaningSynonym, transFr, find_links, get_languages_as_text, languages_list, \
     language_code, get_tld
+from audio import S3Uploader
 
 adverts = [
     'audio download is back',
@@ -33,7 +34,7 @@ api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def get_phone(message):
@@ -497,13 +498,17 @@ eg. group My Music Group
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
                 duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
+                if duration > 600:
+                    logging.warning('SONG TOO LONG TO DOWNLOAD...')
+                    return self.send_message(sid, 'This song is large. Cannot complete downloading')
                 logging.info('[*] DOWNLOADING AUDIO... ')
                 audio_name = downloader.download_audio()
                 # ------------------------------------------------------------------------------------
                 s3_path = save_to_s3(audio_name)
-                # audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
-                logging.info(f'SENDING AUDIO..')
-                # logging.info(audio_sending)
+                logging.info(f'SENDING AUDIO FROM {s3_path}')
+                audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
+                logging.info(audio_sending)
+                S3Uploader().delete_file(s3_path)
                 return ''
                 # ------------------------------------------------------------------------------------
                 # path = f'{heroku_url}files/music/{audio_name}'
@@ -517,36 +522,5 @@ eg. group My Music Group
                 #     return ""
                 # return self.send_message(sid,
                 #                          f'Song not found in directory music/{audio_name}')
-            elif db.getLastCommand(sid) == 'audio':
-                try:
-                    choice = int(text)
-                    if choice not in range(1, 11):
-                        return ''
-                except ValueError:
-                    return ''
-
-                self.send_message(sid, "Downloading your song... please wait")
-                db.add_downloading_user(sid)
-                downloader = Downloader(get_phone(message), choice)
-                duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
-                if duration > 600:
-                    return self.send_message(sid, "This song is large. Cannot complete downloading")
-                logging.info('[*] DOWNLOADING AUDIO... ')
-                audio_name = downloader.download_audio()
-                path = f'{heroku_url}files/music/{audio_name}'
-                logging.info(f'path -> {path}')
-                if os.path.exists(f'music/{audio_name}'):
-                    audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                    logging.info(f'sending audio -> {audio_sending}')
-                    db.delete_downloading(sid)
-                    db.updateLastCommand(sid, 'audio')
-                    # selected_adv = random.choice(adverts)
-                    # logging.info('deleting sent song')
-                    # os.unlink(f"music/{audio_name}")
-                    # txt = f'You song has downloaded.\n\n[*Note*] {selected_adv}'
-                    # return self.send_message(sid, txt)
-                    return 'DONE'
-                return self.send_message(sid,
-                                         f'Song not found in directory music/{audio_name}')
 
             return ''
