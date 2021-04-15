@@ -1,20 +1,15 @@
 import requests
-from json import dumps, loads
-
-import wikipedia
 from wikipedia import PageError, DisambiguationError
 
 from dl import *
-from pymysql import IntegrityError
 from genius import Genius
 from whatsappHandler import register, remove_first_word, is_group
 import uuid
 import os
 import db
-import random
 from wiki import page, search_howto, search_howto_index, random_how_to
 from spotdl.command_line.core import Spotdl
-from dict import meaningSynonym, transFr, find_links, ACCEPTED_LINKS, get_languages_as_text, languages_list, \
+from dict import meaningSynonym, transFr, find_links, get_languages_as_text, languages_list, \
     language_code, get_tld
 
 adverts = [
@@ -504,19 +499,24 @@ eg. group My Music Group
                 duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
                 logging.info('[*] DOWNLOADING AUDIO... ')
                 audio_name = downloader.download_audio()
-                path = f'{heroku_url}files/music/{audio_name}'
-                logging.info(f'path -> {path}')
-                if os.path.exists(f'music/{audio_name}'):
-                    audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                    logging.info(f'sending audio -> {audio_sending}')
-                    db.delete_downloading(sid)
-                    db.updateLastCommand(sid, 'audio')
-                    # selected_adv = random.choice(adverts)
-                    # logging.info('deleting sent song')
-                    # os.unlink(f"music/{audio_name}")
-                    return ""
-                return self.send_message(sid,
-                                         f'Song not found in directory music/{audio_name}')
+                # ------------------------------------------------------------------------------------
+                s3_path = save_to_s3(audio_name)
+                audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
+                logging.info(f'SENDING AUDIO..')
+                logging.info(audio_sending)
+                return ''
+                # ------------------------------------------------------------------------------------
+                # path = f'{heroku_url}files/music/{audio_name}'
+                # logging.info(f'path -> {path}')
+                # if os.path.exists(f'music/{audio_name}'):
+                #     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
+                #     logging.info(f'sending audio -> {audio_sending}')
+                #     db.delete_downloading(sid)
+                #     db.updateLastCommand(sid, 'audio')
+                #
+                #     return ""
+                # return self.send_message(sid,
+                #                          f'Song not found in directory music/{audio_name}')
             elif db.getLastCommand(sid) == 'audio':
                 try:
                     choice = int(text)

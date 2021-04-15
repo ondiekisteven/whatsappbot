@@ -1,4 +1,4 @@
-from pytube import YouTube
+from audio import S3Uploader
 from moviepy.editor import *
 import os
 import db
@@ -129,3 +129,10 @@ def download_song(song_url):
     with YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(song_url, download=True)
     return info_dict["alt_title"] + ".mp3"
+
+
+def save_to_s3(file_name):
+    file_path = f'music/{file_name}'
+    uploader = S3Uploader()
+    uploader.upload_file(file_path)
+    return f'https://som-whatsapp.s3.us-east-2.amazonaws.com/{file_path}'
