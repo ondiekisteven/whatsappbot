@@ -490,7 +490,7 @@ eg. group My Music Group
                 except ValueError:
                     return ''
             elif db.getLastCommand(sid) == 'audio':
-                self.send_typing(sid)
+                # self.send_typing(sid)
                 try:
                     choice = int(text)
                     if choice not in range(1, 11):
