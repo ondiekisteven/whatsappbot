@@ -124,13 +124,6 @@ class WaBot:
         answer = self.send_requests('sendFile', data)
         return answer
 
-    def send_typing(self, chat_id):
-        data = {
-            "chatId": chat_id,
-            "duration": "3"
-        }
-        self.send_requests('typing', data)
-
     def get_song(self, path):
         contents = os.listdir(path)
         if contents:
