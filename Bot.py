@@ -124,6 +124,13 @@ class WaBot:
         answer = self.send_requests('sendFile', data)
         return answer
 
+    def send_typing(self, chat_id):
+        data = {
+            "chatId": chat_id,
+            "duration": "3"
+        }
+        self.send_requests('typing', data)
+
     def get_song(self, path):
         contents = os.listdir(path)
         if contents:
@@ -288,6 +295,7 @@ eg. group My Music Group
                     break
             return 'probably no youtube link'
         if text.lower().startswith('command') or text.lower().startswith('help'):
+            self.send_typing(sid)
             db.updateLastCommand(sid, 'help')
             return self.welcome(sid, name)
         elif text.lower().startswith('sim'):
@@ -310,10 +318,12 @@ eg. group My Music Group
             #     db.updateLastCommand(sid, 'translation-text')
             #     return self.send_message(sid, 'Enter the word or sentence you want to translate')
         elif text.lower().startswith('def'):
+            self.send_typing(sid)
             term = remove_first_word(text)
             meaning = meaningSynonym(term)
             return self.send_message(sid, meaning)
         elif text.lower().startswith('wiki'):
+            self.send_typing(sid)
             search = remove_first_word(text)
             self.send_message(sid, f"Searching for {search}...")
             try:
@@ -325,6 +335,7 @@ eg. group My Music Group
                 print(e)
                 return self.send_message(sid, f"ERROR: {e}")
         elif text.lower().startswith('how to'):
+            self.send_typing(sid)
             if text.lower().replace('how to', '').strip():
                 db.updateLastCommand(sid, 'choice how-to')
                 self.send_message(sid, 'Searching, please wait...')
@@ -338,6 +349,7 @@ eg. group My Music Group
                 return self.send_message(sid, rht)
 
         elif text.lower().startswith('dl'):
+            self.send_typing(sid)
             db.updateLastCommand(sid, 'dl')
             search = remove_first_word(text)
             if not search:
@@ -369,6 +381,7 @@ eg. group My Music Group
                 return self.send_message(sid, ytsearch)
 
         elif text.lower().startswith('audio'):
+            self.send_typing(sid)
             search = remove_first_word(text)
             if not search:
                 return self.send_message(sid,
@@ -395,6 +408,7 @@ eg. group My Music Group
                 return self.send_message(sid, ytsearch)
 
         elif text.lower().startswith('lyrics'):
+            self.send_typing(sid)
             # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
             self.send_message(sid, 'Searching lyrics...')
             search = remove_first_word(text)
@@ -407,12 +421,13 @@ eg. group My Music Group
             db.updateLastCommand(sid, 'lyrics')
             return res
         elif text.lower().startswith('adduser'):
-
+            self.send_typing(sid)
             if is_group(message['chatId']):
                 return self.add_participant(message['chatId'], participant_phone=remove_first_word(text))
             else:
                 return self.send_message(sid, 'Cant add user here. Send this command from a group where i am an admin')
         elif text.lower().startswith('group'):
+            self.send_typing(sid)
             db.updateLastCommand(sid, 'group')
             grName = remove_first_word(text).strip()
             if grName:
@@ -421,6 +436,7 @@ eg. group My Music Group
             self.send_message(sid, f'Creating for you a group called "My awesome group". Go back and check it out')
             return self.group(message['author'], )
         elif text.lower().startswith('diagnose'):
+            self.send_typing(sid)
             if is_group(sid):
                 return self.send_message(sid, "Diagnosis is meant to be confidential. Use it in the bot's inbox")
             user_response = remove_first_word(text)
@@ -471,6 +487,7 @@ eg. group My Music Group
                 return self.send_message(sid,
                                          f"Select the language to translate to\n\n{get_languages_as_text(languages_list)}")
             elif db.getLastCommand(sid) == 'choice how-to':
+                self.send_typing(sid)
                 try:
                     choice = int(text)
                     user_search = db.get_how_to_search(sid)
@@ -483,6 +500,7 @@ eg. group My Music Group
                 except ValueError:
                     return ''
             elif db.getLastCommand(sid) == 'audio':
+                self.send_typing(sid)
                 try:
                     choice = int(text)
                     if choice not in range(1, 11):
