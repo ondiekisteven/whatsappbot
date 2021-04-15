@@ -509,7 +509,7 @@ eg. group My Music Group
                 audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
                 logging.info(audio_sending)
                 logging.info("DELETING FILE")
-                # S3Uploader().delete_file(s3_path)
+                S3Uploader().delete_file(s3_path)
                 return ''
                 # ------------------------------------------------------------------------------------
                 # path = f'{heroku_url}files/music/{audio_name}'
