@@ -494,7 +494,7 @@ eg. group My Music Group
                 except ValueError:
                     return ''
 
-                self.send_message(sid, "...")
+                self.send_message(sid, "Downloading...")
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
                 duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
