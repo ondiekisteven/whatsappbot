@@ -317,4 +317,6 @@ def save_chat(bot, message):
         #                                     'later*')
         # sleep(1)
 
-        return bot.send_message(message['chatId'], "User registered successfully. Type help to see commands")
+        res = bot.send_message(message['chatId'], "User registered successfully. Type help to see commands")
+        print(f'SAVING USER: {res}')
+        return res
