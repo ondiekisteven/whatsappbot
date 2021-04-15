@@ -283,16 +283,13 @@ eg. group My Music Group
                     song_title = YoutubeDL().extract_info(link, download=False)['title']
                     self.send_message(sid, f'Detected song: *{song_title}*\n\nDownloading song...')
                     audio_name = download_song(link)
-                    path = f'{heroku_url}files/music/{audio_name}'
-                    if os.path.exists(f'music/{audio_name}'):
-                        audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                        logging.info(f'sending audio -> {audio_sending}')
-                        db.delete_downloading(sid)
-                        db.updateLastCommand(sid, 'audio')
-                        # selected_adv = random.choice(adverts)
-                        # txt = f'You song has downloaded.\n\n[*Note] {selected_adv}'
-                        return 'DONE'
-                    break
+                    s3_path = save_to_s3(audio_name)
+                    logging.info(f'SENDING AUDIO FROM {s3_path}')
+                    audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
+                    logging.info(audio_sending)
+                    logging.info("DELETING FILE")
+                    S3Uploader().delete_file(s3_path)
+                    return ''
             return 'probably no youtube link'
         if text.lower().startswith('command') or text.lower().startswith('help'):
             # self.send_typing(sid)
