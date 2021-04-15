@@ -134,5 +134,5 @@ def download_song(song_url):
 def save_to_s3(file_name):
     file_path = f'/tmp/music/{file_name}'
     uploader = S3Uploader()
-    uploader.upload_file(file_path)
+    uploader.upload_file(file_path, f'music/{file_name}')
     return f'https://som-whatsapp.s3.us-east-2.amazonaws.com/{file_path}'

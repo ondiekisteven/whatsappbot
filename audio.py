@@ -16,6 +16,6 @@ class S3Uploader:
             aws_secret_access_key=self.TOKEN
         )
 
-    def upload_file(self, file_name):
-        self.client.upload_file(file_name, self.bucket, file_name)
+    def upload_file(self, file_name, object_name):
+        self.client.upload_file(file_name, self.bucket, object_name)
 
