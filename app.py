@@ -39,8 +39,8 @@ def hello_world():
             logging.info(f'NEW MESSAGE FROM {message["chatId"]}: ({message["chatName"]}) ')
             logging.info(f'-----------------------------------------------')
             logging.info({message["body"]})
-            logging.info('Adding task to queue...')
             job = q.enqueue(bot.processing)
+            logging.info(f'Added {job.id} to queue. {len(q)} jobs in the queue currently...')
             return f'Added {job.id} to queue. {len(q)} jobs in the queue currently...'
         else:
             return ""
