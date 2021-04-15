@@ -485,7 +485,7 @@ eg. group My Music Group
                         return ''
                 except ValueError:
                     return ''
-            elif db.getLastCommand(sid) == 'dl':
+            elif db.getLastCommand(sid) == 'audio':
                 try:
                     choice = int(text)
                     if choice not in range(1, 11):
@@ -501,9 +501,9 @@ eg. group My Music Group
                 audio_name = downloader.download_audio()
                 # ------------------------------------------------------------------------------------
                 s3_path = save_to_s3(audio_name)
-                audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
+                # audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
                 logging.info(f'SENDING AUDIO..')
-                logging.info(audio_sending)
+                # logging.info(audio_sending)
                 return ''
                 # ------------------------------------------------------------------------------------
                 # path = f'{heroku_url}files/music/{audio_name}'
