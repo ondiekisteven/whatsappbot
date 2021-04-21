@@ -427,8 +427,8 @@ eg. group My Music Group
             return self.group(message['author'], )
         elif text.lower().startswith('diagnose'):
             # self.send_typing(sid)
-            if is_group(sid):
-                return self.send_message(sid, "Diagnosis is meant to be confidential. Use it in the bot's inbox")
+            # if is_group(sid):
+            #     return self.send_message(sid, "Diagnosis is meant to be confidential. Use it in the bot's inbox")
             user_response = remove_first_word(text)
             db.updateLastCommand(sid, 'diagnose')
 
