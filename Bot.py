@@ -1,3 +1,5 @@
+import random
+
 import requests
 from wikipedia import PageError, DisambiguationError
 
@@ -498,7 +500,16 @@ eg. group My Music Group
                 except ValueError:
                     return ''
 
-                self.send_message(sid, "Downloading...")
+                nums = [0, 1, 2, 3, 4, 5, 6]
+                x = random.choice(nums)
+                if x > 3:
+                    if not os.environ.get('HEROKU_URL') == 'https://som-whatsapp1.herokuapp.com/':
+                        custom_msg = 'Downloading. Contact +254112679544 to get the same bot services.'
+                    else:
+                        custom_msg = 'Downloading'
+                else:
+                    custom_msg = 'Downloading...'
+                self.send_message(sid, custom_msg)
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
                 duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
