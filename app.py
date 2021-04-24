@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, jsonify
 from whatsappHandler import save_chat, getAllowedChats
 import Bot
 from tasks import conn
@@ -15,6 +15,32 @@ q = Queue(connection=conn)
 @app.route('/', methods=['GET'])
 def test():
     return {"success": "API is working"}
+
+
+@app.route('/pay/confirmation/', methods=['GET', 'POST'])
+def confirmation():
+    if request.method == 'POST':
+        print("received data")
+        print(request.json)
+        context = {
+            'ResultCode': 0,
+            'ResultDesc': 'Accepted'
+        }
+        return jsonify(context)
+    return jsonify(message='confirmation page')
+
+
+@app.route('/pay/validation/', methods=['GET', 'POST'])
+def confirmation():
+    if request.method == 'POST':
+        print("received data")
+        print(request.json)
+        context = {
+            'ResultCode': 0,
+            'ResultDesc': 'Accepted'
+        }
+        return jsonify(context)
+    return jsonify(message='validation page')
 
 
 @app.route('/whatsapp/', methods=['POST'])
