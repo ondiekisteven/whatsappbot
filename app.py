@@ -31,7 +31,7 @@ def confirmation():
 
 
 @app.route('/pay/validation/', methods=['GET', 'POST'])
-def confirmation():
+def validation():
     if request.method == 'POST':
         print("received data")
         print(request.json)
