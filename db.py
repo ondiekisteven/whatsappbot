@@ -6,7 +6,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def getDb():
-    db = pymysql.connect(get_database_host(), get_database_user(), get_database_pass(), "heroku_2c9ec56dd042196")
+    db = pymysql.connect(get_database_host(), get_database_user(), get_database_pass(), "heroku_5224e07fd0f4097")
     return db
 
 # def getDb():
