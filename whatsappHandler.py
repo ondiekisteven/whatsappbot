@@ -318,7 +318,7 @@ def save_chat(bot, message):
         db.addLastCommand(str(message['chatId']), 'join')
 
         res = bot.send_message(message['chatId'], "You have been registered. Note, to avoid whatsapp banning the bot, "
-                                                  "save the bot's contact and reply yours to be saved. \n\nthen type "
+                                                  "save the bot's contact and send your name to 0790670635 be saved. \n\nthen type "
                                                   "help to see available commands")
         print(f'SAVING USER: {res}')
         return res
