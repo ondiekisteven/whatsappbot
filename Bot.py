@@ -177,12 +177,6 @@ eg _how to bake a cake_
 6. *define* - get definition of a term. It has to be just one word.
 eg. define gallery
 
-7. *Group* -Create a group using the bot. it adds the bot as a user
-eg. group My Music Group
-
-8. *adduser* - Add a user to a group. For this to work, make me an admin in the group.
-
-*Commands* or *help* -Display this menu
     """
 
         text = f'{name} \n{welcome_string}'
@@ -412,21 +406,21 @@ eg. group My Music Group
 
             db.updateLastCommand(sid, 'lyrics')
             return res
-        elif text.lower().startswith('adduser'):
-            # self.send_typing(sid)
-            if is_group(message['chatId']):
-                return self.add_participant(message['chatId'], participant_phone=remove_first_word(text))
-            else:
-                return self.send_message(sid, 'Cant add user here. Send this command from a group where i am an admin')
-        elif text.lower().startswith('group'):
-            # self.send_typing(sid)
-            db.updateLastCommand(sid, 'group')
-            grName = remove_first_word(text).strip()
-            if grName:
-                self.send_message(sid, f"Creating your group called '{grName}'. Go back and check it out")
-                return self.group(message['author'], grName)
-            self.send_message(sid, f'Creating for you a group called "My awesome group". Go back and check it out')
-            return self.group(message['author'], )
+        # elif text.lower().startswith('adduser'):
+        #     # self.send_typing(sid)
+        #     if is_group(message['chatId']):
+        #         return self.add_participant(message['chatId'], participant_phone=remove_first_word(text))
+        #     else:
+        #         return self.send_message(sid, 'Cant add user here. Send this command from a group where i am an admin')
+        # elif text.lower().startswith('group'):
+        #     # self.send_typing(sid)
+        #     db.updateLastCommand(sid, 'group')
+        #     grName = remove_first_word(text).strip()
+        #     if grName:
+        #         self.send_message(sid, f"Creating your group called '{grName}'. Go back and check it out")
+        #         return self.group(message['author'], grName)
+        #     self.send_message(sid, f'Creating for you a group called "My awesome group". Go back and check it out')
+        #     return self.group(message['author'], )
         elif text.lower().startswith('diagnose'):
             # self.send_typing(sid)
             # if is_group(sid):
@@ -500,15 +494,14 @@ eg. group My Music Group
                 except ValueError:
                     return ''
 
-                nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 x = random.choice(nums)
-                if x > 8:
-                    if not os.environ.get('HEROKU_URL') == 'https://som-whatsapp1.herokuapp.com/':
-                        custom_msg = 'Downloading. Contact +254112679544 to get the same bot services.'
-                    else:
-                        custom_msg = 'Downloading'
+                if x > 9:
+                    custom_msg = 'Downloading. Kindly save the bot contact and rely your name inbox to be saved back if you have not saved.' \
+                                     ' Just preventing whatsapp from banning the bot'
                 else:
-                    custom_msg = 'Downloading...'
+                    cm = ['downloading', 'downloading song', '', '', 'song downloading', 'please wait..', 'your song is donwloading']
+                    custom_msg = random.choice(cm)
                 self.send_message(sid, custom_msg)
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)

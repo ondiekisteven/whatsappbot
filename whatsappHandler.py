@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from infermedicaClient import make_chuka_api_request
 from json import loads
 from loadConf import get_twilio_auth_token, get_twilio_sid
-from time import sleep
+import random
 
 
 x = """
@@ -307,16 +307,18 @@ def save_chat(bot, message):
     """
     user = db.checkAllowedChatBot(str(message['chatId']))
     if user:
-        return bot.send_message(message['chatId'], 'You are already registered :). Type help to see commands')
+        replies = [
+            "You're registered", 'Bot is up', 'Hello', 'Greetings!', 'Chat is registered', 'Already registered',
+            'Hello, type audio then the name of song to download', 'Hello, type lyrics then song title to get lyrics',
+            'Hello, You are registered', 'Hi, You are registered', 'Type help to see available commands'
+        ]
+        return bot.send_message(message['chatId'], random.choice(replies))
     else:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
         db.addLastCommand(str(message['chatId']), 'join')
-        # bot.send_message(message['chatId'], text)
-        # bot.send_message(message['chatId'], '*Please note the bot is not perfect yet, its being developed still. If '
-        #                                     'it doesnt respond, reply with `help` to get other services then try again '
-        #                                     'later*')
-        # sleep(1)
 
-        res = bot.send_message(message['chatId'], "User registered successfully. Type help to see commands")
+        res = bot.send_message(message['chatId'], "You have been registered. Note, to avoid whatsapp banning the bot, "
+                                                  "save the bot's contact and reply yours to be saved. \n\nthen type "
+                                                  "help to see available commands")
         print(f'SAVING USER: {res}')
         return res
