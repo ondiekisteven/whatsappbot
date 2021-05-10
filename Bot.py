@@ -496,7 +496,7 @@ eg. define gallery
 
                 nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 x = random.choice(nums)
-                if x > 9:
+                if x > 6:
                     custom_msg = 'Downloading. Kindly save the bot contact and rely your name inbox to be saved back if you have not saved.' \
                                      ' Just preventing whatsapp from banning the bot'
                 else:
