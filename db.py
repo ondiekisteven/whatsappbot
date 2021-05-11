@@ -155,7 +155,7 @@ def saveCurrentQuestion(tg_id, q_id, q_text):
                        (tg_id, q_id, q_text))
         db.commit()
     except pymysql.err.IntegrityError:
-        print({'Error': 'User record exists, skipping...'})
+        updateCurrentQuestion(tg_id, q_id, q_text)
     finally:
         cursor.close()
         db.close()
@@ -193,6 +193,7 @@ def deleteCurrentQuestion(tg_id):
 def saveInitialSymptom(tg_id, symptom_id, choice_id, initial):
     db = getDb()
     cursor = db.cursor()
+    print("saving symptom in database")
     cursor.execute(f'INSERT INTO user_symptoms (tg_id, symptom_id, choice_id, initial) VALUES({tg_id}, '
                    f'"{symptom_id}", "{choice_id}", {initial})')
     saveCurrentQuestion(tg_id, "", "")
