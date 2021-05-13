@@ -395,7 +395,7 @@ eg. define gallery
 
         elif text.lower().startswith('lyrics'):
             # self.send_typing(sid)
-            # return self.send_message(sid, 'bot is under maintenance, sorry, try later')
+            return self.send_message(sid, 'Lyrics not available right now, try later..')
             self.send_message(sid, 'Searching lyrics...')
             search = remove_first_word(text)
 
