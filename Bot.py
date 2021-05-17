@@ -263,6 +263,9 @@ eg. define gallery
         sid = message['chatId']
         name = message['author']
         links = find_links(text)
+        if 'happy' in message and 'birthday' in message:
+            if not is_group(sid):
+                return self.send_message(sid, 'Thanks.')
         if not os.path.exists(f'music/{get_phone(message)}'):
             os.mkdir(f'music/{get_phone(message)}')
         if links:
