@@ -1,4 +1,7 @@
 from configparser import ConfigParser
+from urllib.parse import urlparse
+
+db = urlparse(os.environ.get('CLEARDB_DATABASE_URL'))
 
 
 parser = ConfigParser()
@@ -14,7 +17,7 @@ def get_dev_bot_token():
 
 
 def get_database_user():
-    return parser.get('database', 'user')
+    return db.username
 
 
 def get_dev_database_user():
@@ -22,11 +25,15 @@ def get_dev_database_user():
 
 
 def get_database_pass():
-    return parser.get('database', 'pass')
+    return db.password
 
 
 def get_database_host():
-    return parser.get('database', 'host')
+    return db.host
+
+
+def get_database_name():
+    return db.path.lstrip('/')
 
 
 def get_dev_database_host():
