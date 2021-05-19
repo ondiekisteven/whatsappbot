@@ -31,6 +31,8 @@ def get_database_pass():
 
 
 def get_database_host():
+	if 'CLEARDB_DATABASE_CLEARDB_HOSTNAME_1' in os.environ:
+		return os.environ.get('CLEARDB_DATABASE_CLEARDB_HOSTNAME_1')
     return db.hostname
 
 
