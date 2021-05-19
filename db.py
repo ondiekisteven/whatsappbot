@@ -1,6 +1,6 @@
 import pymysql
 from pymysql import IntegrityError
-from loadConf import get_database_host, get_database_user, get_database_pass
+from loadConf import get_database_host, get_database_user, get_database_pass, get_database_name
 import logging
 logging.basicConfig(level=logging.INFO)
 
