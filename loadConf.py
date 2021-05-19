@@ -1,5 +1,7 @@
 from configparser import ConfigParser
 from urllib.parse import urlparse
+import os
+
 
 db = urlparse(os.environ.get('CLEARDB_DATABASE_URL'))
 
