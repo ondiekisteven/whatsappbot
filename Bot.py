@@ -500,7 +500,12 @@ eg. define gallery
                 nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 x = random.choice(nums)
                 if x > 8:
-                    custom_msg = 'Downloading. Kindly save the bot contact and send your name to 0790670635 to be saved.' \
+                    if os.environ.get('SITE') == '1':
+                        rec_ph = '0790670635'
+                    else:
+                        rec_ph = '0726422225'
+
+                    custom_msg = f'Downloading. Kindly save the bot contact and send your name to {rec_ph} to be saved.' \
                                      ' Just preventing whatsapp from banning the bot'
                 else:
                     cm = ['downloading', 'downloading song', '', '', 'song downloading', 'please wait..', 'your song is donwloading']
