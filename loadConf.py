@@ -31,7 +31,7 @@ def get_database_pass():
 
 
 def get_database_host():
-    return db.host
+    return db.hostname
 
 
 def get_database_name():
