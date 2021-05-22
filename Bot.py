@@ -190,17 +190,15 @@ eg. define gallery
             if 'Could not find' in sid:
                 return 'Could not find song'
             song_id = sid['song_id']
-            lyrics = bot.retrieve_lyrics(song_id)
+            lyrics = bot.lyrics(song_id)
             thumbnail = sid['song_thumbnail']
             name = sid['song_title']
             self.send_file(chat_id, thumbnail, uuid.uuid4().hex + '.jpg', name)
-            text = f'TITLE: {name}\n\n{lyrics}'
+            text = f'{lyrics}'
         except IndexError:
             text = "Could not find lyrics"
 
-        self.send_message(chat_id, text)
-
-        return 'DONE'
+        return self.send_message(chat_id, text)
 
     def lyrics(self, chat_id, search):
         pass
@@ -398,7 +396,7 @@ eg. define gallery
 
         elif text.lower().startswith('lyrics'):
             # self.send_typing(sid)
-            return self.send_message(sid, 'Lyrics not available right now, try later..')
+            # return self.send_message(sid, 'Lyrics not available right now, try later..')
             self.send_message(sid, 'Searching lyrics...')
             search = remove_first_word(text)
 

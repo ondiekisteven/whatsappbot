@@ -2,12 +2,16 @@ import requests
 import json
 from bs4 import BeautifulSoup
 import base64
+from lyricsgenius import Genius as GeniusLyrics
 
 
 class Genius:
     def __init__(self):
         self.token = 'ixSPr24nAw6FnPZVDGWpWPl40zirdftUk6x7gO5llceXb2v-Ey2Q7SBQaJ9QKksm'
         self.APIUrl = 'https://api.genius.com/'
+
+    def lyrics(self, song_id):
+        return GeniusLyrics(self.token).lyrics(song_id)
 
     def get_header(self):
         header = {
@@ -32,7 +36,7 @@ class Genius:
             return result.text
 
     def get_json(self, path, params=None, headers=None):
-        '''Send request and get response in json format.'''
+        """Send request and get response in json format."""
 
         # Generate request URL
         requrl = ''.join([self.APIUrl, path])
@@ -48,7 +52,7 @@ class Genius:
         return response.json()
 
     def connect_lyrics(self, song_id):
-        '''Constructs the path of song lyrics.'''
+        """Constructs the path of song lyrics."""
         url = "songs/{}".format(song_id)
         data = self.get_json(url)
 
@@ -85,7 +89,7 @@ class Genius:
             URL = "http://genius.com" + path
             page = requests.get(URL)
             # Extract the page's HTML as a string
-            html = BeautifulSoup(page.text, "html.parser")
+            html = BeautifulSoup(page.text, "lxml")
 
             # Scrape the song lyrics from the HTML
             lyr = html.find("div", class_="lyrics").get_text()
