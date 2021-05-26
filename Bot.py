@@ -368,6 +368,7 @@ eg. define gallery
                 return self.send_message(sid, ytsearch)
 
         elif text.lower().startswith('audio'):
+            return self.send_message(sid, "No audio right now")
             # self.send_typing(sid)
             search = remove_first_word(text)
             if not search:
@@ -487,6 +488,7 @@ eg. define gallery
                 except ValueError:
                     return ''
             elif db.getLastCommand(sid) == 'audio':
+                return 
                 # self.send_typing(sid)
                 try:
                     choice = int(text)
