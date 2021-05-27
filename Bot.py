@@ -367,7 +367,7 @@ eg. define gallery
                 ytsearch = MySearch(search, get_phone(message)).get_printable()
                 return self.send_message(sid, ytsearch)
 
-        elif text.lower().startswith('audio'):
+        elif text.lower().startswith('dl'):
             # return self.send_message(sid, "No audio right now")
             # self.send_typing(sid)
             search = remove_first_word(text)
@@ -487,7 +487,7 @@ eg. define gallery
                         return ''
                 except ValueError:
                     return ''
-            elif db.getLastCommand(sid) == 'audio':
+            elif db.getLastCommand(sid) == 'dl':
                 # return
                 # self.send_typing(sid)
                 try:
@@ -520,24 +520,22 @@ eg. define gallery
                 logging.info('[*] DOWNLOADING AUDIO... ')
                 audio_name = downloader.download_audio()
                 # ------------------------------------------------------------------------------------
-                s3_path = save_to_s3(audio_name)
-                logging.info(f'SENDING AUDIO FROM {s3_path}')
-                audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
-                logging.info(audio_sending)
-                logging.info("DELETING FILE")
-                S3Uploader().delete_file(s3_path)
-                return ''
+                # s3_path = save_to_s3(audio_name)
+                # logging.info(f'SENDING AUDIO FROM {s3_path}')
+                # audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
+                # logging.info(audio_sending)
+                # logging.info("DELETING FILE")
+                # S3Uploader().delete_file(s3_path)
+                # return ''
                 # ------------------------------------------------------------------------------------
-                # path = f'{heroku_url}files/music/{audio_name}'
-                # logging.info(f'path -> {path}')
-                # if os.path.exists(f'music/{audio_name}'):
-                #     audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                #     logging.info(f'sending audio -> {audio_sending}')
-                #     db.delete_downloading(sid)
-                #     db.updateLastCommand(sid, 'audio')
-                #
-                #     return ""
-                # return self.send_message(sid,
-                #                          f'Song not found in directory music/{audio_name}')
+                path = f'{heroku_url}files/music/{audio_name}'
+                logging.info(f'path -> {path}')
+                if os.path.exists(f'/temp/music/{audio_name}'):
+                    audio_sending = self.send_file(sid, path, audio_name, audio_name)
+                    logging.info(f'sending audio -> {audio_sending}')
+
+                    return audio_sending
+                return self.send_message(sid,
+                                         f'Song not found in directory /temp/music/{audio_name}')
 
             return ''
