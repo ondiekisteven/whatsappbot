@@ -90,7 +90,7 @@ class Downloader(DlSelector):
 
         with YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(self.url, download=True)
-        return info_dict["title"] + ".mp3"
+        return info_dict["title"] + info_dict["ext"]
 
 
 class Converter:
