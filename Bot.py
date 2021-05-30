@@ -520,21 +520,21 @@ eg. define gallery
                 logging.info('[*] DOWNLOADING AUDIO... ')
                 audio_name = downloader.download_audio()
                 # ------------------------------------------------------------------------------------
-                # s3_path = save_to_s3(audio_name)
-                # logging.info(f'SENDING AUDIO FROM {s3_path}')
-                # audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
-                # logging.info(audio_sending)
-                # logging.info("DELETING FILE")
-                # S3Uploader().delete_file(s3_path)
-                # return ''
+                s3_path = save_to_s3(audio_name)
+                logging.info(f'SENDING AUDIO FROM {s3_path}')
+                audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
+                logging.info(audio_sending)
+                logging.info("DELETING FILE")
+                S3Uploader().delete_file(s3_path)
+                return ''
                 # ------------------------------------------------------------------------------------
-                path = f'{heroku_url}files/music/{audio_name}'
-                logging.info(f'path -> {path}')
-
-                print("Path exists")
-                audio_sending = self.send_file(sid, path, audio_name, audio_name)
-                logging.info(f'sending audio -> {audio_sending}')
-
-                return audio_sending
+                # path = f'{heroku_url}files/music/{audio_name}'
+                # logging.info(f'path -> {path}')
+                #
+                # print("Path exists")
+                # audio_sending = self.send_file(sid, path, audio_name, audio_name)
+                # logging.info(f'sending audio -> {audio_sending}')
+                #
+                # return audio_sending
 
             return ''
