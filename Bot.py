@@ -334,9 +334,9 @@ eg. define gallery
                 rht = random_how_to()
                 return self.send_message(sid, rht)
 
-        elif text.lower().startswith('dl'):
+        elif text.lower().startswith('audio'):
             # self.send_typing(sid)
-            db.updateLastCommand(sid, 'dl')
+            db.updateLastCommand(sid, 'audio')
             search = remove_first_word(text)
             if not search:
                 return self.send_message(sid,
@@ -486,7 +486,7 @@ eg. define gallery
                         return ''
                 except ValueError:
                     return ''
-            elif db.getLastCommand(sid) == 'dl':
+            elif db.getLastCommand(sid) == 'audio':
                 # return
                 # self.send_typing(sid)
                 try:
