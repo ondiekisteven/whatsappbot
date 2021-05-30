@@ -76,7 +76,7 @@ class Downloader(DlSelector):
         self.url = self.get_choice_url()
 
     def download_audio(self):
-        outtmpl = '/tmp/%(id)s' + '.%(ext)s'
+        outtmpl = 'tmp/%(id)s' + '.%(ext)s'
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
