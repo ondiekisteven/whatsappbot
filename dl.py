@@ -80,12 +80,12 @@ class Downloader(DlSelector):
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
-            # 'postprocessors': [
-            #     {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
-            #      'preferredquality': '192',
-            #      },
-            #     {'key': 'FFmpegMetadata'},
-            # ],
+            'postprocessors': [
+                {'key': 'FFmpegExtractAudio', 'preferredcodec': 'aac',
+                 'preferredquality': '192',
+                 },
+                {'key': 'FFmpegMetadata'},
+            ],
         }
 
         with YoutubeDL(ydl_opts) as ydl:
