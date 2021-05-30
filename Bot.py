@@ -530,13 +530,11 @@ eg. define gallery
                 # ------------------------------------------------------------------------------------
                 path = f'{heroku_url}files/music/{audio_name}'
                 logging.info(f'path -> {path}')
-                if os.path.exists(f'tmp/{audio_name}'):
-                    print("Path exists")
-                    audio_sending = self.send_file(sid, path, audio_name, audio_name)
-                    logging.info(f'sending audio -> {audio_sending}')
 
-                    return audio_sending
-                return self.send_message(sid,
-                                         f'Song not found in directory tmp/{audio_name}')
+                print("Path exists")
+                audio_sending = self.send_file(sid, path, audio_name, audio_name)
+                logging.info(f'sending audio -> {audio_sending}')
+
+                return audio_sending
 
             return ''
