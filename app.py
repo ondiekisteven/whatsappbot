@@ -97,7 +97,7 @@ def receive():
 
 @app.route('/files/music/<filename>/', methods=['GET'])
 def download_audio(filename):
-    file_path = f'/tmp/{filename}'
+    file_path = f'tmp/{filename}'
     logging.info(file_path)
     if not file_path:
         return 'File not found'
