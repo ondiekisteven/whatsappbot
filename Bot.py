@@ -114,13 +114,12 @@ class WaBot:
         answer = self.send_requests('sendMessage', data)
         return answer
 
-    def send_file(self, chat_id, body, file_name, caption):
+    def send_file(self, chat_id, body, file_name):
 
         data = {
             'chatId': chat_id,
             'body': body,
             'filename': file_name,
-            'caption': caption
         }
         logging.debug(f'send_file data -> {data}')
         answer = self.send_requests('sendFile', data)
