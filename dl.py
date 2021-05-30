@@ -112,7 +112,7 @@ def download_song(song_url):
     Download a song using youtube url and song title
     """
 
-    outtmpl = '/tmp/%(id)s' + '.%(ext)s'
+    outtmpl = 'tmp/%(id)s' + '.%(ext)s'
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': outtmpl,
@@ -130,7 +130,7 @@ def download_song(song_url):
 
 
 def save_to_s3(file_name):
-    file_path = f'/tmp/{file_name}'
+    file_path = f'tmp/{file_name}'
     uploader = S3Uploader()
     uploader.upload_file(file_path, f'music/{file_name}')
     return f'https://som-whatsapp.s3.us-east-2.amazonaws.com/music/{file_name}'
