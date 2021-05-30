@@ -81,7 +81,7 @@ class Downloader(DlSelector):
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
             'postprocessors': [
-                {'key': 'FFmpegExtractAudio', 'preferredcodec': 'aac',
+                {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
                  'preferredquality': '192',
                  },
                 {'key': 'FFmpegMetadata'},
@@ -90,7 +90,7 @@ class Downloader(DlSelector):
 
         with YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(self.url, download=True)
-        return info_dict["title"] + ".aac"
+        return info_dict["title"] + ".mp3"
 
 
 class Converter:

@@ -28,9 +28,9 @@ adverts = [
     'The bot downloads songs from  youtube. If we didnt find your song, its probably not in youtube yet',
     'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
 ]
-# os.environ["API_URL"] = 'https://api.chat-api.com/instance241226/'
-# os.environ["API_TOKEN"] = 'fwdetb64e29aig52'
-# os.environ["HEROKU_URL"] = 'http://localhost:5000/'
+os.environ["API_URL"] = 'https://api.chat-api.com/instance279019/'
+os.environ["API_TOKEN"] = '21lamw2k30b9f6c3'
+os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('HEROKU_URL')
 api_url = os.getenv('API_URL')
 api_token = os.getenv('API_TOKEN')
