@@ -98,5 +98,5 @@ virtualenv==20.4.3
 Werkzeug==1.0.1
 wikipedia==1.4.0
 yarl==1.5.1
-youtube-dl==2021.2.22
+youtube-dl
 youtube-search==1.1.1
