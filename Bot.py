@@ -517,15 +517,20 @@ eg. define gallery
                     logging.warning('SONG TOO LONG TO DOWNLOAD...')
                     return self.send_message(sid, 'This song is large. Cannot complete downloading')
                 logging.info('[*] DOWNLOADING AUDIO... ')
-                audio_name = downloader.download_audio()
-                # ------------------------------------------------------------------------------------
-                s3_path = save_to_s3(audio_name)
-                logging.info(f'SENDING AUDIO FROM {s3_path}')
-                audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
-                logging.info(audio_sending)
-                logging.info("DELETING FILE")
-                S3Uploader().delete_file(s3_path)
-                return ''
+                try:
+                    audio_name = downloader.download_audio()
+
+                    # ------------------------------------------------------------------------------------
+                    s3_path = save_to_s3(audio_name)
+                    logging.info(f'SENDING AUDIO FROM {s3_path}')
+                    audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
+                    logging.info(audio_sending)
+                    logging.info("DELETING FILE")
+                    S3Uploader().delete_file(s3_path)
+                    return ''
+                except Exception as e:
+                    self.send_message(sid, str(e))
+
                 # ------------------------------------------------------------------------------------
                 # path = f'{heroku_url}files/music/{audio_name}'
                 # logging.info(f'path -> {path}')
