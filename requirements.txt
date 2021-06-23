@@ -103,3 +103,4 @@ wikipedia==1.4.0
 yarl==1.5.1
 youtube-dl
 youtube-search==1.1.1
+gunicorn
