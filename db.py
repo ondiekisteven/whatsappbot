@@ -10,7 +10,7 @@ def getDb():
     return db
 
 # def getDb():
-#     db = pymysql.connect("localhost", "root", "", "infermedica")
+#     db = pymysql.connect("localhost", "steven", "zamo1234", "infermedica")
 #     return db
 
 

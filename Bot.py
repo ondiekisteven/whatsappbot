@@ -32,8 +32,8 @@ adverts = [
 # os.environ["API_TOKEN"] = '21lamw2k30b9f6c3'
 # os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('HEROKU_URL')
-api_url = os.getenv('API_URL')
-api_token = os.getenv('API_TOKEN')
+api_url = os.getenv('API_URL', 'https://api.chat-api.com/instance291622/')
+api_token = os.getenv('API_TOKEN', 'esps2cxpqfb0sehq')
 import logging
 
 logging.basicConfig(level=logging.INFO)
