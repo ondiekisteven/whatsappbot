@@ -32,11 +32,11 @@ adverts = [
 # os.environ["API_TOKEN"] = '21lamw2k30b9f6c3'
 # os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('HEROKU_URL')
-api_url = "https://api.chat-api.com/instance294457/"
-api_token = " 7sjpu0qtn8joild6"
+api_url = os.environ.get("API_URL")
+api_token = os.environ.get("API_TOKEN")
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def get_phone(message):
