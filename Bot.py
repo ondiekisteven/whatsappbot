@@ -503,16 +503,16 @@ eg. define gallery
                     else:
                         rec_ph = '0726422225'
 
-                    custom_msg = f'Downloading. Kindly save the bot contact and send your name to {rec_ph} to be saved.' \
-                                     ' Just preventing whatsapp from banning the bot'
+                    custom_msg = f'Downloading. If you have not been saved, send your name to {rec_ph} to be saved.' \
+                                     ''
                 else:
-                    cm = ['downloading', 'downloading song', '', '', 'song downloading', 'please wait..', 'your song is donwloading']
+                    cm = ['downloading', 'downloading song','', '', '', 'song downloading', 'please wait..', 'your song is downloading']
                     custom_msg = random.choice(cm)
                 self.send_message(sid, custom_msg)
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
                 duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
-                if duration > 600:
+                if duration > 1300:
                     logging.warning('SONG TOO LONG TO DOWNLOAD...')
                     return self.send_message(sid, 'This song is large. Cannot complete downloading')
                 logging.info('[*] DOWNLOADING AUDIO... ')
