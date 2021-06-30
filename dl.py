@@ -1,11 +1,19 @@
+import logging
+
 from audio import S3Uploader
 from moviepy.editor import *
 import os
 import db
 from json import dumps, loads
+import re
 
 from youtube_dl import YoutubeDL
 from youtube_search import YoutubeSearch
+
+
+def clean_file_name(filename):
+    new_file_name = re.sub("[^0-9a-zA-Z.]+", "_", filename)
+    return new_file_name
 
 
 class MySearch(YoutubeSearch):
@@ -76,7 +84,7 @@ class Downloader(DlSelector):
         self.url = self.get_choice_url()
 
     def download_audio(self):
-        outtmpl = '/tmp/music/%(title)s' + '.%(ext)s'
+        outtmpl = '/tmp/music/%(id)s' + '.%(ext)s'
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
@@ -90,7 +98,11 @@ class Downloader(DlSelector):
 
         with YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(self.url, download=True)
-        return info_dict["title"] + ".mp3"
+
+        renamed_file_name = f"{clean_file_name(info_dict['title'])}.mp3"
+        logging.info(f"RENAMING SONG TO {renamed_file_name}")
+        os.rename(f"/tmp/music/{info_dict['id']}.mp3", f"/tmp/music/{renamed_file_name}")
+        return renamed_file_name
 
 
 class Converter:

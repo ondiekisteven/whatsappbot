@@ -495,6 +495,8 @@ eg. define gallery
                 except ValueError:
                     return ''
 
+                loc = "\n\nOnce downloaded, if the song cannot play directly in whatsapp, navigate to File Manager > " \
+                      "Whatsapp folder.> media > Whatsapp Documents. You will find the songs there "
                 nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 x = random.choice(nums)
                 if x > 8:
@@ -506,7 +508,7 @@ eg. define gallery
                     custom_msg = f'Downloading. If you have not been saved, send your name to {rec_ph} to be saved.' \
                                      ''
                 else:
-                    cm = ['downloading', 'downloading song','', '', '', 'song downloading', 'please wait..', 'your song is downloading']
+                    cm = [f'downloading.{loc}', f'downloading song{loc}','', '', '', f'song downloading{loc}', f'please wait...', 'Your song is downloading']
                     custom_msg = random.choice(cm)
                 self.send_message(sid, custom_msg)
                 db.add_downloading_user(sid)
