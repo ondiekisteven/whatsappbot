@@ -5,13 +5,13 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 
-def getDb():
-    db = pymysql.connect(get_database_host(), get_database_user(), get_database_pass(), get_database_name())
-    return db
-
 # def getDb():
-#     db = pymysql.connect("localhost", "steven", "zamo1234", "infermedica")
+#     db = pymysql.connect(get_database_host(), get_database_user(), get_database_pass(), get_database_name())
 #     return db
+
+def getDb():
+    db = pymysql.connect(host="173.230.134.76", user="root", password="Xy2E3JazKXkYdMZw", database="whatsappbot")
+    return db
 
 
 def getUserById(tg_id):
@@ -348,7 +348,11 @@ def addLastCommand(chat_id, command):
 def updateLastCommand(chat_id, new_command):
     db = getDb()
     cursor = db.cursor()
-    cursor.execute(f'UPDATE last_command SET command = "{new_command}" WHERE chat_id = "{chat_id}"')
+    try:
+        cursor.execute(f"INSERT INTO last_command (chat_id, command) VALUES ('{chat_id}', '{new_command}') ")
+    except Exception as e:
+        cursor.execute(f'UPDATE last_command SET command = "{new_command}" WHERE chat_id = "{chat_id}"')
+
     db.commit()
     cursor.close()
     db.close()
@@ -359,7 +363,7 @@ def getLastCommand(chat_id):
     cursor = db.cursor()
     cursor.execute(f'SELECT command FROM last_command WHERE chat_id = "{chat_id}"')
     com = cursor.fetchone()
-    data = com[0] or 'join'
+    data = com[0] if com is not None else 'join'
     cursor.close()
     db.close()
     return data
@@ -448,6 +452,7 @@ def save_link(chat_id, text):
     try:
         sql = 'INSERT INTO link_text (user_id, text) VALUES (%s, %s)'
         cursor.execute(sql, (chat_id, text))
+
     except Exception as e:
         logging.error(f'Error :{e}')
         sql = 'UPDATE link_text SET text = %s WHERE user_id = %s'

@@ -84,7 +84,7 @@ class Downloader(DlSelector):
         self.url = self.get_choice_url()
 
     def download_audio(self):
-        outtmpl = '/tmp/music/%(id)s' + '.%(ext)s'
+        outtmpl = 'music/%(id)s' + '.%(ext)s'
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
@@ -101,7 +101,7 @@ class Downloader(DlSelector):
 
         renamed_file_name = f"{clean_file_name(info_dict['title'])}.mp3"
         logging.info(f"RENAMING SONG TO {renamed_file_name}")
-        os.rename(f"/tmp/music/{info_dict['id']}.mp3", f"/tmp/music/{renamed_file_name}")
+        os.rename(f"music/{info_dict['id']}.mp3", f"music/{self.sid}/{renamed_file_name}")
         return renamed_file_name
 
 

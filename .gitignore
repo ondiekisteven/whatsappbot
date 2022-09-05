@@ -1,0 +1,9 @@
+venv
+*.mp3
+*.mp4
+*.webm
+*.part
+*.zip
+__pycache__/
+.idea
+

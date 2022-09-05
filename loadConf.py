@@ -31,7 +31,7 @@ def get_database_pass():
 
 
 def get_database_host():
-    return os.environ.get('CLEARDB_DATABASE_CLEARDB_HOSTNAME_1')
+    return os.environ.get('CLEARDB_DATABASE_CLEARDB_HOSTNAME_1', 'mysql://localhost:3306/whatsappbot')
     # return db.hostname
 
 

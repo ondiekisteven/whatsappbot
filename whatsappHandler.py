@@ -296,7 +296,7 @@ def getAllowedChats():
     allowed = []
     cursor = db.getAllowedBotChat()
     for item in cursor:
-        allowed.append(item[0])
+        allowed.append(item[1])
     return allowed
 
 

@@ -4,11 +4,15 @@ import Bot
 from tasks import conn
 from rq import Queue
 import logging
+import rq_dashboard
 
 logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 
-# r = redis.Redis()
+app.config.from_object(rq_dashboard.default_settings)
+app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
+
+
 q = Queue(connection=conn)
 
 
@@ -97,7 +101,7 @@ def receive():
 
 @app.route('/files/music/<filename>/', methods=['GET'])
 def download_audio(filename):
-    file_path = f'tmp/{filename}'
+    file_path = f'/tmp/music/{filename}'
     logging.info(file_path)
     if not file_path:
         return 'File not found'
@@ -105,4 +109,4 @@ def download_audio(filename):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=8003)

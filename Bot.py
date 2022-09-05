@@ -1,10 +1,12 @@
 import random
 
+import magic
 import requests
 from wikipedia import PageError, DisambiguationError
 
 from dl import *
 from genius import Genius
+from twitter import twitter_dl
 from whatsappHandler import register, remove_first_word, is_group
 import uuid
 import os
@@ -31,8 +33,9 @@ adverts = [
 # os.environ["API_URL"] = 'https://api.chat-api.com/instance279019/'
 # os.environ["API_TOKEN"] = '21lamw2k30b9f6c3'
 # os.environ["HEROKU_URL"] = 'http://localhost:5000/'
-heroku_url = os.getenv('HEROKU_URL')
-api_url = os.environ.get("API_URL")
+heroku_url = os.getenv('BOT_HOST', 'http://173.230.134.76:8003/')  # address of this machine
+api_url = "http://173.230.134.76:8002/api/v1/send-chat"
+upload_url = "http://173.230.134.76:8002/uploadfile/"
 api_token = os.environ.get("API_TOKEN")
 import logging
 
@@ -60,6 +63,15 @@ def sim(message: str):
 
     bot = WaBot(body)
     return bot.processing()
+
+
+link = re.compile(
+        r'^(?:http|ftp)s?://' # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+        r'localhost|' #localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+        r'(?::\d+)?' # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 
 def delete_diagnosis_user(message):
@@ -100,10 +112,31 @@ class WaBot:
         self.last_command = "last command"
 
     def send_requests(self, method, data):
-        url = f'{self.APIUrl}{method}?token={self.token}'
+
         headers = {'content-type': 'application/json'}
-        answer = requests.post(url, data=dumps(data), headers=headers)
+        if method == 'sendMessage':
+            d = {
+                'chat_id': data['chatId'],
+                'message': data['body'],
+                'type': 'chat'
+            }
+            answer = requests.post(api_url, data=dumps(d), headers=headers)
+        elif method == 'sendFileLink':
+            # first upload the file
+            # requests.post(upload_url, files={'file': open()})
+            # then send message containing the file
+            d = {
+                'chat_id': data['chatId'],
+                'message': data['message'],
+                'image': data['image'],
+                'type': 'file'
+            }
+            answer = requests.post(api_url, data=dumps(d), headers=headers)
+
+        else:
+            answer = "Not sent..."
         y = answer.text
+        print(f"SEND-MESSAGE RESP: {y}")
         return y
 
     def send_message(self, chat_id, text):
@@ -114,15 +147,41 @@ class WaBot:
         answer = self.send_requests('sendMessage', data)
         return answer
 
-    def send_file(self, chat_id, body, file_name, caption):
+    def upload_file(self, file_path):
 
-        data = {
-            'chatId': chat_id,
-            'body': body,
-            'filename': file_name,
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        files = {
+            'file': open(os.path.join(BASE_DIR, file_path), 'rb')
         }
-        logging.debug(f'send_file data -> {data}')
-        answer = self.send_requests('sendFile', data)
+
+        response = requests.post(url=upload_url, files=files)
+        return response.status_code
+
+    def send_file(self, chat_id, body, file_name, caption):
+        if re.match(link, body):
+            data = {
+                'chatId': chat_id,
+                'image': body,
+                'message': file_name,
+                'caption': caption
+            }
+            logging.debug(f'send_file data -> {data}')
+            answer = self.send_requests('sendFileLink', data)
+        else:
+            status = self.upload_file(body)
+            if status == 200:
+                data = {
+                    'chatId': chat_id,
+                    'image': file_name,
+                    'message': file_name,
+                    'caption': caption
+                }
+                logging.debug(f'send_file data -> {data}')
+                answer = self.send_requests('sendFileLink', data)
+            else:
+                answer = self.send_message(chat_id, 'An error occurred when uploading your file to whatsapp. '
+                                                    'We will try again later')
+
         return answer
 
     def get_song(self, path):
@@ -192,7 +251,7 @@ eg. define gallery
             lyrics = bot.lyrics(song_id)
             thumbnail = sid['song_thumbnail']
             name = sid['song_title']
-            self.send_file(chat_id, thumbnail, uuid.uuid4().hex + '.jpg', name)
+            self.send_file(chat_id, thumbnail, sid['song_title'] + '.jpg', name)
             text = f'{lyrics}'
         except IndexError:
             text = "Could not find lyrics"
@@ -278,6 +337,10 @@ eg. define gallery
                     logging.info("DELETING FILE")
                     S3Uploader().delete_file(s3_path)
                     return ''
+                elif get_tld(link) in ['https://twitter.com/']:
+
+                    file_path = twitter_dl(get_phone(message), link.split('?')[0])
+                    self.send_file(sid, file_path, 'twitter.mp4', 'Twitter Video')
             return 'probably no youtube link'
         if text.lower().startswith('command') or text.lower().startswith('help'):
             # self.send_typing(sid)
@@ -315,7 +378,8 @@ eg. define gallery
                 res = page(search)
                 return self.send_message(sid, f'*{res["t"]}* \n\n{res["d"]}')
             except PageError:
-                return self.send_message(sid, f"The page you searched  wasn't found. Use the wiki command to search about a topic, not to ask the bot random questions.',")
+                return self.send_message(sid,
+                                         f"The page you searched  wasn't found. Use the wiki command to search about a topic, not to ask the bot random questions.',")
             except DisambiguationError as e:
                 print(e)
                 return self.send_message(sid, f"ERROR: {e}")
@@ -446,14 +510,16 @@ eg. define gallery
                 db.updateLastCommand(sid, 'join')
                 return ''
             # check if the user is using diagnosis command
-            if db.getLastCommand(sid) == 'diagnose':
+            last_commad = db.getLastCommand(sid)
+            if last_commad == 'diagnose':
                 if is_group(message['chatId']):
                     return ''
                 res = self.diagnose(message['author'], sid, text.lower())
                 if 'conditions were discovered' in res:
                     delete_diagnosis_user(message)
                     return self.send_message(sid, 'Thanks for using our service. \n\nSend *diagnose* to restart')
-            elif db.getLastCommand(sid) == 'translation-language':
+
+            elif last_commad == 'translation-language':
                 try:
                     choice = int(text)
                     if choice in range(1, len(languages_list) + 1):
@@ -466,13 +532,15 @@ eg. define gallery
                         return ""
                 except ValueError:
                     return ""
-            elif db.getLastCommand(sid) == 'translation-text':
+
+            elif last_commad == 'translation-text':
                 print("Getting translation text")
                 db.updateLastCommand(sid, 'translation-language')
                 db.update_translating(get_phone(message), text)
                 return self.send_message(sid,
                                          f"Select the language to translate to\n\n{get_languages_as_text(languages_list)}")
-            elif db.getLastCommand(sid) == 'choice how-to':
+
+            elif last_commad == 'choice how-to':
                 # self.send_typing(sid)
                 try:
                     choice = int(text)
@@ -485,7 +553,8 @@ eg. define gallery
                         return ''
                 except ValueError:
                     return ''
-            elif db.getLastCommand(sid) == 'audio':
+
+            elif last_commad == 'audio':
                 # return
                 # self.send_typing(sid)
                 try:
@@ -495,8 +564,9 @@ eg. define gallery
                 except ValueError:
                     return ''
 
-                loc = "\n\nOnce downloaded, if the song cannot play directly in whatsapp, navigate to File Manager > " \
-                      "Whatsapp folder.> media > Whatsapp Documents. You will find the songs there "
+                # loc = "\n\nOnce downloaded, if the song cannot play directly in whatsapp, navigate to File Manager > " \
+                #       "Whatsapp folder.> media > Whatsapp Documents. You will find the songs there "
+                loc = ""
                 nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 x = random.choice(nums)
                 if x > 8:
@@ -506,9 +576,10 @@ eg. define gallery
                         rec_ph = '0726422225'
 
                     custom_msg = f'Downloading. If you have not been saved, send your name to {rec_ph} to be saved.' \
-                                     ''
+                                 ''
                 else:
-                    cm = [f'downloading.{loc}', f'downloading song{loc}','', '', '', f'song downloading{loc}', f'please wait...', 'Your song is downloading']
+                    cm = [f'downloading...', f'downloading song...', '', '', '', f'song downloading{loc}',
+                          f'please wait...', 'Your song is downloading']
                     custom_msg = random.choice(cm)
                 self.send_message(sid, custom_msg)
                 db.add_downloading_user(sid)
@@ -522,24 +593,26 @@ eg. define gallery
                     audio_name = downloader.download_audio()
 
                     # ------------------------------------------------------------------------------------
-                    s3_path = save_to_s3(audio_name)
-                    logging.info(f'SENDING AUDIO FROM {s3_path}')
-                    audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
-                    logging.info(audio_sending)
-                    logging.info("DELETING FILE")
-                    S3Uploader().delete_file(s3_path)
-                    return ''
+                #     s3_path = save_to_s3(audio_name)
+                #     logging.info(f'SENDING AUDIO FROM {s3_path}')
+                #     audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
+                #     logging.info(audio_sending)
+                #     logging.info("DELETING FILE")
+                #     S3Uploader().delete_file(s3_path)
+                #     return ''
                 except Exception as e:
                     self.send_message(sid, str(e))
+                    return str(e)
 
                 # ------------------------------------------------------------------------------------
-                # path = f'{heroku_url}files/music/{audio_name}'
-                # logging.info(f'path -> {path}')
-                #
-                # print("Path exists")
-                # audio_sending = self.send_file(sid, path, audio_name, audio_name)
-                # logging.info(f'sending audio -> {audio_sending}')
-                #
-                # return audio_sending
+
+                path = f'music/{get_phone(message)}/{audio_name}'
+                logging.info(f'path -> {path}')
+
+                print("Path exists")
+                audio_sending = self.send_file(sid, path, audio_name, audio_name)
+                logging.info(f'sending audio -> {audio_sending}')
+
+                return audio_sending
 
             return ''
