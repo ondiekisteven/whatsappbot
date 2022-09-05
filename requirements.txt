@@ -106,3 +106,4 @@ youtube-search==1.1.1
 gunicorn
 python-magic
 riprova
+rq-dashboard
