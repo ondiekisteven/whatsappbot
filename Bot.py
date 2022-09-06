@@ -340,7 +340,8 @@ eg. define gallery
                 elif get_tld(link) in ['https://twitter.com/']:
 
                     file_path = twitter_dl(get_phone(message), link.split('?')[0])
-                    self.send_file(sid, file_path, 'twitter.mp4', 'Twitter Video')
+                    file_name = file_path.split("/")[-1]
+                    self.send_file(sid, file_path, file_name, file_name)
             return 'probably no youtube link'
         if text.lower().startswith('command') or text.lower().startswith('help'):
             # self.send_typing(sid)
