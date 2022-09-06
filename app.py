@@ -65,7 +65,8 @@ def hello_world():
             
             return 'Saving user'
 
-        elif message['chatId'] in allowed_chats and not message['fromMe'] and not message['chatId'] in blocked_chats:
+        # elif message['chatId'] in allowed_chats and not message['fromMe'] and not message['chatId'] in blocked_chats:
+        elif not message['fromMe'] and not message['chatId'] in blocked_chats:
             logging.info(f'NEW MESSAGE FROM {message["chatId"]}: ({message["chatName"]}) ')
             logging.info(f'-----------------------------------------------')
             logging.info({message["body"]})
