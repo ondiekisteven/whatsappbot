@@ -18,17 +18,7 @@ from dict import meaningSynonym, transFr, find_links, get_languages_as_text, lan
 from audio import S3Uploader
 
 adverts = [
-    'audio download is back',
-    'Use the wiki command to search about a topic, not to ask the bot random questions.',
-    'Use the wiki command to search about a topic, not to ask the bot random questions.',
-    'Whenever you can, help your friends. Dont let them suffer when you can help.',
-    'This bot is a free project. Do not pay to use it'
-    'Audio is back, if you have not tried just type audio then name of song.',
-    'This bot is not for commercial use. Use it for fun, everyone else does so',
-    "Here's a fact about Corona Virus. Thermal scanners CAN detect if you have a fever but CANNOT detect whether you "
-    "have the virus. STAY SAFE",
-    'The bot downloads songs from  youtube. If we didnt find your song, its probably not in youtube yet',
-    'If you dont receive your song quickly, send the command *join bot* to refresh the bot. It will send your song',
+    'To download a video from twitter, send the link here, you will get the video in few seconds'
 ]
 # os.environ["API_URL"] = 'https://api.chat-api.com/instance279019/'
 # os.environ["API_TOKEN"] = '21lamw2k30b9f6c3'
@@ -214,15 +204,13 @@ class WaBot:
 
     def welcome(self, chat_id, name):
         welcome_string = """
-Hello, Here are the serivces i can offer you...
+Hello, Here are the services i can offer you...
 
 1. *Lyrics*   - Get lyrics of song 
 e.g. *lyrics work - rihanna*
 
-
 2. *audio*    - Get audio of a song.
-e.g. *audio alan walker faded* or
-*audio http//youtube.com...* (youtube link)
+e.g. *audio alan walker faded*
 
 3. *wiki* - search wikipedia for a given topic
 eg. _wiki coronavirus_
@@ -230,16 +218,14 @@ eg. _wiki coronavirus_
 4. *how to ...* - how to do something
 eg _how to bake a cake_
 
-5. *diagnose* - this command will start a conversation to do diagnosis. use it in the bot's inbox
-
-6. *define* - get definition of a term. It has to be just one word.
+5. *define* - get definition of a term. It has to be just one word.
 eg. define gallery
 
     """
 
         text = f'{name} \n{welcome_string}'
         self.send_message(chat_id, text)
-        return self.send_message(chat_id, 'use the examples given in each command to understand how it works')
+        return self.send_message(chat_id, 'You can now download videos from twitter, just send the link here and get the video in few seconds')
 
     def genius_lyrics(self, chat_id, search, phone, download=False, ):
         try:

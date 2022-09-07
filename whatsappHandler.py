@@ -308,9 +308,9 @@ def save_chat(bot, message):
     user = db.checkAllowedChatBot(str(message['chatId']))
     if user:
         replies = [
-            "You're registered", 'Bot is up', 'Hello', 'Greetings!', 'Chat is registered', 'Already registered',
-            'Hello, type audio then the name of song to download', 'Hello, type lyrics then song title to get lyrics',
-            'Hello, You are registered', 'Hi, You are registered', 'Type help to see available commands'
+            "Welcome back", 'Welcome back\nYou can now download audio by sending a youtube link here',
+            'Welcome back\n You can now download twitter videos, just send a link here',
+            'Welcome back. type help to see available services', 'Hi, \nTo see available commands, send the word help'
         ]
         return bot.send_message(message['chatId'], random.choice(replies))
     else:
