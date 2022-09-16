@@ -314,6 +314,7 @@ eg. define gallery
         white_listed_groups = env_groups.split(',') if env_groups else []
 
         if sid not in white_listed_groups:
+            print(f"GROUP NOT WHITELISTED\ngroup :: {sid}\nwhitelist :: {white_listed_groups}\n")
             return ""
         if not os.path.exists(f'music/{get_phone(message)}'):
             os.mkdir(f'music/{get_phone(message)}')
