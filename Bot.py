@@ -16,6 +16,10 @@ from spotdl.command_line.core import Spotdl
 from dict import meaningSynonym, transFr, find_links, get_languages_as_text, languages_list, \
     language_code, get_tld
 from audio import S3Uploader
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 adverts = [
     'To download a video from twitter, send the link here, you will get the video in few seconds'
@@ -305,7 +309,11 @@ eg. define gallery
         sid = message['chatId']
         name = message['author']
         links = find_links(text)
-        if sid.endswith("@g.us"):
+
+        env_groups = os.environ.get('WHITELISTED_GROUPS')
+        white_listed_groups = env_groups.split(',') if env_groups else []
+
+        if sid not in white_listed_groups:
             return ""
         if not os.path.exists(f'music/{get_phone(message)}'):
             os.mkdir(f'music/{get_phone(message)}')
@@ -333,9 +341,11 @@ eg. define gallery
             # self.send_typing(sid)
             db.updateLastCommand(sid, 'help')
             return self.welcome(sid, name)
+
         elif text.lower().startswith('sim'):
             message = remove_first_word(text)
             return sim(message)
+
         elif text.lower().startswith('transl'):
             return ''
             # try:
@@ -352,11 +362,13 @@ eg. define gallery
             #     # user has not defined sentence to be translated...
             #     db.updateLastCommand(sid, 'translation-text')
             #     return self.send_message(sid, 'Enter the word or sentence you want to translate')
+
         elif text.lower().startswith('def'):
             # self.send_typing(sid)
             term = remove_first_word(text)
             meaning = meaningSynonym(term)
             return self.send_message(sid, meaning)
+
         elif text.lower().startswith('wiki'):
             # self.send_typing(sid)
             search = remove_first_word(text)
@@ -603,3 +615,17 @@ eg. define gallery
                 return audio_sending
 
             return ''
+
+    def how_to(self, text: str, sid: str):
+        # self.send_typing(sid)
+        if text.lower().replace('how to', '').strip():
+            db.updateLastCommand(sid, 'choice how-to')
+            self.send_message(sid, 'Searching, please wait...')
+            hts = search_howto(text.lower())
+            db.add_how_to_search(sid, text.lower(), hts['size'])
+            return self.send_message(sid, hts['articles'])
+        else:
+            self.send_message(sid, 'You did not specify what to search. Searching for random how-to item')
+            db.updateLastCommand(sid, 'join bot')
+            rht = random_how_to()
+            return self.send_message(sid, rht)
