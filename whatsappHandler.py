@@ -303,22 +303,16 @@ def getAllowedChats():
 def save_chat(bot, message):
     text = f"""
     Hello {message['chatName']}, welcome.
-    Send *help* or *commands* for help
+    Send *help*  to see more commands
     """
     user = db.checkAllowedChatBot(str(message['chatId']))
-    if user:
-        replies = [
-            "Welcome back", 'Welcome back\nYou can now download audio by sending a youtube link here',
-            'Welcome back\n You can now download twitter videos, just send a link here',
-            'Welcome back. type help to see available services', 'Hi, \nTo see available commands, send the word help'
-        ]
-        return bot.send_message(message['chatId'], random.choice(replies))
-    else:
+    replies = [
+        "Welcome back", 'Welcome back\nYou can now download audio by sending a youtube link here',
+        'Welcome back\n You can now download twitter videos, just send a link here',
+        'Welcome back. type help to see available services', 'Hi, \nTo see available commands, send the word help'
+    ]
+    if not user:
         db.addAllowedBotChat(str(message['chatId']), message['chatName'])
         db.addLastCommand(str(message['chatId']), 'join')
 
-        res = bot.send_message(message['chatId'], "You have been registered. Note, to avoid whatsapp banning the bot, "
-                                                  "save the bot's contact and send your name to 0790670635 be saved. \n\nthen type "
-                                                  "help to see available commands")
-        print(f'SAVING USER: {res}')
-        return res
+    return bot.send_message(message['chatId'], random.choice(replies))

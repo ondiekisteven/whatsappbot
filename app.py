@@ -80,7 +80,7 @@ def hello_world():
 @app.route('/whatsapp/chatapi/messages/', methods=['POST'])
 def receive():
     messages = request.json['messages']
-    allowed_chats = getAllowedChats()
+    # allowed_chats = getAllowedChats()
     blocked_chats = [
     ]
     for message in messages:

@@ -208,7 +208,7 @@ class WaBot:
 
     def welcome(self, chat_id, name):
         welcome_string = """
-Hello, Here are the services i can offer you...
+Services currently offered:
 
 1. *Lyrics*   - Get lyrics of song 
 e.g. *lyrics work - rihanna*
@@ -222,8 +222,7 @@ eg. _wiki coronavirus_
 4. *how to ...* - how to do something
 eg _how to bake a cake_
 
-5. *define* - get definition of a term. It has to be just one word.
-eg. define gallery
+5. To download a video from twitter, send the twitter link here
 
     """
 
