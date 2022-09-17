@@ -396,7 +396,7 @@ eg _how to bake a cake_
                 rht = random_how_to()
                 return self.send_message(sid, rht)
 
-        elif text.lower() in ['audio', '.play']:
+        elif text.lower().split(" ")[0] in ['audio', '.play']:
             # self.send_typing(sid)
             db.updateLastCommand(sid, 'audio')
             search = remove_first_word(text)
