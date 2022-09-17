@@ -459,16 +459,19 @@ eg _how to bake a cake_
         elif text.lower().startswith('lyrics'):
             # self.send_typing(sid)
             # return self.send_message(sid, 'Lyrics not available right now, try later..')
-            self.send_message(sid, 'Searching lyrics...')
-            search = remove_first_word(text)
+            try:
+                self.send_message(sid, 'Searching lyrics...')
+                search = remove_first_word(text)
 
-            if db.getLastCommand(sid) == 'audio':
-                res = self.genius_lyrics(sid, search, get_phone(message), False)
-            else:
-                res = self.genius_lyrics(sid, search, get_phone(message), True)
+                if db.getLastCommand(sid) == 'audio':
+                    res = self.genius_lyrics(sid, search, get_phone(message), False)
+                else:
+                    res = self.genius_lyrics(sid, search, get_phone(message), True)
 
-            db.updateLastCommand(sid, 'lyrics')
-            return res
+                db.updateLastCommand(sid, 'lyrics')
+                return res
+            except Exception as e:
+                self.send_message(sid, str(e))
         # elif text.lower().startswith('adduser'):
         #     # self.send_typing(sid)
         #     if is_group(message['chatId']):
@@ -563,23 +566,9 @@ eg _how to bake a cake_
                 except ValueError:
                     return ''
 
-                # loc = "\n\nOnce downloaded, if the song cannot play directly in whatsapp, navigate to File Manager > " \
-                #       "Whatsapp folder.> media > Whatsapp Documents. You will find the songs there "
-                loc = ""
-                nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                x = random.choice(nums)
-                if x > 8:
-                    if os.environ.get('SITE') == '1':
-                        rec_ph = '0790670635'
-                    else:
-                        rec_ph = '0726422225'
-
-                    custom_msg = f'Downloading. If you have not been saved, send your name to {rec_ph} to be saved.' \
-                                 ''
-                else:
-                    cm = [f'downloading...', f'downloading song...', '', '', '', f'song downloading{loc}',
-                          f'please wait...', 'Your song is downloading']
-                    custom_msg = random.choice(cm)
+                cm = [f'downloading...', f'downloading song...', '', '', '',
+                      f'please wait...', 'Your song is downloading']
+                custom_msg = random.choice(cm)
                 self.send_message(sid, custom_msg)
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
