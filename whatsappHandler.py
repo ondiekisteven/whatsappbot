@@ -1,3 +1,5 @@
+import os
+
 from twilio.rest import Client
 import db
 import requests
@@ -301,10 +303,12 @@ def getAllowedChats():
 
 
 def save_chat(bot, message):
-    text = f"""
-    Hello {message['chatName']}, welcome.
-    Send *help*  to see more commands
-    """
+    env_groups = os.environ.get('WHITELISTED_GROUPS')
+    white_listed_groups = env_groups.split(',') if env_groups else []
+
+    if message['chatId'].endswith('@g.us') and message['chatId'] not in white_listed_groups:
+        print(f"GROUP NOT WHITELISTED\ngroup :: {message['chatId']}\nwhitelist :: {white_listed_groups}\n")
+        return ""
     user = db.checkAllowedChatBot(str(message['chatId']))
     replies = [
         "Welcome back", 'Welcome back\nYou can now download audio by sending a youtube link here',
