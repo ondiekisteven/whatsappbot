@@ -46,8 +46,8 @@ def sim(message: str):
     body = {
                 "body": arg,
                 "fromMe": False,
-                "author": f"254{phone[1:]}@c.us",
-                "chatId": f"254{phone[1:]}@c.us",
+                "author": f"254{phone[1:]}",
+                "chatId": f"254{phone[1:]}",
                 "chatName": f"254{phone[1:]}"
     }
 
