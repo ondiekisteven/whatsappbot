@@ -44,15 +44,11 @@ def sim(message: str):
     phone = message.split(' ')[0]
     arg = remove_first_word(message)
     body = {
-        "messages": [
-            {
                 "body": arg,
                 "fromMe": False,
                 "author": f"254{phone[1:]}@c.us",
                 "chatId": f"254{phone[1:]}@c.us",
                 "chatName": f"254{phone[1:]}"
-            }
-        ]
     }
 
     bot = WaBot(body)
