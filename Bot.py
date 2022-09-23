@@ -52,6 +52,10 @@ def sim(message: str):
     }
 
     bot = WaBot(body)
+    print(f"phone: {phone}")
+    print(f"arg: {arg}")
+    print(f"body: {body}")
+
     return bot.processing()
 
 
