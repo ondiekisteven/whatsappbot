@@ -43,13 +43,22 @@ def get_phone(message):
 def sim(message: str):
     phone = message.split(' ')[0]
     arg = remove_first_word(message)
-    body = {
+    if '@' in phone:
+        body = {
                 "body": arg,
                 "fromMe": False,
-                "author": f"254{phone[1:]}",
-                "chatId": f"254{phone[1:]}",
-                "chatName": f"254{phone[1:]}"
-    }
+                "author": phone,
+                "chatId": phone,
+                "chatName": phone}
+    else:
+        body = {
+                "body": arg,
+                "fromMe": False,
+                "author": f"254{phone[1:]}@c.us",
+                "chatId": f"254{phone[1:]}@c.us",
+                "chatName": f"254{phone[1:]}"}
+
+    
 
     bot = WaBot(body)
     print(f"phone: {phone}")
