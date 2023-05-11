@@ -42,7 +42,6 @@ itsdangerous==1.1.0
 Jinja2==2.11.3
 jmespath==0.10.0
 kombu==4.6.11
-lxml==4.6.2
 lyricsgenius==3.0.1
 lyricwikia==0.1.11
 MarkupSafe==1.1.1

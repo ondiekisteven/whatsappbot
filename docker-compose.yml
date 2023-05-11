@@ -1,0 +1,41 @@
+version: "3.7"
+
+
+services:
+
+  legacy_bot:
+    container_name: legacy_bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    command: gunicorn app:app --bind 0.0.0.0:5000 --workers 1 --timeout 30
+    ports:
+      - 8070:5000
+    restart: always
+    environment:
+      - FLASK_ENV=production
+    env_file:
+      - .env
+    logging:
+      driver: local
+    networks:
+      - whatsapp-network
+
+  legacy_bot_worker:
+    container_name: legacy_bot_worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    command: python tasks.py
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - whatsapp-network
+
+
+networks:
+  whatsapp-network:
+    external: true
