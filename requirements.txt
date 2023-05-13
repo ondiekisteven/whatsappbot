@@ -67,7 +67,7 @@ pyparsing==2.4.7
 pyreadline==2.1
 python-dateutil==2.8.1
 pytube==10.4.1
-pytube3==9.6.4
+pytube3
 pytz==2020.1
 pywikihow==0.5.7
 PyYAML==5.3.1
@@ -106,3 +106,4 @@ gunicorn
 python-magic
 riprova
 rq-dashboard
+python-dotenv

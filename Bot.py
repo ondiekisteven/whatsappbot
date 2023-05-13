@@ -28,7 +28,7 @@ adverts = [
 # os.environ["API_TOKEN"] = '21lamw2k30b9f6c3'
 # os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('BOT_HOST', 'http://173.230.134.76:8003/')  # address of this machine
-api_url = "http://173.230.134.76:8002/api/v1/send-chat"
+api_url = "https://portal.somwaki.com/qr/send-message"
 upload_url = "http://173.230.134.76:8002/uploadfile/"
 api_token = os.environ.get("API_TOKEN")
 import logging
@@ -116,13 +116,18 @@ class WaBot:
 
     def send_requests(self, method, data):
 
-        headers = {'content-type': 'application/json'}
+        headers = {
+            'content-type': 'application/json',
+            'client_id': self.message.get('client_id'),
+            'auth-key': '5ohsRCA8os7xW7arVagm3O861lMZwFfl'
+        }
         if method == 'sendMessage':
             d = {
                 'chat_id': data['chatId'],
                 'message': data['body'],
                 'type': 'chat'
             }
+            print(f"sending message: headers -> {headers} , data -> {d}")
             answer = requests.post(api_url, data=dumps(d), headers=headers)
         elif method == 'sendFileLink':
             # first upload the file

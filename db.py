@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 #     return db
 
 def getDb():
-    db = pymysql.connect(host="localhost", user="root", password="Xy2E3JazKXkYdMZw", database="whatsappbot")
+    db = pymysql.connect(port=3360, host="38.242.251.251", user="root", password="Xy2E3JazKXkYdMZw", database="legacy_bot")
     return db
 
 

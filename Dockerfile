@@ -1,5 +1,5 @@
 
-FROM python
+FROM python:3.9
 
 WORKDIR /home/app
 
@@ -7,11 +7,11 @@ ENV FLASK_APP app.py
 
 ENV FLASK_RUN_HOST 0.0.0.0
 
-RUN apt-get update && \
+RUN apt-get update -y && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         libxml2-dev \
         libxslt-dev \
-        python3-dev && \
+        python3-dev gcc && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt  requirements.txt
