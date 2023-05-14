@@ -338,12 +338,12 @@ eg _how to bake a cake_
                     song_title = YoutubeDL().extract_info(link, download=False)['title']
                     self.send_message(sid, f'Detected song: *{song_title}*\n\nDownloading song...')
                     audio_name = download_song(link)
-                    s3_path = save_to_s3(audio_name)
-                    logging.info(f'SENDING AUDIO FROM {s3_path}')
+                    # s3_path = save_to_s3(audio_name)
+                    # logging.info(f'SENDING AUDIO FROM {s3_path}')
                     audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
                     logging.info(audio_sending)
-                    logging.info("DELETING FILE")
-                    S3Uploader().delete_file(s3_path)
+                    # logging.info("DELETING FILE")
+                    # S3Uploader().delete_file(s3_path)
                     return ''
                 elif get_tld(link) in ['https://twitter.com/']:
 
@@ -586,13 +586,14 @@ eg _how to bake a cake_
                 self.send_message(sid, custom_msg)
                 db.add_downloading_user(sid)
                 downloader = Downloader(get_phone(message), choice)
-                duration = YoutubeDL().extract_info(downloader.url, download=False)['duration']
+                info = YoutubeDL().extract_info(downloader.url, download=False)
+                duration = info['duration']
                 if duration > 1300:
                     logging.warning('SONG TOO LONG TO DOWNLOAD...')
                     return self.send_message(sid, 'This song is large. Cannot complete downloading')
                 logging.info('[*] DOWNLOADING AUDIO... ')
                 try:
-                    audio_name = downloader.download_audio()
+                    audio_name = downloader.download_audio(info)
 
                     # ------------------------------------------------------------------------------------
                 #     s3_path = save_to_s3(audio_name)

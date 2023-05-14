@@ -7,7 +7,7 @@ import db
 from json import dumps, loads
 import re
 
-from youtube_dl import YoutubeDL
+from yt_dlp import YoutubeDL
 from youtube_search import YoutubeSearch
 
 
@@ -83,21 +83,29 @@ class Downloader(DlSelector):
         super().__init__(sid, choice)
         self.url = self.get_choice_url()
 
-    def download_audio(self):
+    def my_hook(self, d):
+        if d['status'] == 'downloading':
+            print(f"Downloading: {d['filename']} | ETA: {d['eta']}")
+        elif d['status'] == 'finished':
+            print(f"Download complete: {d['filename']}")
+    
+    def download_audio(self, info_dict):
         outtmpl = 'music/%(id)s' + '.%(ext)s'
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
-            'postprocessors': [
-                {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
-                 'preferredquality': '192',
-                 },
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio', 
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            },
                 {'key': 'FFmpegMetadata'},
             ],
+            'progress_hooks': [self.my_hook]
         }
 
         with YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(self.url, download=True)
+            ydl.download([self.url])
 
         renamed_file_name = f"{clean_file_name(info_dict['title'])}.mp3"
         logging.info(f"RENAMING SONG TO {renamed_file_name}")
