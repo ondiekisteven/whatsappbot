@@ -164,12 +164,21 @@ class WaBot:
         #     }
         # else: 
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        upload_file_name = os.path.join(BASE_DIR, file_path)
+        
+        logger.warning("-----------------uploading file---------------------")
+        logger.warning(f"FILE -> {file_path}")
+        logger.warning(f"upload_path -> {upload_file_name}")
+        if not os.path.exists(upload_file_name):
+            logger.error("Upload file not found. Quitting...")
+            return 500
         files = {
-            'file': open(os.path.join(BASE_DIR, file_path), 'rb')
+            'file': open(upload_file_name, 'rb')
         }
 
         response = requests.post(url=upload_url, files=files)
-        return response.status_code
+        logger.warning(response.text)
+        return response.status_code, 
 
     def send_file(self, chat_id, body, file_name, caption):
         if re.match(link, body):
