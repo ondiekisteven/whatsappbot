@@ -16,6 +16,13 @@ def clean_file_name(filename):
     return new_file_name
 
 
+def my_hook(d):
+    if d['status'] == 'downloading':
+        print(f"Downloading: {d['filename']} | ETA: {d['eta']}")
+    elif d['status'] == 'finished':
+        print(f"Download complete: {d['filename']}")
+    
+
 class MySearch(YoutubeSearch):
     """
     class which makes a youtube search for a song, saves the search results to a file and gives a printable result
@@ -83,14 +90,8 @@ class Downloader(DlSelector):
         super().__init__(sid, choice)
         self.url = self.get_choice_url()
 
-    def my_hook(self, d):
-        if d['status'] == 'downloading':
-            print(f"Downloading: {d['filename']} | ETA: {d['eta']}")
-        elif d['status'] == 'finished':
-            print(f"Download complete: {d['filename']}")
-    
     def download_audio(self, info_dict):
-        outtmpl = 'music/%(id)s' + '.%(ext)s'
+        outtmpl = 'music/%(title)s' + '.%(ext)s'
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': outtmpl,
@@ -101,7 +102,7 @@ class Downloader(DlSelector):
             },
                 {'key': 'FFmpegMetadata'},
             ],
-            'progress_hooks': [self.my_hook]
+            'progress_hooks': [my_hook]
         }
 
         with YoutubeDL(ydl_opts) as ydl:
@@ -132,16 +133,18 @@ def download_song(song_url):
     Download a song using youtube url and song title
     """
 
-    outtmpl = '/tmp/music/%(title)s' + '.%(ext)s'
+    outtmpl = 'music/%(title)s' + '.%(ext)s'
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': outtmpl,
-        'postprocessors': [
-            {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3',
-             'preferredquality': '192',
-             },
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio', 
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        },
             {'key': 'FFmpegMetadata'},
         ],
+        'progress_hooks': [my_hook]
     }
 
     with YoutubeDL(ydl_opts) as ydl:

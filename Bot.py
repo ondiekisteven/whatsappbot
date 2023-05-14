@@ -34,6 +34,7 @@ api_token = os.environ.get("API_TOKEN")
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 def get_phone(message):
@@ -155,8 +156,13 @@ class WaBot:
         answer = self.send_requests('sendMessage', data)
         return answer
 
-    def upload_file(self, file_path):
+    def upload_file(self, file_path, absolute=False):
 
+        # if absolute:
+        #     files = {
+        #         'file': open(file_path, 'rb')
+        #     }
+        # else: 
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         files = {
             'file': open(os.path.join(BASE_DIR, file_path), 'rb')
@@ -173,10 +179,10 @@ class WaBot:
                 'message': file_name,
                 'caption': caption
             }
-            logging.debug(f'send_file data -> {data}')
+            logger.warning(f'send_file data -> {data}')
             answer = self.send_requests('sendFileLink', data)
         else:
-            status = self.upload_file(body)
+            status = self.upload_file(body, absolute=True)
             if status == 200:
                 data = {
                     'chatId': chat_id,
@@ -184,7 +190,7 @@ class WaBot:
                     'message': file_name,
                     'caption': caption
                 }
-                logging.debug(f'send_file data -> {data}')
+                logger.warning(f'send_file data -> {data}')
                 answer = self.send_requests('sendFileLink', data)
             else:
                 answer = self.send_message(chat_id, 'An error occurred when uploading your file to whatsapp. '
@@ -339,10 +345,10 @@ eg _how to bake a cake_
                     self.send_message(sid, f'Detected song: *{song_title}*\n\nDownloading song...')
                     audio_name = download_song(link)
                     # s3_path = save_to_s3(audio_name)
-                    # logging.info(f'SENDING AUDIO FROM {s3_path}')
-                    audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
-                    logging.info(audio_sending)
-                    # logging.info("DELETING FILE")
+                    # logger.warning(f'SENDING AUDIO FROM {s3_path}')
+                    audio_sending = self.send_file(sid, f'music/{song_title}.mp3', song_title, song_title)
+                    logger.warning(audio_sending)
+                    # logger.warning("DELETING FILE")
                     # S3Uploader().delete_file(s3_path)
                     return ''
                 elif get_tld(link) in ['https://twitter.com/']:
@@ -428,7 +434,7 @@ eg _how to bake a cake_
                         path = f'{heroku_url}files/music/{audio_name}'
                         if os.path.exists(f'music/{get_phone(message)}/{audio_name}'):
                             audio_sending = self.send_file(sid, path, "audio.mp3", "audio")
-                            logging.info(f'sending audio -> {audio_sending}')
+                            logger.warning(f'sending audio -> {audio_sending}')
 
                             db.delete_downloading(sid)
                             db.updateLastCommand(sid, 'audio')
@@ -459,10 +465,10 @@ eg _how to bake a cake_
                                          'www.youtube.com']:
                         audio_name = download_song(link)
                         s3_path = save_to_s3(audio_name)
-                        logging.info(f'SENDING AUDIO FROM {s3_path}')
+                        logger.warning(f'SENDING AUDIO FROM {s3_path}')
                         audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
-                        logging.info(audio_sending)
-                        logging.info("DELETING FILE")
+                        logger.warning(audio_sending)
+                        logger.warning("DELETING FILE")
                         S3Uploader().delete_file(s3_path)
                         return ''
                 return 'probably no youtube link'
@@ -591,16 +597,16 @@ eg _how to bake a cake_
                 if duration > 1300:
                     logging.warning('SONG TOO LONG TO DOWNLOAD...')
                     return self.send_message(sid, 'This song is large. Cannot complete downloading')
-                logging.info('[*] DOWNLOADING AUDIO... ')
+                logger.warning('[*] DOWNLOADING AUDIO... ')
                 try:
                     audio_name = downloader.download_audio(info)
 
                     # ------------------------------------------------------------------------------------
                 #     s3_path = save_to_s3(audio_name)
-                #     logging.info(f'SENDING AUDIO FROM {s3_path}')
+                #     logger.warning(f'SENDING AUDIO FROM {s3_path}')
                 #     audio_sending = self.send_file(sid, s3_path, audio_name, audio_name)
-                #     logging.info(audio_sending)
-                #     logging.info("DELETING FILE")
+                #     logger.warning(audio_sending)
+                #     logger.warning("DELETING FILE")
                 #     S3Uploader().delete_file(s3_path)
                 #     return ''
                 except Exception as e:
@@ -610,11 +616,11 @@ eg _how to bake a cake_
                 # ------------------------------------------------------------------------------------
 
                 path = f'music/{get_phone(message)}/{audio_name}'
-                logging.info(f'path -> {path}')
+                logger.warning(f'path -> {path}')
 
                 print("Path exists")
                 audio_sending = self.send_file(sid, path, audio_name, audio_name)
-                logging.info(f'sending audio -> {audio_sending}')
+                logger.warning(f'sending audio -> {audio_sending}')
 
                 return audio_sending
 
