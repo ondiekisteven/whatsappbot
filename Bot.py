@@ -29,7 +29,7 @@ adverts = [
 # os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('BOT_HOST', 'http://173.230.134.76:8003/')  # address of this machine
 api_url = "https://portal.somwaki.com/qr/send-message"
-upload_url = "https://portal.somwaki.com/qr/upload-file/"
+upload_url = "https://portal.somwaki.com/qr/upload-file"
 api_token = os.environ.get("API_TOKEN")
 import logging
 
