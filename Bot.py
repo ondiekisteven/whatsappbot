@@ -172,13 +172,20 @@ class WaBot:
         if not os.path.exists(upload_file_name):
             logger.error("Upload file not found. Quitting...")
             return 500
+        logger.info(f"uploading {file_path}...")
         files = {
             'file': open(upload_file_name, 'rb')
         }
 
-        response = requests.post(url=upload_url, files=files)
-        logger.warning(response.text)
-        return response.status_code, 
+        headers = {
+            'content-type': 'application/json',
+            'client_id': self.message.get('client_id'),
+            'auth-key': '5ohsRCA8os7xW7arVagm3O861lMZwFfl'
+        }
+
+        r = requests.post(url=upload_url, files=files, json={}, headers=headers)
+        logger.info(f"UPLOADING FILE... {r.status_code} :: {r.text}")
+        return r.status_code
 
     def send_file(self, chat_id, body, file_name, caption):
         if re.match(link, body):
