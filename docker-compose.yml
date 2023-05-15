@@ -30,6 +30,8 @@ services:
     
     command: python tasks.py
     restart: always
+    volumes:
+      - ./music:/home/app/music
     env_file:
       - .env
     networks:

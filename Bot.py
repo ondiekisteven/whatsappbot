@@ -28,8 +28,8 @@ adverts = [
 # os.environ["API_TOKEN"] = '21lamw2k30b9f6c3'
 # os.environ["HEROKU_URL"] = 'http://localhost:5000/'
 heroku_url = os.getenv('BOT_HOST', 'http://173.230.134.76:8003/')  # address of this machine
-api_url = "https://portal.somwaki.com/qr/send-message"
-upload_url = "https://portal.somwaki.com/qr/upload-file"
+api_url = "http://webapi:9050/send-message"
+upload_url = "http://webapi:9050/upload-file"
 api_token = os.environ.get("API_TOKEN")
 import logging
 
@@ -173,9 +173,9 @@ class WaBot:
             logger.error("Upload file not found. Quitting...")
             return 500
         logger.info(f"uploading {file_path}...")
-        files = {
-            'file': open(upload_file_name, 'rb')
-        }
+        files = [
+            ('file', (os.path.basename(upload_file_name), open(upload_file_name, 'rb'), 'audio/mp3'))
+        ]
 
         headers = {
             'content-type': 'application/json',
