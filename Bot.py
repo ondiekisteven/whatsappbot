@@ -156,7 +156,7 @@ class WaBot:
         answer = self.send_requests('sendMessage', data)
         return answer
 
-    def upload_file(self, file_path, absolute=False):
+    def upload_file(self, file_path, absolute=False, override_client_id=None, override_upload_url=None):
 
         # if absolute:
         #     files = {
@@ -173,17 +173,18 @@ class WaBot:
             logger.error("Upload file not found. Quitting...")
             return 500
         logger.info(f"uploading {file_path}...")
+        mime = magic.Magic(mime=True)
+        file_type = mime.from_file(upload_file_name)
         files = [
-            ('file', (os.path.basename(upload_file_name), open(upload_file_name, 'rb'), 'audio/mp3'))
+            ('image', (os.path.basename(upload_file_name), open(upload_file_name, 'rb'), file_type))
         ]
 
         headers = {
-            'content-type': 'application/json',
-            'client_id': self.message.get('client_id'),
+            'client_id': override_client_id or self.message.get('client_id'),
             'auth-key': '5ohsRCA8os7xW7arVagm3O861lMZwFfl'
         }
 
-        r = requests.post(url=upload_url, files=files, json={}, headers=headers)
+        r = requests.post(url=override_upload_url or upload_url, files=files, json={}, headers=headers)
         logger.info(f"UPLOADING FILE... {r.status_code} :: {r.text}")
         return r.status_code
 
