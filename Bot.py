@@ -203,7 +203,7 @@ class WaBot:
             if status == 200:
                 data = {
                     'chatId': chat_id,
-                    'image': file_name,
+                    'image': os.path.basename(body),
                     'message': file_name,
                     'caption': caption
                 }
