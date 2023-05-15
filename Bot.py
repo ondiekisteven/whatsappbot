@@ -138,7 +138,7 @@ class WaBot:
                 'chat_id': data['chatId'],
                 'message': data['message'],
                 'image': data['image'],
-                'type': 'file'
+                'type': 'image'
             }
             answer = requests.post(api_url, data=dumps(d), headers=headers)
 
